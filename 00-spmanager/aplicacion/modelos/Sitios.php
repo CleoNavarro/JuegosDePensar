@@ -17,7 +17,7 @@ class Sitios extends CActiveRecord {
         return array(
             "cod_sitio", "coor_x", "coor_y",
             "nombre_sitio", "direccion", "poblacion", 
-            "descripcion", "contacto", "foto", "borrado"
+            "descripcion", "contacto", "foto", "visto", "borrado"
         );
     }
 
@@ -69,6 +69,9 @@ class Sitios extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
+                ),
+                array( 
+                    "ATRI" => "fecha", "TIPO" => "FECHA"
                 ),
                 array(
                     "ATRI" => "borrado", "TIPO" => "ENTERO",

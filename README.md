@@ -66,3 +66,26 @@ Permite depurar código en PHP. Para configurarlo:
 		 Require all granted
 	 </Directory>
 </VirtualHost>
+
+
+## Configurar y cargar la base de datos
+Hay un script llamado safeplace.sql. En él viene todas las instrucciones para crear la base de datos.
+- Entra en phpMyAdmin, y en el index, selecciona Importar. Puedes dejar el archivo SQL tal cual.
+
+También debes crear la siguiente cuenta de usuario, que la aplicación usará para acceder a la base de datos:
+- Entra en phpMyAdmin, y en el index, selecciona Cuentas de Usuario. Pinchas en Agregar cuenta de usuario, e introduces las siguentes credenciales:
+Nombre de Usuario: 2daw01
+Nombre del Servidor: localhost
+Contraseña: 2daw
+- Luego, en la tabla de cuentas de usuario, selecciona Editar Privilegios en la linea de 2daw01.
+- Seleccionas Base de datos, y en Añadir privilegios a la base de datos siguiente, selecciona safeplace
+- Selecciona los permisos para hacer SELECT, INSERT, UPDATE y DELETE y dale a Continuar.
+
+
+## SI LO HAS HECHO TODO BIEN
+Reinicia o enciende XAMMP (los servicios MySql y Apache). Debes poder entrar en los siguientes links:
+- www.safeplace.com : El mapa que ve el usuario
+- www.spmanager.com : La interfaz de administrador
+
+
+
