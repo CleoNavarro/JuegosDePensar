@@ -6,7 +6,7 @@ class Sitios extends CActiveRecord {
     }
 
     protected function fijarTabla():string {
-        return "sitios";
+        return "vista_sitios";
     }
     
     protected function fijarId():string {
@@ -15,9 +15,11 @@ class Sitios extends CActiveRecord {
 
     protected function fijarAtributos(): array {
         return array(
-            "cod_sitio", "coor_x", "coor_y",
-            "nombre_sitio", "direccion", "poblacion", 
-            "descripcion", "contacto", "foto", "visto", "borrado"
+            "cod_sitio", "coor_x", "coor_y", "nombre_sitio", 
+            "direccion", "poblacion", "cp", "provincia", "pais",
+            "descripcion", "contacto", "foto", "alta", "alta_por",
+            "borrado", "fecha_borrado", "borrado_por", 
+            "puntuacion", "nombre_alta", "nombre_baja"
         );
     }
 
@@ -29,10 +31,20 @@ class Sitios extends CActiveRecord {
             "nombre_sitio" => "Nombre del sitio",
             "direccion" => "Dirección", 
             "poblacion" => "Población", 
+            "cp" => "Código Postal", 
+            "provincia" => "Provincia/Región", 
+            "pais" => "País/Estado",
             "descripcion" => "Descripción del sitio", 
             "contacto" => "Teléfono y/o mail de contacto", 
             "foto" => "Foto", 
-            "borrado" => "Sitio Borrado"
+            "alta" => "Fecha del alta", 
+            "alta_por" => "Cod alta por",
+            "borrado" => "¿Borrado?", 
+            "fecha_borrado" => "Fecha del borrado", 
+            "borrado_por" => "Cod Borrado por",
+            "puntuacion" => "Puntuación", 
+            "nombre_alta" => "Dado de alta por", 
+            "nombre_baja" => "Borrado por"
         );
     }
 
@@ -62,6 +74,15 @@ class Sitios extends CActiveRecord {
                     "ATRI" => "poblacion", "TIPO" => "CADENA", "TAMANIO" => 60
                 ),
                 array(
+                    "ATRI" => "cp", "TIPO" => "CADENA", "TAMANIO" => 6
+                ),
+                array(
+                    "ATRI" => "provincia", "TIPO" => "CADENA", "TAMANIO" => 60
+                ),
+                array(
+                    "ATRI" => "pais", "TIPO" => "CADENA", "TAMANIO" => 60
+                ),
+                array(
                     "ATRI" => "descripcion", "TIPO" => "CADENA", "TAMANIO" => 480
                 ),
                 array(
@@ -71,12 +92,24 @@ class Sitios extends CActiveRecord {
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
                 ),
                 array( 
-                    "ATRI" => "fecha", "TIPO" => "FECHA"
+                    "ATRI" => "alta", "TIPO" => "FECHA", "DEFECTO" => date("d/m/Y H:i:s")
+                ),
+                array("ATRI" => "alta", "TIPO" => "FUNCION",
+                    "FUNCION" => "validaFechaAlta"
+                ),
+                array(
+                    "ATRI" => "alta_por", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
                     "ATRI" => "borrado", "TIPO" => "ENTERO",
                     "RANGO" => [0, 1], "DEFECTO" => 0
                 ),
+                array( 
+                    "ATRI" => "fecha_borrado", "TIPO" => "FECHA"
+                ),
+                array(
+                    "ATRI" => "borrado_por", "TIPO" => "ENTERO", "MIN" => 0,
+                )
             );
     }
 
@@ -88,10 +121,17 @@ class Sitios extends CActiveRecord {
         $this->nombre_sitio = "";
         $this->direccion = "";
         $this->poblacion = "";
+        $this->cp = "";
+        $this->provincia = "";
+        $this->pais = "";
         $this->descripcion = "";
         $this->contacto = "";
         $this->foto = "fotoSitioPorDefecto.png";
+        $this->alta = date("d/m/Y H:i:s");
+        $this->alta_por = 0;
         $this->borrado = 0;
+        $this->fecha_borrado = date("d/m/Y H:i:s");
+        $this->borrado_por = 0;
     }
 
     /**
@@ -128,6 +168,33 @@ class Sitios extends CActiveRecord {
     }
 
     /**
+     * Función para borrar un sitio. Le asigna fecha de borrado y el código de quien lo ha hecho
+     */
+    public static function borrarSitio(int $cod_sit, int $cod_borrador) {
+
+        $sentencia = "UPDATE sitios ".
+            "SET borrado = 1, ".
+            "fecha_borrado = CURRENT_TIMESTAMP, ".
+            "borrado_por = $cod_borrador ".
+            "WHERE cod_sitio = $cod_sit;";
+    }
+
+    /**
+     * Función para recuperar un Sitio. Le asigna una nueva fecha de alta y el código de quien lo ha hecho,
+     * y borra los datos de quien lo borró
+     */
+    public static function recuperarSitio(int $cod_sit, int $cod_recuperador) {
+
+        $sentencia = "UPDATE sitios ".
+            "SET alta = CURRENT_TIMESTAMP, ".
+            "alta_por = $cod_recuperador, ".
+            "borrado = 0, ".
+            "fecha_borrado = NULL, ".
+            "borrado_por = 0 ".
+            "WHERE cod_sitio = $cod_sit;";
+    }
+
+    /**
      * 
      */
     function fijarSentenciaInsert(): string {
@@ -137,15 +204,21 @@ class Sitios extends CActiveRecord {
         $nombre_sitio = CGeneral::addSlashes($this->nombre_sitio);
         $direccion = CGeneral::addSlashes($this->direccion);
         $poblacion = CGeneral::addSlashes($this->poblacion);
+        $cp = CGeneral::addSlashes($this->cp);
+        $provincia = CGeneral::addSlashes($this->provincia);
+        $pais = CGeneral::addSlashes($this->pais);
         $descripcion = CGeneral::addSlashes($this->descripcion);
         $contacto = CGeneral::addSlashes($this->contacto);
         $foto = CGeneral::addSlashes($this->foto);
+        $alta_por = intval($this->alta_por);
+        
 
         $sentencia = "INSERT INTO sitios ". 
-            "(coor_x, coor_y, nombre_sitio, direccion, poblacion, ".
-            "descripcion, contacto, foto, borrado)". 
+            "(coor_x, coor_y, nombre_sitio, direccion, poblacion, cp, provincia, pais, ".
+            "descripcion, contacto, foto, alta, alta_por, borrado, fecha_borrado, borrado_por)". 
             " VALUES ('$coor_x', '$coor_y','$nombre_sitio', '$direccion', ".
-            "'$poblacion', '$descripcion', '$contacto', '$foto', 0); ";
+            "'$poblacion', '$cp', '$provincia', '$pais'. '$descripcion', '$contacto', '$foto', ".
+            "CURRENT_TIMESTAMP, $alta_por, 0, NULL, 0); ";
 
         return $sentencia;
     }
@@ -158,18 +231,20 @@ class Sitios extends CActiveRecord {
         $nombre_sitio = CGeneral::addSlashes($this->nombre_sitio);
         $direccion = CGeneral::addSlashes($this->direccion);
         $poblacion = CGeneral::addSlashes($this->poblacion);
+        $cp = CGeneral::addSlashes($this->cp);
+        $provincia = CGeneral::addSlashes($this->provincia);
+        $pais = CGeneral::addSlashes($this->pais);
         $descripcion = CGeneral::addSlashes($this->descripcion);
         $contacto = CGeneral::addSlashes($this->contacto);
         $foto = CGeneral::addSlashes($this->foto);
-        $borrado = intval($this->borrado);
-
 
         $sentencia = "UPDATE sitios ".
             "SET coor_x = '$coor_x', coor_y = '$coor_y', ".
             "nombre_sitio = '$nombre_sitio', ".
             "direccion = '$direccion', poblacion = '$poblacion', ".
+            "cp = '$cp', provincia = '$provincia', pais = '$pais',".
             "descripcion = '$descripcion', contacto = '$contacto', ".
-            "foto = '$foto', borrado = $borrado ".
+            "foto = '$foto' ".
             "WHERE cod_sitio = $cod_sitio;";
      
         return $sentencia;
