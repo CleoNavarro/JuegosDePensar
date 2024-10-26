@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-10-2024 a las 22:28:35
+-- Tiempo de generación: 26-10-2024 a las 13:25:59
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -206,7 +206,8 @@ CREATE TABLE `resenias` (
 
 INSERT INTO `resenias` (`cod_resenia`, `cod_usuario`, `cod_sitio`, `fecha`, `puntuacion`, `titulo`, `descripcion`, `nuevo`, `borrado`, `borrado_fecha`, `borrado_por`) VALUES
 (1, 0, 0, '2024-10-21', 1, '--', '--', '2024-10-21 22:21:39', 1, '2024-10-21 22:21:39', 0),
-(2, 7, 4, '2024-10-21', 5, 'Muy contentos', 'Nuestros dos hijos han pasado por este instituto en Antequera y han salido muy bien preparados. Estamos muy contentos y agradecidos.', NULL, 0, NULL, 0);
+(2, 7, 4, '2024-10-21', 5, 'Muy contentos', 'Nuestros dos hijos han pasado por este instituto en Antequera y han salido muy bien preparados. Estamos muy contentos y agradecidos.', NULL, 0, NULL, 0),
+(3, 7, 4, '2024-10-26', 4, 'Buen instituto', NULL, NULL, 0, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -456,6 +457,35 @@ CREATE TABLE `vista_resenias` (
 -- --------------------------------------------------------
 
 --
+-- Estructura Stand-in para la vista `vista_sitios`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `vista_sitios` (
+`cod_sitio` int(11)
+,`coor_x` decimal(8,5)
+,`coor_y` decimal(8,5)
+,`nombre_sitio` varchar(120)
+,`direccion` varchar(255)
+,`poblacion` varchar(60)
+,`cp` varchar(6)
+,`provincia` varchar(60)
+,`pais` varchar(60)
+,`descripcion` varchar(480)
+,`contacto` varchar(255)
+,`foto` varchar(255)
+,`alta` datetime
+,`alta_por` int(11)
+,`borrado` tinyint(1)
+,`fecha_borrado` datetime
+,`borrado_por` int(11)
+,`puntuacion` decimal(12,1)
+,`nombre_alta` varchar(100)
+,`nombre_baja` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura Stand-in para la vista `vista_sitios_caracteristicas`
 -- (Véase abajo para la vista actual)
 --
@@ -525,6 +555,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `vista_resenias`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_resenias`  AS   (select `r`.`cod_resenia` AS `cod_resenia`,`r`.`cod_usuario` AS `cod_usuario`,`r`.`cod_sitio` AS `cod_sitio`,`r`.`fecha` AS `fecha`,`r`.`puntuacion` AS `puntuacion`,`r`.`titulo` AS `titulo`,`r`.`descripcion` AS `descripcion`,`r`.`nuevo` AS `nuevo`,`r`.`borrado` AS `borrado`,`r`.`borrado_fecha` AS `borrado_fecha`,`r`.`borrado_por` AS `borrado_por`,`u`.`nick` AS `nick_reseniador`,`u`.`pronombres` AS `pronombres`,`u`.`foto` AS `foto`,`s`.`nombre_sitio` AS `nombre_sitio`,`a`.`nick` AS `nick_borrador` from (((`resenias` `r` join `sitios` `s`) join `usuarios` `u`) join `acl_usuarios` `a`) where `r`.`cod_sitio` = `s`.`cod_sitio` and `r`.`cod_usuario` = `u`.`cod_usuario` and `r`.`borrado_por` = `a`.`cod_acl_usuario`)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_sitios`
+--
+DROP TABLE IF EXISTS `vista_sitios`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_sitios`  AS   (select `s`.`cod_sitio` AS `cod_sitio`,`s`.`coor_x` AS `coor_x`,`s`.`coor_y` AS `coor_y`,`s`.`nombre_sitio` AS `nombre_sitio`,`s`.`direccion` AS `direccion`,`s`.`poblacion` AS `poblacion`,`s`.`cp` AS `cp`,`s`.`provincia` AS `provincia`,`s`.`pais` AS `pais`,`s`.`descripcion` AS `descripcion`,`s`.`contacto` AS `contacto`,`s`.`foto` AS `foto`,`s`.`alta` AS `alta`,`s`.`alta_por` AS `alta_por`,`s`.`borrado` AS `borrado`,`s`.`fecha_borrado` AS `fecha_borrado`,`s`.`borrado_por` AS `borrado_por`,(select round(avg(`r`.`puntuacion`),1) from `resenias` `r` where `r`.`cod_sitio` = `s`.`cod_sitio` group by `r`.`cod_sitio`) AS `puntuacion`,`al`.`nick` AS `nombre_alta`,`bj`.`nick` AS `nombre_baja` from ((`sitios` `s` join `acl_usuarios` `al`) join `acl_usuarios` `bj`) where `s`.`alta_por` = `al`.`cod_acl_usuario` and `s`.`borrado_por` = `bj`.`cod_acl_usuario`)  ;
 
 -- --------------------------------------------------------
 
@@ -705,7 +744,7 @@ ALTER TABLE `reportes`
 -- AUTO_INCREMENT de la tabla `resenias`
 --
 ALTER TABLE `resenias`
-  MODIFY `cod_resenia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cod_resenia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `respuestas`
