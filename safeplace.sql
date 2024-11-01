@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-10-2024 a las 13:25:59
+-- Tiempo de generación: 01-11-2024 a las 11:37:14
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -67,22 +67,24 @@ CREATE TABLE `acl_usuarios` (
   `nombre` varchar(255) NOT NULL,
   `contrasenia` varchar(50) NOT NULL,
   `cod_acl_role` int(11) NOT NULL,
-  `borrado` datetime DEFAULT NULL
+  `borrado` tinyint(1) NOT NULL DEFAULT 0,
+  `borrado_fecha` datetime DEFAULT NULL,
+  `borrado_por` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `acl_usuarios`
 --
 
-INSERT INTO `acl_usuarios` (`cod_acl_usuario`, `nick`, `nombre`, `contrasenia`, `cod_acl_role`, `borrado`) VALUES
-(0, '--', '--', '--', 2, '2024-10-01 22:08:42'),
-(1, 'CleoNavarro', 'Cleo Navarro Molina', 'f1575b49081d7abe41fd7f150f4a2d0a7c22a96b', 1, NULL),
-(2, 'AdminAux', 'Administrador Auxiliar', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 3, NULL),
-(3, 'PlaceGestor', 'Gestor de Sitios', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 7, NULL),
-(4, 'Sugestions', 'Gestor de Sugerencias', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 4, NULL),
-(5, 'Reports', 'Gestión de Reportes', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 5, NULL),
-(6, 'Reviews', 'Gestor de Reseñas', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 6, NULL),
-(7, 'UserTest', 'Usuario Test', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3', 2, NULL);
+INSERT INTO `acl_usuarios` (`cod_acl_usuario`, `nick`, `nombre`, `contrasenia`, `cod_acl_role`, `borrado`, `borrado_fecha`, `borrado_por`) VALUES
+(0, '--', '--', '--', 2, 1, '2024-10-01 22:08:42', 1),
+(1, 'CleoNavarro', 'Cleo Navarro Molina', 'f1575b49081d7abe41fd7f150f4a2d0a7c22a96b', 1, 0, NULL, 0),
+(2, 'AdminAux', 'Administrador Auxiliar', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 3, 0, NULL, 0),
+(3, 'PlaceGestor', 'Gestor de Sitios', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 7, 0, NULL, 0),
+(4, 'Sugestions', 'Gestor de Sugerencias', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 4, 0, NULL, 0),
+(5, 'Reports', 'Gestión de Reportes', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 5, 0, NULL, 0),
+(6, 'Reviews', 'Gestor de Reseñas', 'a096961d20e19bb6363a54f97fd5e0b9d655e46e', 6, 0, NULL, 0),
+(7, 'UserTest', 'Usuario Test', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3', 2, 0, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -607,7 +609,8 @@ ALTER TABLE `acl_roles`
 --
 ALTER TABLE `acl_usuarios`
   ADD PRIMARY KEY (`cod_acl_usuario`),
-  ADD KEY `fk_acl_usuarios1` (`cod_acl_role`);
+  ADD KEY `fk_acl_usuarios1` (`cod_acl_role`),
+  ADD KEY `fk_acl_usuarios2` (`borrado_por`);
 
 --
 -- Indices de la tabla `caracteristicas`
@@ -796,7 +799,8 @@ ALTER TABLE `usuarios`
 -- Filtros para la tabla `acl_usuarios`
 --
 ALTER TABLE `acl_usuarios`
-  ADD CONSTRAINT `fk_acl_usuarios1` FOREIGN KEY (`cod_acl_role`) REFERENCES `acl_roles` (`cod_acl_role`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_acl_usuarios1` FOREIGN KEY (`cod_acl_role`) REFERENCES `acl_roles` (`cod_acl_role`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_acl_usuarios2` FOREIGN KEY (`borrado_por`) REFERENCES `acl_usuarios` (`cod_acl_usuario`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `reportes`
