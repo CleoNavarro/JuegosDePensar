@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-11-2024 a las 11:37:14
+-- Tiempo de generación: 01-11-2024 a las 13:16:58
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -370,7 +370,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`cod_usuario`, `nombre`, `nick`, `descripcion`, `mail`, `telefono`, `pronombres`, `foto`, `fecha_registrado`, `verificado`, `borrado`, `borrado_fecha`, `borrado_por`) VALUES
-(0, '--', '--', '--', '--', '--', '--', '--', '2024-10-20 22:17:08', '2024-10-20 22:17:08', 1, '2024-10-21 22:17:08', 0),
+(0, '--', '--', '--', '--', '--', '--', '--', '2024-10-20 22:17:08', '2024-10-20 22:17:08', 1, '2024-10-21 22:17:08', 1),
 (1, 'Cleo Navarro Molina', 'CleoNavarro', 'Administradora de SafePlace. Creando un lugar seguro en la red', 'latitacleo@gmail.com', '656928992', 'She/Her', 'fotoUsuarioPorDefecto.png', '2024-05-22 20:11:33', '2024-10-18 12:47:33', 0, NULL, 0),
 (2, 'Administrador Auxiliar', 'AdminAux', 'Administrador de SafePlace', 'adminaux@sfpl.com', '612345678', 'He/HIm', 'fotoUsuarioPorDefecto.png', '2024-05-26 14:01:41', '2024-10-19 12:47:33', 0, NULL, 0),
 (3, 'Gestor de Sitios', 'PlaceGestor', 'Gestor de Sitios', 'places@sfpl.com', '654987321', 'They/Them', 'fotoUsuarioPorDefecto.png', '2024-05-26 14:01:41', '2024-10-18 12:47:33', 0, NULL, 0),
@@ -382,10 +382,10 @@ INSERT INTO `usuarios` (`cod_usuario`, `nombre`, `nick`, `descripcion`, `mail`, 
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `vista_reportes_de_resenias`
+-- Estructura Stand-in para la vista `vista_reportes`
 -- (Véase abajo para la vista actual)
 --
-CREATE TABLE `vista_reportes_de_resenias` (
+CREATE TABLE `vista_reportes` (
 `cod_reporte` int(11)
 ,`cod_usuario` int(11)
 ,`cod_sitio` int(11)
@@ -405,29 +405,6 @@ CREATE TABLE `vista_reportes_de_resenias` (
 ,`titulo_resenia` varchar(120)
 ,`descripcion_resenia` varchar(800)
 ,`nick_reseniador` varchar(100)
-,`nick_lector` varchar(100)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vista_reportes_de_sitios`
--- (Véase abajo para la vista actual)
---
-CREATE TABLE `vista_reportes_de_sitios` (
-`cod_reporte` int(11)
-,`cod_usuario` int(11)
-,`cod_sitio` int(11)
-,`fecha` datetime
-,`titulo` varchar(120)
-,`motivo` varchar(2000)
-,`leido` tinyint(1)
-,`leido_fecha` datetime
-,`leido_por` int(11)
-,`nick_reportador` varchar(100)
-,`pronombres` varchar(15)
-,`foto` varchar(255)
-,`nombre_sitio` varchar(120)
 ,`nick_lector` varchar(100)
 );
 
@@ -534,20 +511,11 @@ CREATE TABLE `vista_sitios_comunidades` (
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `vista_reportes_de_resenias`
+-- Estructura para la vista `vista_reportes`
 --
-DROP TABLE IF EXISTS `vista_reportes_de_resenias`;
+DROP TABLE IF EXISTS `vista_reportes`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_reportes_de_resenias`  AS   (select `r`.`cod_reporte` AS `cod_reporte`,`r`.`cod_usuario` AS `cod_usuario`,`r`.`cod_sitio` AS `cod_sitio`,`r`.`cod_resenia` AS `cod_resenia`,`r`.`fecha` AS `fecha`,`r`.`titulo` AS `titulo`,`r`.`motivo` AS `motivo`,`r`.`leido` AS `leido`,`r`.`leido_fecha` AS `leido_fecha`,`r`.`leido_por` AS `leido_por`,`u`.`nick` AS `nick_reportador`,`u`.`pronombres` AS `pronombres`,`u`.`foto` AS `foto`,`s`.`nombre_sitio` AS `nombre_sitio`,`rs`.`cod_usuario` AS `cod_usuario_reseniador`,`rs`.`fecha` AS `fecha_resenia`,`rs`.`titulo` AS `titulo_resenia`,`rs`.`descripcion` AS `descripcion_resenia`,`u`.`nick` AS `nick_reseniador`,`a`.`nick` AS `nick_lector` from ((((`reportes` `r` join `sitios` `s`) join `resenias` `rs`) join `usuarios` `u`) join `acl_usuarios` `a`) where `r`.`cod_sitio` = `s`.`cod_sitio` and `r`.`cod_usuario` = `u`.`cod_usuario` and `rs`.`cod_usuario` = `u`.`cod_usuario` and `r`.`leido_por` = `a`.`cod_acl_usuario`)  ;
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `vista_reportes_de_sitios`
---
-DROP TABLE IF EXISTS `vista_reportes_de_sitios`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_reportes_de_sitios`  AS   (select `r`.`cod_reporte` AS `cod_reporte`,`r`.`cod_usuario` AS `cod_usuario`,`r`.`cod_sitio` AS `cod_sitio`,`r`.`fecha` AS `fecha`,`r`.`titulo` AS `titulo`,`r`.`motivo` AS `motivo`,`r`.`leido` AS `leido`,`r`.`leido_fecha` AS `leido_fecha`,`r`.`leido_por` AS `leido_por`,`u`.`nick` AS `nick_reportador`,`u`.`pronombres` AS `pronombres`,`u`.`foto` AS `foto`,`s`.`nombre_sitio` AS `nombre_sitio`,`a`.`nick` AS `nick_lector` from (((`reportes` `r` join `sitios` `s`) join `usuarios` `u`) join `acl_usuarios` `a`) where `r`.`cod_sitio` = `s`.`cod_sitio` and `r`.`cod_usuario` = `u`.`cod_usuario` and `r`.`leido_por` = `a`.`cod_acl_usuario`)  ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_reportes`  AS   (select `r`.`cod_reporte` AS `cod_reporte`,`r`.`cod_usuario` AS `cod_usuario`,`r`.`cod_sitio` AS `cod_sitio`,`r`.`cod_resenia` AS `cod_resenia`,`r`.`fecha` AS `fecha`,`r`.`titulo` AS `titulo`,`r`.`motivo` AS `motivo`,`r`.`leido` AS `leido`,`r`.`leido_fecha` AS `leido_fecha`,`r`.`leido_por` AS `leido_por`,`u`.`nick` AS `nick_reportador`,`u`.`pronombres` AS `pronombres`,`u`.`foto` AS `foto`,`s`.`nombre_sitio` AS `nombre_sitio`,`rs`.`cod_usuario` AS `cod_usuario_reseniador`,`rs`.`fecha` AS `fecha_resenia`,`rs`.`titulo` AS `titulo_resenia`,`rs`.`descripcion` AS `descripcion_resenia`,`u`.`nick` AS `nick_reseniador`,`a`.`nick` AS `nick_lector` from ((((`reportes` `r` join `sitios` `s`) join `resenias` `rs`) join `usuarios` `u`) join `acl_usuarios` `a`) where `r`.`cod_sitio` = `s`.`cod_sitio` and `r`.`cod_usuario` = `u`.`cod_usuario` and `rs`.`cod_usuario` = `u`.`cod_usuario` and `r`.`leido_por` = `a`.`cod_acl_usuario`)  ;
 
 -- --------------------------------------------------------
 

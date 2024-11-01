@@ -170,20 +170,27 @@ class Sitios extends CActiveRecord {
     /**
      * Función para borrar un sitio. Le asigna fecha de borrado y el código de quien lo ha hecho
      */
-    public static function borrarSitio(int $cod_sit, int $cod_borrador) {
+    public static function borrarSitio(int $cod_sit, int $cod_borrador) : bool {
 
         $sentencia = "UPDATE sitios ".
             "SET borrado = 1, ".
             "fecha_borrado = CURRENT_TIMESTAMP, ".
             "borrado_por = $cod_borrador ".
             "WHERE cod_sitio = $cod_sit;";
+
+            $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+            if ($consulta->error())
+                return false;
+
+            return true;
     }
 
     /**
      * Función para recuperar un Sitio. Le asigna una nueva fecha de alta y el código de quien lo ha hecho,
      * y borra los datos de quien lo borró
      */
-    public static function recuperarSitio(int $cod_sit, int $cod_recuperador) {
+    public static function recuperarSitio(int $cod_sit, int $cod_recuperador) : bool {
 
         $sentencia = "UPDATE sitios ".
             "SET alta = CURRENT_TIMESTAMP, ".
@@ -192,6 +199,13 @@ class Sitios extends CActiveRecord {
             "fecha_borrado = NULL, ".
             "borrado_por = 0 ".
             "WHERE cod_sitio = $cod_sit;";
+
+            $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+            if ($consulta->error())
+                return false;
+
+            return true;
     }
 
     /**

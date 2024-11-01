@@ -18,7 +18,8 @@ class Usuarios extends CActiveRecord {
             "cod_usuario", "nombre", "nick", "contrasenia", 
             "repite_contrasenia" ,"descripcion", "mail", 
             "telefono", "pronombres", "foto", "fecha_registrado", 
-            "verificado", "borrado", "cod_acl_role"
+            "verificado", "borrado", "borrado_fecha", 
+            "borrado_por", "cod_acl_role"
         );
     }
 
@@ -37,6 +38,8 @@ class Usuarios extends CActiveRecord {
             "fecha_registrado" => "Fecha de registro",
             "verificado" => "Usuario Verificado",
             "borrado" => "Usuario Borrado",
+            "borrado_fecha" => "Fecha del Borrado",
+            "borrado_por" => "Borrado por",
             "cod_acl_role" => "Asignar rol"
         );
     }
@@ -100,15 +103,20 @@ class Usuarios extends CActiveRecord {
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
                 ),
                 array( 
-                    "ATRI" => "fecha", "TIPO" => "FECHA"
+                    "ATRI" => "fecha_registrado", "TIPO" => "FECHA"
                 ),
                 array(
-                    "ATRI" => "verificado", "TIPO" => "ENTERO",
-                    "RANGO" => [0, 1], "DEFECTO" => 0
+                    "ATRI" => "verificado", "TIPO" => "FECHA"
                 ),
                 array(
                     "ATRI" => "borrado", "TIPO" => "ENTERO",
                     "RANGO" => [0, 1], "DEFECTO" => 0
+                ),
+                array( 
+                    "ATRI" => "borrado_fecha", "TIPO" => "FECHA"
+                ),
+                array(
+                    "ATRI" => "borrado_por", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
                     "ATRI" => "cod_acl_role",  "TIPO" => "ENTERO", "MIN" => 0,
@@ -138,6 +146,7 @@ class Usuarios extends CActiveRecord {
         $this->foto = "fotoUsuarioPorDefecto.png";
         $this->verificado = 0;
         $this->borrado = 0;
+        $this->borrado_por = 0;
         $this->cod_acl_role = 2;
     }
 
@@ -278,6 +287,69 @@ class Usuarios extends CActiveRecord {
         }
     }
 
+    /**
+     * Función para borrar un usuario. Le asigna fecha de borrado y el código de quien lo ha hecho
+     */
+    public static function borrarUsuario(int $cod_usuario, int $cod_borrador) : bool {
+
+        $sentencia = "UPDATE acl_usuarios ".
+            "SET borrado = 1, ".
+            "borrado_fecha = CURRENT_TIMESTAMP, ".
+            "borrado_por = $cod_borrador ".
+            "WHERE cod_acl_usuario = $cod_usuario;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        $sentencia = "UPDATE usuarios ".
+            "SET borrado = 1, ".
+            "borrado_fecha = CURRENT_TIMESTAMP, ".
+            "borrado_por = $cod_borrador ".
+            "WHERE cod_usuario = $cod_usuario;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+
+    }
+
+    /**
+     * Función para recuperar un usuario. Borra los datos de quien lo borró
+     */
+    public static function recuperarUsuario(int $cod_usuario) : bool {
+
+        $sentencia = "UPDATE acl_usuarios ".
+            "SET borrado = 0, ".
+            "fecha_borrado = NULL, ".
+            "borrado_por = 0 ".
+            "WHERE cod_acl_usuario = $cod_usuario;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        $sentencia = "UPDATE usuarios ".
+            "SET borrado = 0, ".
+            "fecha_borrado = NULL, ".
+            "borrado_por = 0 ".
+            "WHERE cod_usuario = $cod_usuario;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+    }
+
+    
+
     
     protected function afterBuscar(): void {
 
@@ -285,9 +357,19 @@ class Usuarios extends CActiveRecord {
         $fecha = CGeneral::fechahoraMysqlANormal($fecha);
         $this->fecha_registrado = $fecha;
 
+        if (!is_null($this->verificado)) {
+            $fecha = $this->verificado;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->verificado = $fecha;
+        }
+
+        if ($this->borrado == 1) {
+            $fecha = $this->borrado_fecha;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->borrado_fecha = $fecha;
+        }
+
     }
-
-
     
     /**
      * 
@@ -303,15 +385,15 @@ class Usuarios extends CActiveRecord {
 
         $sentencia = "INSERT INTO usuarios ". 
             "(nombre, nick, descripcion, mail, telefono, pronombres, ".
-            "foto, fecha_registrado, verificado, borrado)". 
+            "foto, fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
             " VALUES ('$nombre', '$nick', '', '$mail', ".
             "'$telefono', '$pronombres', 'fotoUsuarioPorDefecto.png', ".
-            "CURRENT_TIMESTAMP, 0, 0); ".
+            "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ".
 
             "INSERT INTO acl_usuarios ". 
-            "(nick, nombre, contrasenia, cod_acl_role, borrado)".
+            "(nick, nombre, contrasenia, cod_acl_role, borrado, borrado_fecha, borrado_por)".
             " VALUES ('$nick', '$nombre', sha1('$contrasenia'), ".
-            "2, 0);";
+            "2, 0, NULL, 0);";
 
         return $sentencia;
     }
@@ -327,8 +409,6 @@ class Usuarios extends CActiveRecord {
         $telefono = CGeneral::addSlashes($this->telefono);
         $pronombres = Usuarios::damePronombres(intval($this->pronombres));
         $foto = CGeneral::addSlashes($this->foto);
-        $verificado = intval($this->verificado);
-        $borrado = intval($this->borrado);
         $cod_acl_role = intval($this->cod_acl_role);
 
 
@@ -340,8 +420,6 @@ class Usuarios extends CActiveRecord {
             "telefono = '$telefono', ".
             "pronombres = '$pronombres', ".
             "foto = '$foto', ".
-            "verificado = $verificado, ".
-            "borrado = $borrado ".
             "WHERE cod_usuario = $cod_usuario; ".
 
             "UPDATE acl_usuarios ".
@@ -349,7 +427,6 @@ class Usuarios extends CActiveRecord {
             "nick = '$nick', ".
             "contrasenia = sha1('$contrasenia'), ".
             "cod_acl_role = $cod_acl_role, ".
-            "borrado = $borrado ".
             "WHERE cod_acl_usuario = $cod_usuario;";
      
         return $sentencia;
