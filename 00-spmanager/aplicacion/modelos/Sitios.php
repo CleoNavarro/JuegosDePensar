@@ -113,26 +113,7 @@ class Sitios extends CActiveRecord {
             );
     }
 
-    protected function afterCreate(): void {
-
-        $this->cod_usuario = 0;
-        $this->coor_x = 1;
-        $this->coor_y = 1;
-        $this->nombre_sitio = "";
-        $this->direccion = "";
-        $this->poblacion = "";
-        $this->cp = "";
-        $this->provincia = "";
-        $this->pais = "";
-        $this->descripcion = "";
-        $this->contacto = "";
-        $this->foto = "fotoSitioPorDefecto.png";
-        $this->alta = date("d/m/Y H:i:s");
-        $this->alta_por = 0;
-        $this->borrado = 0;
-        $this->fecha_borrado = date("d/m/Y H:i:s");
-        $this->borrado_por = 0;
-    }
+   
 
     /**
      * Undocumented function
@@ -208,9 +189,41 @@ class Sitios extends CActiveRecord {
             return true;
     }
 
-    /**
-     * 
-     */
+    protected function afterCreate(): void {
+
+        $this->cod_usuario = 0;
+        $this->coor_x = 1;
+        $this->coor_y = 1;
+        $this->nombre_sitio = "";
+        $this->direccion = "";
+        $this->poblacion = "";
+        $this->cp = "";
+        $this->provincia = "";
+        $this->pais = "";
+        $this->descripcion = "";
+        $this->contacto = "";
+        $this->foto = "fotoSitioPorDefecto.png";
+        $this->alta = date("d/m/Y H:i:s");
+        $this->alta_por = 0;
+        $this->borrado = 0;
+        $this->fecha_borrado = date("d/m/Y H:i:s");
+        $this->borrado_por = 0;
+    }
+
+    protected function afterBuscar(): void {
+
+        $fecha = $this->alta;
+        $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+        $this->alta = $fecha;
+
+        if ($this->borrado == 1) {
+            $fecha = $this->fecha_borrado;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->fecha_borrado = $fecha;
+        }
+
+    }
+
     function fijarSentenciaInsert(): string {
 
         $coor_x = floatval($this->coor_x);

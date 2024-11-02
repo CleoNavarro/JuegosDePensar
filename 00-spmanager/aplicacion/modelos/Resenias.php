@@ -58,17 +58,7 @@ class Resenias extends CActiveRecord {
                     "ATRI" => "cod_usuario", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
-                    "ATRI" => "cod_usuario", "TIPO" => "FUNCION", 
-                    "FUNCION" => "rellenaCamposUsuario",
-                    "MENSAJE" => "El usuario no existe"
-                ),
-                array(
                     "ATRI" => "cod_sitio", "TIPO" => "ENTERO", "MIN" => 0
-                ),
-                array(
-                    "ATRI" => "cod_sitio", "TIPO" => "FUNCION", 
-                    "FUNCION" => "rellenaCamposSitio",
-                    "MENSAJE" => "El sitio no existe"
                 ),
                 array( 
                     "ATRI" => "fecha", "TIPO" => "FECHA"
@@ -85,13 +75,15 @@ class Resenias extends CActiveRecord {
                     "ATRI" => "descripcion", "TIPO" => "CADENA", "TAMANIO" => 120
                 ),
                 array(
-                    "ATRI" => "resenia_verificada", "TIPO" => "ENTERO",
-                    "RANGO" => [0, 1], "DEFECTO" => 0
-                ),
-                array(
                     "ATRI" => "borrado", "TIPO" => "ENTERO",
                     "RANGO" => [0, 1], "DEFECTO" => 0
                 ),
+                array( 
+                    "ATRI" => "borrado_fecha", "TIPO" => "FECHA"
+                ),
+                array(
+                    "ATRI" => "borrado_por", "TIPO" => "ENTERO", "MIN" => 0
+                )
             );
     }
 
@@ -168,56 +160,21 @@ class Resenias extends CActiveRecord {
         $this->borrado = 0;
     }
 
-    // public function rellenaCamposUsuario () : bool {
 
-    //     $cod_usu = intval($this->cod_usuario);
-
-    //     $datosUsu = Usuarios::dameUsuarios($cod_usu);
-
-    //     if (!$datosUsu) return false;
-
-    //     $this->nombre = $datosUsu["nombre"];
-    //     $this->nick = $datosUsu["nick"];
-    //     $this->pronombres = $datosUsu["pronombres"];
-    //     $this->foto_usuario = $datosUsu["foto_usuario"];
-    //     $this->usuario_verificado = $datosUsu["usuario_verificado"];
-       
-    //     return true;
-
-    // }
-
-    // /**
-    //  * 
-    //  */
-    // public function rellenaCamposSitio () : bool {
-
-    //     $cod_sitio = intval($this->cod_sitio);
-
-    //     $datosSitio = Sitios::dameSitios($cod_sitio);
-
-    //     if (!$datosSitio) return false;
-
-    //     $this->coor_x = $datosSitio["coor_x"];
-    //     $this->coor_y = $datosSitio["coor_y"];
-    //     $this->nombre_sitio = $datosSitio["nombre_sitio"];
-    //     $this->direccion = $datosSitio["direccion"];
-    //     $this->poblacion = $datosSitio["poblacion"];
-    //     $this->foto_sitio = $datosSitio["foto_sitio"];
-       
-    //     return true;
-
-    // }
     protected function afterBuscar(): void {
 
         $fecha = $this->fecha;
         $fecha = CGeneral::fechahoraMysqlANormal($fecha);
         $this->fecha = $fecha;
 
+        if ($this->borrado == 1) {
+            $fecha = $this->borrado_fecha;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->borrado_fecha = $fecha;
+        }
+
     }
     
-    /**
-     * 
-     */
     function fijarSentenciaInsert(): string {
 
         $cod_usuario = intval($this->cod_usuario);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-11-2024 a las 13:16:58
+-- Tiempo de generación: 02-11-2024 a las 23:32:06
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -436,6 +436,21 @@ CREATE TABLE `vista_resenias` (
 -- --------------------------------------------------------
 
 --
+-- Estructura Stand-in para la vista `vista_respuestas`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `vista_respuestas` (
+`cod_respuesta` int(11)
+,`cod_reporte` int(11)
+,`respondido_por` int(11)
+,`fecha_respuesta` datetime
+,`mensaje` varchar(2000)
+,`nick_respuesta` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura Stand-in para la vista `vista_sitios`
 -- (Véase abajo para la vista actual)
 --
@@ -511,6 +526,31 @@ CREATE TABLE `vista_sitios_comunidades` (
 -- --------------------------------------------------------
 
 --
+-- Estructura Stand-in para la vista `vista_sugerencias`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `vista_sugerencias` (
+`cod_sugerencia` int(11)
+,`fecha` timestamp
+,`nombre_sitio` varchar(120)
+,`direccion` varchar(255)
+,`poblacion` varchar(60)
+,`comentario` varchar(4000)
+,`foto` varchar(255)
+,`mail_contacto` varchar(255)
+,`leido` tinyint(1)
+,`leido_fecha` datetime
+,`leido_por` int(11)
+,`anulado` tinyint(1)
+,`anulado_fecha` datetime
+,`anulado_por` int(11)
+,`nick_lector` varchar(100)
+,`nick_anulador` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura para la vista `vista_reportes`
 --
 DROP TABLE IF EXISTS `vista_reportes`;
@@ -525,6 +565,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `vista_resenias`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_resenias`  AS   (select `r`.`cod_resenia` AS `cod_resenia`,`r`.`cod_usuario` AS `cod_usuario`,`r`.`cod_sitio` AS `cod_sitio`,`r`.`fecha` AS `fecha`,`r`.`puntuacion` AS `puntuacion`,`r`.`titulo` AS `titulo`,`r`.`descripcion` AS `descripcion`,`r`.`nuevo` AS `nuevo`,`r`.`borrado` AS `borrado`,`r`.`borrado_fecha` AS `borrado_fecha`,`r`.`borrado_por` AS `borrado_por`,`u`.`nick` AS `nick_reseniador`,`u`.`pronombres` AS `pronombres`,`u`.`foto` AS `foto`,`s`.`nombre_sitio` AS `nombre_sitio`,`a`.`nick` AS `nick_borrador` from (((`resenias` `r` join `sitios` `s`) join `usuarios` `u`) join `acl_usuarios` `a`) where `r`.`cod_sitio` = `s`.`cod_sitio` and `r`.`cod_usuario` = `u`.`cod_usuario` and `r`.`borrado_por` = `a`.`cod_acl_usuario`)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_respuestas`
+--
+DROP TABLE IF EXISTS `vista_respuestas`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_respuestas`  AS SELECT `r`.`cod_respuesta` AS `cod_respuesta`, `r`.`cod_reporte` AS `cod_reporte`, `r`.`respondido_por` AS `respondido_por`, `r`.`fecha_respuesta` AS `fecha_respuesta`, `r`.`mensaje` AS `mensaje`, `u`.`nick` AS `nick_respuesta` FROM (`respuestas` `r` join `acl_usuarios` `u`) WHERE `r`.`respondido_por` = `u`.`cod_acl_usuario` ;
 
 -- --------------------------------------------------------
 
@@ -561,6 +610,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `vista_sitios_comunidades`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_sitios_comunidades`  AS   (select `sc`.`cod_sitio_comunidad` AS `cod_sitio_comunidad`,`s`.`cod_sitio` AS `cod_sitio`,`c`.`cod_comunidad` AS `cod_comunidad`,`s`.`nombre_sitio` AS `nombre_sitio`,`c`.`nombre_comu` AS `nombre_comu`,`c`.`descripcion_comu` AS `descripcion_comu`,`c`.`icono_comu` AS `icono_comu` from ((`sitios` `s` join `comunidades` `c`) join `sitios_comunidades` `sc`) where `s`.`cod_sitio` = `sc`.`cod_sitio` and `c`.`cod_comunidad` = `sc`.`cod_comunidad`)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_sugerencias`
+--
+DROP TABLE IF EXISTS `vista_sugerencias`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_sugerencias`  AS SELECT `s`.`cod_sugerencia` AS `cod_sugerencia`, `s`.`fecha` AS `fecha`, `s`.`nombre_sitio` AS `nombre_sitio`, `s`.`direccion` AS `direccion`, `s`.`poblacion` AS `poblacion`, `s`.`comentario` AS `comentario`, `s`.`foto` AS `foto`, `s`.`mail_contacto` AS `mail_contacto`, `s`.`leido` AS `leido`, `s`.`leido_fecha` AS `leido_fecha`, `s`.`leido_por` AS `leido_por`, `s`.`anulado` AS `anulado`, `s`.`anulado_fecha` AS `anulado_fecha`, `s`.`anulado_por` AS `anulado_por`, `ul`.`nick` AS `nick_lector`, `ua`.`nick` AS `nick_anulador` FROM ((`sugerencias` `s` join `acl_usuarios` `ul`) join `acl_usuarios` `ua`) WHERE `s`.`leido_por` = `ul`.`cod_acl_usuario` AND `s`.`anulado_por` = `ua`.`cod_acl_usuario` ;
 
 --
 -- Índices para tablas volcadas
@@ -661,7 +719,8 @@ ALTER TABLE `sitios_comunidades`
 --
 ALTER TABLE `sugerencias`
   ADD PRIMARY KEY (`cod_sugerencia`),
-  ADD KEY `fk_sugerencias1` (`leido_por`);
+  ADD KEY `fk_sugerencias1` (`leido_por`),
+  ADD KEY `fk_sugerencias2` (`anulado_por`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -825,7 +884,8 @@ ALTER TABLE `sitios_comunidades`
 -- Filtros para la tabla `sugerencias`
 --
 ALTER TABLE `sugerencias`
-  ADD CONSTRAINT `fk_sugerencias1` FOREIGN KEY (`leido_por`) REFERENCES `acl_usuarios` (`cod_acl_usuario`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_sugerencias1` FOREIGN KEY (`leido_por`) REFERENCES `acl_usuarios` (`cod_acl_usuario`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sugerencias2` FOREIGN KEY (`anulado_por`) REFERENCES `acl_usuarios` (`cod_acl_usuario`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `usuarios`

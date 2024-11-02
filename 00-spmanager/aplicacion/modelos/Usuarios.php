@@ -349,8 +349,6 @@ class Usuarios extends CActiveRecord {
     }
 
     
-
-    
     protected function afterBuscar(): void {
 
         $fecha = $this->fecha_registrado;
@@ -371,9 +369,7 @@ class Usuarios extends CActiveRecord {
 
     }
     
-    /**
-     * 
-     */
+
     function fijarSentenciaInsert(): string {
 
         $nombre = CGeneral::addSlashes($this->nombre);

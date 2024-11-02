@@ -163,7 +163,11 @@ class Reportes extends CActiveRecord {
         $this->foto = "fotoSitioPorDefecto.png";
         $this->mail_contacto = "";
         $this->leido = 0;
+        $this->leido_fecha = date("d/m/Y H:i:s");
+        $this->leido_por = 0;
         $this->anulado = 0;
+        $this->anulado_fecha = date("d/m/Y H:i:s");
+        $this->anulado_por = 0;
     }
 
     protected function afterBuscar(): void {
@@ -171,6 +175,18 @@ class Reportes extends CActiveRecord {
         $fecha = $this->fecha;
         $fecha = CGeneral::fechahoraMysqlANormal($fecha);
         $this->fecha = $fecha;
+
+        if ($this->leido == 1) {
+            $fecha = $this->leido_fecha;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->leido_fecha = $fecha;
+        }
+
+        if ($this->anulado == 1) {
+            $fecha = $this->anulado_fecha;
+            $fecha = CGeneral::fechahoraMysqlANormal($fecha);
+            $this->anulado_fecha = $fecha;
+        }
 
     }
     

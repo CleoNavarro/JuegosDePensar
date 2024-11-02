@@ -28,6 +28,7 @@ class Reportes extends CActiveRecord {
             "cod_reporte" => "Código Reporte", 
             "cod_usuario" => "Código Usuario", 
             "cod_sitio" => "Código Sitio", 
+            "cod_resenia" => "Código Reseña",
             "fecha" => "Fecha del reporte", 
             "titulo" => "Título", 
             "motivo" => "Motivo del reporte", 
@@ -61,17 +62,7 @@ class Reportes extends CActiveRecord {
                     "ATRI" => "cod_usuario", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
-                    "ATRI" => "cod_usuario", "TIPO" => "FUNCION", 
-                    "FUNCION" => "rellenaCamposUsuario",
-                    "MENSAJE" => "El usuario no existe"
-                ),
-                array(
                     "ATRI" => "cod_sitio", "TIPO" => "ENTERO", "MIN" => 0
-                ),
-                array(
-                    "ATRI" => "cod_sitio", "TIPO" => "FUNCION", 
-                    "FUNCION" => "rellenaCamposSitio",
-                    "MENSAJE" => "El sitio no existe"
                 ),
                 array( 
                     "ATRI" => "fecha", "TIPO" => "FECHA"
@@ -134,57 +125,6 @@ class Reportes extends CActiveRecord {
     }
 
 
-
-    // public function rellenaCamposUsuario () : bool {
-
-    //     $cod_usu = intval($this->cod_usuario);
-
-    //     $datosUsu = Usuarios::dameUsuarios($cod_usu);
-
-    //     if (!$datosUsu) return false;
-
-    //     $this->nombre = $datosUsu["nombre"];
-    //     $this->nick = $datosUsu["nick"];
-    //     $this->pronombres = $datosUsu["pronombres"];
-    //     $this->foto = $datosUsu["foto_usuario"];
-
-    //     return true;
-
-    // }
-
-    // /**
-    //  * 
-    //  */
-    // public function rellenaCamposSitio () : bool {
-
-    //     $cod_sitio = intval($this->cod_sitio);
-
-    //     $datosSitio = Sitios::dameSitios($cod_sitio);
-
-    //     if (!$datosSitio) return false;
-
-    //     $this->nombre_sitio = $datosSitio["nombre_sitio"];
-    //     $this->direccion = $datosSitio["direccion"];
-    //     $this->poblacion = $datosSitio["poblacion"];
-    //     $this->foto_sitio = $datosSitio["foto_sitio"];
-       
-    //     return true;
-
-    // }
-    // protected function afterBuscar(): void {
-
-    //     $this->rellenaCamposUsuario();
-    //     $this->rellenaCamposSitio();
-
-    //     $fecha = $this->fecha;
-    //     $fecha = CGeneral::fechahoraMysqlANormal($fecha);
-    //     $this->fecha = $fecha;
-
-    // }
-    
-    /**
-     * 
-     */
     function fijarSentenciaInsert(): string {
 
         $cod_usuario = intval($this->cod_usuario);
