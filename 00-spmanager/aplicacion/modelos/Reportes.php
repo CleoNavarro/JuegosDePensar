@@ -95,6 +95,26 @@ class Reportes extends CActiveRecord {
             );
     }
 
+     /**
+     * Funcion que se activa cuando se lee un reporte. Graba la fecha de lectura y quién lo leyó
+     * @return bool True si se pudo realizar la actualización. False si no
+     */
+    public static function leerReporte (int $cod_reporte, int $cod_lector) : bool {
+
+        $sentencia = "UPDATE sugerencias ".
+        "SET leido = 1, ".
+        "leido_fecha = CURRENT_TIMESTAMP, ".
+        "leido_por = $cod_lector ".
+        "WHERE cod_reporte = $cod_reporte;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+    }
+
     protected function afterCreate(): void {
 
         $this->cod_reporte = 0;

@@ -6,7 +6,7 @@ class Reportes extends CActiveRecord {
     }
 
     protected function fijarTabla():string {
-        return "sugerencias";
+        return "vista_sugerencias";
     }
     
     protected function fijarId():string {
@@ -15,8 +15,9 @@ class Reportes extends CActiveRecord {
 
     protected function fijarAtributos(): array {
         return array(
-            "cod_sugerencia", "fecha", "nombre_sitio", "direccion", 
-            "poblacion", "comentario", "foto", "mail_contacto", "leido", "anulado"
+            "cod_sugerencia", "fecha", "nombre_sitio", "direccion", "poblacion", 
+            "comentario", "foto", "mail_contacto", "leido", "leido_fecha", "leido_por",
+            "anulado", "anulado_fecha", "anulado_por", "nick_lector", "nick_anulador"
         );
     }
 
@@ -31,7 +32,13 @@ class Reportes extends CActiveRecord {
             "foto" => "Foto (opcional)", 
             "mail_contacto" => "Mail de contacto",
             "leido" => "Leido",
-            "anulado" => "Sugerencia anulada"
+            "leido_fecha" => "Fecha de lectura", 
+            "leido_por" => "Cod Leido Por",
+            "anulado" => "Sugerencia anulada",
+            "anulado_fecha" => "Fecha de anulación", 
+            "anulado_por" => "Cod Anulado por",
+            "nick_lector" => "Leido Por", 
+            "nick_anulador" => "Anulado por"
         );
     }
 
@@ -75,21 +82,74 @@ class Reportes extends CActiveRecord {
                     "ATRI" => "leido", "TIPO" => "ENTERO",
                     "RANGO" => [0, 1], "DEFECTO" => 0
                 ),
+                array( 
+                    "ATRI" => "leido_fecha", "TIPO" => "FECHA"
+                ),
+                array(
+                    "ATRI" => "leido_por", "TIPO" => "ENTERO", "MIN" => 0
+                ),
                 array(
                     "ATRI" => "anulado", "TIPO" => "ENTERO",
                     "RANGO" => [0, 1], "DEFECTO" => 0
                 ),
+                array( 
+                    "ATRI" => "anulado_fecha", "TIPO" => "FECHA"
+                ),
+                array(
+                    "ATRI" => "anulado_por", "TIPO" => "ENTERO", "MIN" => 0
+                )
             );
     }
 
      /**
-     * Undocumented function
+     * Función para validar mail
      *
-     * @return bool
+     * @return bool True si es un mail válido. False si no
      */
     public function validarMail () : bool {
         $mail = $this->mail;
         return CValidaciones::validaEMail($mail);
+    }
+
+
+    /**
+     * Funcion que se activa cuando se lee una sugerencia. Graba la fecha de lectura y quién lo leyó
+     * @return bool True si se pudo realizar la actualización. False si no
+     */
+    public static function leerSugerencia (int $cod_sugerencia, int $cod_lector) : bool {
+
+        $sentencia = "UPDATE sugerencias ".
+        "SET leido = 1, ".
+        "leido_fecha = CURRENT_TIMESTAMP, ".
+        "leido_por = $cod_lector ".
+        "WHERE cod_sugerencia = $cod_sugerencia;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Funcion que anula una sugerencia. Graba la fecha de anulación y quién lo anuló
+     * @return bool True si se pudo realizar la actualización. False si no
+     */
+    public static function anularSugerencia (int $cod_sugerencia, int $cod_anulador) : bool {
+
+        $sentencia = "UPDATE sugerencias ".
+        "SET anulado = 1, ".
+        "anulado_fecha = CURRENT_TIMESTAMP, ".
+        "anulado_por = $cod_anulador ".
+        "WHERE cod_sugerencia = $cod_sugerencia;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
     }
 
     protected function afterCreate(): void {
@@ -128,9 +188,11 @@ class Reportes extends CActiveRecord {
 
         $sentencia = "INSERT INTO sugerencias ". 
             "(fecha, nombre_sitio, direccion, poblacion, comentario, ".
-            "foto, mail_contacto, leido, anulado,)". 
+            "foto, mail_contacto, leido, leido_fecha, leido_por, ".
+            "anulado, anulado_fecha, anulado_por)". 
             " VALUES (CURRENT_TIMESTAMP, '$nombre_sitio', '$direccion', ".
-            "'$poblacion', '$comentario', '$foto', '$mail_contacto', 0, 0); ";
+            "'$poblacion', '$comentario', '$foto', '$mail_contacto', 0, NULL, 0".
+            "0, NULL, 0); ";
 
         return $sentencia;
     }
@@ -144,14 +206,11 @@ class Reportes extends CActiveRecord {
         $comentario = CGeneral::addSlashes($this->comentario);
         $foto = CGeneral::addSlashes($this->foto);
         $mail_contacto = CGeneral::addSlashes($this->mail_contacto);
-        $leido = intval($this->leido);
-        $anulado = intval($this->anulado);
 
         $sentencia = "UPDATE sugerencias ".
             "SET nombre_sitio = '$nombre_sitio', direccion = '$direccion', ".
             "poblacion = '$poblacion', comentario = '$comentario', foto = '$foto', ".
-            "mail_contacto = '$mail_contacto', ".
-            "leido = $leido, anulado = $anulado ".
+            "mail_contacto = '$mail_contacto' ".
             "WHERE cod_sugerencia = $cod_sugerencia;";
      
         return $sentencia;

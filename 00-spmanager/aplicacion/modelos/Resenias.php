@@ -16,9 +16,9 @@ class Resenias extends CActiveRecord {
     protected function fijarAtributos(): array {
         return array(
             "cod_resenia", "cod_usuario", "cod_sitio", "fecha", 
-            "puntuacion", "titulo", "descripcion", "resenia_verificada", 
-            "borrado", "nick", "pronombres", "foto_usuario",
-            "coor_x", "coor_y", "nombre_sitio",
+            "puntuacion", "titulo", "descripcion", "nuevo", 
+            "borrado", "borrado_fecha", "borrado_por", "nick_reseniador", 
+            "pronombres", "foto", "nombre_sitio", "nick_borrador"
             
         );
     }
@@ -32,14 +32,15 @@ class Resenias extends CActiveRecord {
             "puntuacion" => "Puntuación",
             "titulo" => "Título de la reseña", 
             "descripcion" => "Descripción", 
-            "resenia_verificada" => "Reseña verificada",
+            "nuevo" => "Nueva reseña",
             "borrado" => "Reseña borrada",
-            "nick" => "Escrito por:",
+            "borrado_fecha" => "Fecha de borrado",
+            "borrado_por" => "Cod Borrado por",
+            "nick_reseniador" => "Escrito por:",
             "pronombres" => "Pronombres",
-            "foto_usuario" => "Foto del usuario",
-            "coor_x" => "Longitud (X)", 
-            "coor_y" => "Latitud (Y)", 
-            "nombre_sitio" => "Nombre del sitio"
+            "foto" => "Foto del usuario",
+            "nombre_sitio" => "Nombre del sitio",
+            "nick_borrador" => "Borrado por"
         );
     }
 
@@ -94,6 +95,66 @@ class Resenias extends CActiveRecord {
             );
     }
 
+
+      /**
+     * Funcion que se activa cuando se lee una reseña.
+     * @return bool True si se pudo realizar la actualización. False si no
+     */
+    public static function leerResenia (int $cod_resenia) : bool {
+
+        $sentencia = "UPDATE resenias ".
+        "SET nuevo = 1 ".
+        "WHERE cod_resenia = $cod_resenia;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Funcion que borra una reseña. Graba la fecha de borrado y quién lo borró
+     * @return bool True si se pudo realizar la actualización. False si no
+     */
+    public static function borrarResenia (int $cod_resenia, int $cod_borrador) : bool {
+
+        $sentencia = "UPDATE resenias ".
+        "SET borrado = 1, ".
+        "borrado_fecha = CURRENT_TIMESTAMP, ".
+        "borrado_por = $cod_borrador ".
+        "WHERE cod_resenia = $cod_resenia;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Función para recuperar un reseña. Borra los datos de quien lo borró
+     */
+    public static function recuperarResenia(int $cod_resenia) : bool {
+
+        $sentencia = "UPDATE resenias ".
+            "SET borrado = 0, ".
+            "fecha_borrado = NULL, ".
+            "borrado_por = 0 ".
+            "WHERE cod_resenia = $cod_resenia;";
+
+            $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+            if ($consulta->error())
+                return false;
+
+            return true;
+    }
+
+
+
     protected function afterCreate(): void {
 
         $this->cod_resenia = 0;
@@ -107,49 +168,46 @@ class Resenias extends CActiveRecord {
         $this->borrado = 0;
     }
 
-    public function rellenaCamposUsuario () : bool {
+    // public function rellenaCamposUsuario () : bool {
 
-        $cod_usu = intval($this->cod_usuario);
+    //     $cod_usu = intval($this->cod_usuario);
 
-        $datosUsu = Usuarios::dameUsuarios($cod_usu);
+    //     $datosUsu = Usuarios::dameUsuarios($cod_usu);
 
-        if (!$datosUsu) return false;
+    //     if (!$datosUsu) return false;
 
-        $this->nombre = $datosUsu["nombre"];
-        $this->nick = $datosUsu["nick"];
-        $this->pronombres = $datosUsu["pronombres"];
-        $this->foto_usuario = $datosUsu["foto_usuario"];
-        $this->usuario_verificado = $datosUsu["usuario_verificado"];
+    //     $this->nombre = $datosUsu["nombre"];
+    //     $this->nick = $datosUsu["nick"];
+    //     $this->pronombres = $datosUsu["pronombres"];
+    //     $this->foto_usuario = $datosUsu["foto_usuario"];
+    //     $this->usuario_verificado = $datosUsu["usuario_verificado"];
        
-        return true;
+    //     return true;
 
-    }
+    // }
 
-    /**
-     * 
-     */
-    public function rellenaCamposSitio () : bool {
+    // /**
+    //  * 
+    //  */
+    // public function rellenaCamposSitio () : bool {
 
-        $cod_sitio = intval($this->cod_sitio);
+    //     $cod_sitio = intval($this->cod_sitio);
 
-        $datosSitio = Sitios::dameSitios($cod_sitio);
+    //     $datosSitio = Sitios::dameSitios($cod_sitio);
 
-        if (!$datosSitio) return false;
+    //     if (!$datosSitio) return false;
 
-        $this->coor_x = $datosSitio["coor_x"];
-        $this->coor_y = $datosSitio["coor_y"];
-        $this->nombre_sitio = $datosSitio["nombre_sitio"];
-        $this->direccion = $datosSitio["direccion"];
-        $this->poblacion = $datosSitio["poblacion"];
-        $this->foto_sitio = $datosSitio["foto_sitio"];
+    //     $this->coor_x = $datosSitio["coor_x"];
+    //     $this->coor_y = $datosSitio["coor_y"];
+    //     $this->nombre_sitio = $datosSitio["nombre_sitio"];
+    //     $this->direccion = $datosSitio["direccion"];
+    //     $this->poblacion = $datosSitio["poblacion"];
+    //     $this->foto_sitio = $datosSitio["foto_sitio"];
        
-        return true;
+    //     return true;
 
-    }
+    // }
     protected function afterBuscar(): void {
-
-        $this->rellenaCamposUsuario();
-        $this->rellenaCamposSitio();
 
         $fecha = $this->fecha;
         $fecha = CGeneral::fechahoraMysqlANormal($fecha);
@@ -170,9 +228,9 @@ class Resenias extends CActiveRecord {
 
         $sentencia = "INSERT INTO resenias ". 
             "(cod_usuario, cod_sitio, fecha, puntuacion, titulo, descripcion, ".
-            "resenia_verificada, borrado)". 
+            "nuevo, borrado, borrado_fecha, borrado_por)". 
             " VALUES ($cod_usuario, $cod_sitio, CURRENT_TIMESTAMP, $puntuacion, '$titulo', ".
-            "'$descripcion', 0, 0); ";
+            "'$descripcion', 0, 0, NULL, 0); ";
 
         return $sentencia;
     }
@@ -185,15 +243,11 @@ class Resenias extends CActiveRecord {
         $puntuacion = intval($this->puntuacion);
         $titulo = CGeneral::addSlashes($this->titulo);
         $descripcion = CGeneral::addSlashes($this->descripcion);
-        $resenia_verificada = intval($this->resenia_verificada);
-        $borrado = intval($this->borrado);
-
 
         $sentencia = "UPDATE resenias ".
             "SET cod_usuario = $cod_usuario, cod_sitio = $cod_sitio, ".
             "puntuacion = $puntuacion, titulo = '$titulo', ".
-            "descripcion = '$descripcion', resenia_verificada = $resenia_verificada, ".
-            "borrado = $borrado ".
+            "descripcion = '$descripcion'".
             "WHERE cod_resenia = $cod_resenia;";
      
         return $sentencia;
