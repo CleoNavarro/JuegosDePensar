@@ -22,7 +22,7 @@
 											"CSesion"=>"/base/CSesion.php",
 											"CAcceso"=>"/acceso/CAcceso.php",
 											"CACLBase"=>"/acceso/CACLBase.php",
-											"CACLBD"=>"/acceso/CACLBD.php"
+											"CACLBD"=>"/acceso/CACLBD.php",
 										);
 		static private $_rutasInclude=array();
 		static private $_app;

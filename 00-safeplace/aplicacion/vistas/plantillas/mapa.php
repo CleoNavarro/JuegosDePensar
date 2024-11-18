@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1.0;">
 	<link rel="stylesheet" id="mapa" type="text/css" href="/estilos/mapa.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="/estilos/accesibilidad.css" /> -->
-	<!-- <script src="/js/mapa.js" defer></script> -->
+	<script src="/js/mapa.js" defer></script>
 	<link rel="stylesheet" href="/leaflet/leaflet.css" />
 	<script src="/leaflet/leaflet.js"></script>
 	<link rel="icon" type="image/png" href="/imagenes/favicon.png" />
@@ -71,20 +71,7 @@
 		<div id="map">
 		</div>
 
-		<script>
-
-
-			var map = L.map('map').setView([36.7246, -4.4183], 16);
-
-			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '&copy; <?php //echo Sistema::app()->autor ?> | Todos los Derechos Reservados'
-			}).addTo(map);
-
-			L.marker([36.7246, -4.4183]).addTo(map)
-				.bindPopup('Miramé, existo')
-				.openPopup();
-
-		</script>
+		
 
 	</div><!-- #wrapper -->
 </body>

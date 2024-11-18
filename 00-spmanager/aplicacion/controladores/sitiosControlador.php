@@ -154,7 +154,7 @@ class sitiosControlador extends CControlador {
        $sitios = new Sitios();
 
        if ($_POST) {
-           $nombre = $plazas->getNombre();
+           $nombre = $sitios->getNombre();
 
            if(isset($_FILES["plazas"])) {
                $nombre_imagen = $_FILES['plazas']['tmp_name']["icono"];
@@ -173,12 +173,12 @@ class sitiosControlador extends CControlador {
                $_POST[$nombre]["icono"] = "fotoPorDefecto.jpg";
            }
 
-           $plazas->setValores($_POST[$nombre]);
+           $sitios->setValores($_POST[$nombre]);
    
-            if ($plazas->validar()) {
+            if ($sitios->validar()) {
 
-               if (!$plazas->guardar()) {
-                   $this->dibujaVista("nuevo", array("modelo"=>$plazas), "Crear plaza");
+               if (!$sitios->guardar()) {
+                   $this->dibujaVista("nuevo", array("modelo"=>$sitios), "Crear plaza");
                    exit;
                }
 
@@ -187,7 +187,7 @@ class sitiosControlador extends CControlador {
            }
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $plazas), "Crear plaza");
+       $this->dibujaVista("nuevo", array("modelo" => $sitios), "Crear plaza");
    }
 
    public function accionModificar () {
@@ -201,14 +201,14 @@ class sitiosControlador extends CControlador {
 
        $this->tienePermisos("modificar", $id);
 
-       $plazas = new Plazas();
+       $sitios = new Sitios();
 
-       if (!$plazas->buscarPorId($id)) {
+       if (!$sitios->buscarPorId($id)) {
            Sistema::app()->paginaError(404, "No se encuentra la reserva");
            exit;
        }
 
-       $this->menuIzquierda();
+       $this->menu();
 
        $this->barra_ubi = [
            [
@@ -216,18 +216,18 @@ class sitiosControlador extends CControlador {
                "enlace" => ["inicial"]
            ],
            [
-               "texto" => "Gestión de Plazas",
-               "enlace" => ["plazas"]
+               "texto" => "Gestión de Sitios",
+               "enlace" => ["sitios"]
            ],
            [
-               "texto" => "Modificar plaza ".$plazas->nombre_plaza,
-               "enlace" => ["plazas", "modificar/id=$id",]
+               "texto" => "Modificar sitio ".$sitios->nombre_sitio,
+               "enlace" => ["sitios", "modificar/id=$id",]
            ]
        ];
 
        if ($_POST) {
            
-           $nombre = $plazas->getNombre();
+           $nombre = $sitios->getNombre();
 
            if(isset($_FILES["plazas"]))
                {
@@ -242,33 +242,33 @@ class sitiosControlador extends CControlador {
                        $_POST[$nombre]["icono"] = $_FILES["plazas"]["name"]["icono"];
                    else 
                        //Sino seleccionamos la opción que estaba guardada
-                       $_POST[$nombre]["icono"] = $plazas->icono;
+                       $_POST[$nombre]["icono"] = $sitios->icono;
                }
 
            
-           $plazas->setValores($_POST[$nombre]);
+           $sitios->setValores($_POST[$nombre]);
    
-            if ($plazas->validar()) {
+            if ($sitios->validar()) {
 
-               if (!$plazas->guardar()) {
-                   $this->dibujaVista("modificar", array("modelo"=>$plazas), "Modificar plaza ".$plazas->nombre_plaza);
+               if (!$sitios->guardar()) {
+                   $this->dibujaVista("modificar", array("modelo"=>$sitios), "Modificar plaza ".$sitios->nombre_plaza);
                    exit;
                }
 
-               $id = $plazas->cod_plaza;
+               $id = $sitios->cod_plaza;
 
                Sistema::app()->irAPagina(array("plazas", "consultar/id=$id")); 
                exit;
            }
        }
 
-       $this->dibujaVista("modificar", array("modelo" => $plazas), "Modificar plaza ".$plazas->nombre_plaza);
+       $this->dibujaVista("modificar", array("modelo" => $sitios), "Modificar plaza ".$sitios->nombre_plaza);
    }
 
    public function accionBorrar() {
 
        if (!isset($_GET["id"])) {
-           Sistema::app()->paginaError("No has indicado la plaza");
+            Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
 
@@ -276,10 +276,10 @@ class sitiosControlador extends CControlador {
 
        $this->tienePermisos("borrar", $id);
 
-       $plazas = new Plazas();
+       $sitios = new Sitios();
 
-       if (!$plazas->buscarPorId($id)) {
-           Sistema::app()->paginaError("No se encuentra la plaza");
+       if (!$sitios->buscarPorId($id)) {
+            Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
 
@@ -291,23 +291,23 @@ class sitiosControlador extends CControlador {
                "enlace" => ["inicial"]
            ],
            [
-               "texto" => "Gestión de plazas",
-               "enlace" => ["plazas"]
+               "texto" => "Gestión de sitios",
+               "enlace" => ["sitios"]
            ],
            [
-               "texto" => "Anular plaza ".$plazas->nombre_plaza,
-               "enlace" => ["plazas", "borrar/id=$id",]
+               "texto" => "Anular sitio ".$sitios->nombre_sitio,
+               "enlace" => ["sitios", "borrar/id=$id",]
            ]
        ];
 
        if ($_POST) {
-           $nombre = $plazas->getNombre();
-           $plazas->setValores($_POST[$nombre]);
+           $nombre = $sitios->getNombre();
+           $sitios->setValores($_POST[$nombre]);
    
-            if ($plazas->validar()) {
+            if ($sitios->validar()) {
 
-               if (!$plazas->guardar()) {
-                   $this->dibujaVista("borrar", ["plazas" => $plazas], "Anular plaza ".$plazas->nombre_plaza);
+               if (!$sitios->guardar()) {
+                   $this->dibujaVista("borrar", ["plazas" => $sitios], "Anular plaza ".$sitios->nombre_plaza);
                }
 
                Sistema::app()->irAPagina(array("plazas")); 
@@ -317,9 +317,9 @@ class sitiosControlador extends CControlador {
        }
 
        $corr = "SI";
-       if ($plazas->corriente_electrica==0) $corr = "NO";
+       if ($sitios->corriente_electrica==0) $corr = "NO";
 
-       $this->dibujaVista("borrar", ["plaza" => $plazas, "corr" => $corr], "Anular plaza ".$plazas->nombre_plaza);
+       $this->dibujaVista("borrar", ["plaza" => $sitios, "corr" => $corr], "Anular plaza ".$sitios->nombre_plaza);
 
    }
 
