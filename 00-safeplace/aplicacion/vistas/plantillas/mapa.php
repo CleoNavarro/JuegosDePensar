@@ -21,19 +21,13 @@
 
 <body>
 
-		<!-- <header>
+		<header>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/index.php"><img src="/imagenes/logo.png" width="50px" height="50px" /></a>
-				</div>
-				<div class="titulo">
-					<a href="/index.php">
-						<h1>SAFEPLACE</h1>
-					</a>
+				<a href="/index.php"><img src="/imagenes/logo.png" height="30px" /></a>
 				</div>
 			</div>
-			
-		</header> -->
+		</header>
 
 		<nav class="barraNav">
 			<ul>

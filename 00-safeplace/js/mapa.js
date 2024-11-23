@@ -10,7 +10,7 @@ buscarSitio("37.01894", "-4.55572")
 
 function buscarSitio (coor_x, coor_y) {
     
-    let loc = location.href + "sitios/index"
+    let loc = location.href + "api/sitios"
 
     let busqueda = new Request(loc, {
             method: "POST",

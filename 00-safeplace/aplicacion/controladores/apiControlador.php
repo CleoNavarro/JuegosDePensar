@@ -1,8 +1,8 @@
 <?php
 	 
-class sitiosControlador extends CControlador {
+class apiControlador extends CControlador {
 
-    public function accionIndex() {
+    public function accionSitios() {
 
         if ($_SERVER["REQUEST_METHOD"]=="POST") {
 
