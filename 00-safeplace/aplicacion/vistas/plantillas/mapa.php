@@ -18,15 +18,19 @@
 		echo $this->textoHead;
 	?>
 </head>
-
 <body>
 
 		<header>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/index.php"><img src="/imagenes/logo.png" height="30px" /></a>
+				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="30px" /></a>
 				</div>
 			</div>
+			<div class="buscadorcontainer">
+				<input type="text" id="txtbuscador" placeholder="Buscar por nombre" onKeyPress="Enter(event)">
+				<input type="button" id="btnbuscar" value="&#128270;">
+			</div>
+
 		</header>
 
 		<nav class="barraNav">

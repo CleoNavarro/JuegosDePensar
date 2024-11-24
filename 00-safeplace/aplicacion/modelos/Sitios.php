@@ -148,6 +148,45 @@ class Sitios extends CActiveRecord {
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param integer|null $cod_sit
+     * @return mixed
+     */
+    public static function dameSitiosPorNombre(string $nombre) : mixed {
+
+        $sentencia = "SELECT * from vista_sitios ".
+        "where upper(nombre_sitio) like upper('%$nombre%')";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+    
+        $filas=$consulta->filas();
+
+        if (is_null($filas))
+            return false;
+
+        $sitios = [];
+
+        if (count($filas) == 1) {
+            foreach ($filas as $fila) {
+                $sitios = $fila;
+            }
+    
+            $id = intval($sitios["cod_sitio"]);
+            $sitios["caracteristicas"] = Caracteristicas::dameCaracteristicasDelSitio($id);
+            $sitios["categorias"] = Categorias::dameCategoriasDelSitio($id);
+            $sitios["comunidades"] = Comunidades::dameComunidadesDelSitio($id);
+    
+        } else {
+            foreach ($filas as $fila) {
+                $sitios[intval($fila["cod_sitio"])] = $fila;
+            }
+        }
+
+        return $sitios;
+    }
+
      /**
      * Undocumented function
      *
