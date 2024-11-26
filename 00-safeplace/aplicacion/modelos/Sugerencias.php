@@ -1,5 +1,5 @@
 <?php
-class Reportes extends CActiveRecord {
+class Sugerencias extends CActiveRecord {
 
     protected function fijarNombre(): string {
         return 'sugerencias';

@@ -129,19 +129,17 @@
 		margin: 0 10px;
 		text-decoration: none;
 		list-style-type: none;
-		transition: font-size 0.7s;
 		color: #094e1f;
 	}
 
 	nav.barraNav ul li:hover {
-		font-size: 1.3rem;
 		font-weight: bold;
 	}
 	
 	nav.barraNav li a {	
 		display: block;
 		text-decoration:none;
-	    color: #999999;
+	    color: #4c4c4c;
 	    text-align:center;
 	    line-height:40px;    
 	
@@ -194,6 +192,11 @@
 	footer h2 span {
 		font-size: 1.3rem;
 		margin: 0 0.6rem;
+	}
+
+	/* Empecemos */
+	article h1, article h2{
+		text-align: center;
 	}
 
 	/* Diseño de la portada del home */
@@ -304,6 +307,8 @@
 		justify-content: center;
 		align-items: center;
 	}
+
+	
 
 	article.articuloTurismo {
 		width: 90%;
