@@ -84,6 +84,16 @@ class indexControlador extends CControlador {
 			
 	}
 
+	public function accionCerrarSesion () {
+
+        Sistema::app()->Acceso()->quitarRegistroUsuario();
+
+        Sistema::app()->irAPagina(["index", "login"]); 
+		exit;
+
+    }
+
+
 	
 	/**
 	 * Función que genera los links del menú para el header

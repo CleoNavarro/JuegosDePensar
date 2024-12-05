@@ -709,7 +709,7 @@
 	.caja{
 		background-color: rgb(139, 202, 177);
 		border-radius: 5px;
-		margin: 0 auto;
+		margin: 20px auto 0;
 	}
 	.caja tbody .titulo{
 		margin: 10px;

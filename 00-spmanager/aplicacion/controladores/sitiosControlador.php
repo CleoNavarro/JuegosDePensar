@@ -9,12 +9,12 @@ class sitiosControlador extends CControlador {
 
        $this->barra_ubi = [
            [
-               "texto" => "INICIAL",
-               "enlace" => ["inicial"]
+               "texto" => "MANAGER",
+               "enlace" => ["index"]
            ],
            [
-               "texto" => "Mensajes",
-               "enlace" => ["mensajes"]
+               "texto" => "Sitios",
+               "enlace" => ["sitios"]
            ]
        ]; 
  
@@ -23,29 +23,26 @@ class sitiosControlador extends CControlador {
        $condiciones = ["select" => "*"];
 
        $postmen = [
-           "nombre" => "",
+           "nombre_sitio" => "",
            "poblacion" => "",
        ];
 
+       $where = " nombre_sitio != '--' ";
+
        if ($_POST) {
 
-            $where = "";
-
-            if (isset($_POST["sitios"]["nombre"])) {
-                $postmen["nombre"] = CGeneral::addSlashes($_POST["sitios"]["nombre"]);
-                $where .= " nombre_sitio like '%".$postmen["nombre"]."%' ";
+            if (isset($_POST["sitios"]["nombre_sitio"])) {
+                $postmen["nombre_sitio"] = CGeneral::addSlashes($_POST["sitios"]["nombre_sitio"]);
+                $where .= " and nombre_sitio like '%".$postmen["nombre_sitio"]."%' ";
             }
 
             if (isset($_POST["sitios"]["poblacion"])) {
                 $postmen["poblacion"] = CGeneral::addSlashes($_POST["sitios"]["poblacion"]);
-                if (isset($_POST["sitios"]["nombre"])) 
-                    $where .= " and ";
-                $where .= " poblacion like '%".$postmen["poblacion"]."%' ";
+                $where .= " and poblacion like '%".$postmen["poblacion"]."%' ";
             }
-           
-           $condiciones["where"] = $where;
-           
        }
+
+       $condiciones["where"] = $where;
 
        $tamPagina = 10;
 
@@ -66,13 +63,18 @@ class sitiosControlador extends CControlador {
        $inicio = $tamPagina * ($pag - 1);
        $condiciones["limit"]="$inicio,$tamPagina";
 
-
        $filas = $this->filasTodas($sitios, $condiciones);
 
        if ($filas===false) {
            Sistema::app()->paginaError(402, "Error con el acceso a base de datos");
            return;
        }
+
+       foreach ($filas as $clave=>$fila) {
+            if ($fila["borrado"]==0) $filas[$clave]["borrado"] = "NO";
+            else $filas[$clave]["borrado"] = "SI";
+       }
+        
 
        $cabecera = $this->crearCabecera();
 
@@ -107,8 +109,8 @@ class sitiosControlador extends CControlador {
 
        $this->barra_ubi = [
            [
-               "texto" => "INICIAL",
-               "enlace" => ["inicial"]
+               "texto" => "Manager",
+               "enlace" => ["index"]
            ],
            [
                "texto" => "Gestión de Sitios",
@@ -125,7 +127,7 @@ class sitiosControlador extends CControlador {
        $comunidades = Comunidades::dameComunidadesDelSitio($id);
 
        $this->dibujaVista("consultar", 
-           ["sitios" => $sitios, "cat" => $categorias, "caract" => $caracteristicas, "comu"=> $comunidades],
+           ["sitio" => $sitios, "cat" => $categorias, "caract" => $caracteristicas, "comu"=> $comunidades],
            "Consulta Sitio ".$sitios->nombre_sitio);
 
    }
@@ -138,8 +140,8 @@ class sitiosControlador extends CControlador {
 
        $this->barra_ubi = [
            [
-               "texto" => "INICIAL",
-               "enlace" => ["inicial"]
+               "texto" => "MANAGER",
+               "enlace" => ["index"]
            ],
            [
                "texto" => "Gestion de Sitios",
@@ -156,21 +158,21 @@ class sitiosControlador extends CControlador {
        if ($_POST) {
            $nombre = $sitios->getNombre();
 
-           if(isset($_FILES["plazas"])) {
-               $nombre_imagen = $_FILES['plazas']['tmp_name']["icono"];
+           if(isset($_FILES["sitios"])) {
+               $nombre_imagen = $_FILES['sitios']['tmp_name']["foto"];
                //Guardamos tambien la ruta a donde ira
-               $ruta = RUTA_BASE."/imagenes/terrenos/".$_FILES["plazas"]["name"]["icono"];
+               $ruta = RUTA_BASE."/imagenes/sitios/".$_FILES["sitios"]["name"]["foto"];
                move_uploaded_file($nombre_imagen, $ruta);
 
                //Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-               if($_FILES["plazas"]["name"]["icono"]!== "")
+               if($_FILES["sitios"]["name"]["foto"]!== "")
                    //Como la imagen no es por post, sino por file, lo añadimos de esta manera
-                   $_POST[$nombre]["icono"] = $_FILES["plazas"]["name"]["icono"];
+                   $_POST[$nombre]["foto"] = $_FILES["sitios"]["name"]["foto"];
                else 
                    //Sino seleccionamos la opción por defecto
-                   $_POST[$nombre]["icono"] = "fotoPorDefecto.jpg";
+                   $_POST[$nombre]["foto"] = "fotoSitioPorDefecto.jpg";
            } else {
-               $_POST[$nombre]["icono"] = "fotoPorDefecto.jpg";
+               $_POST[$nombre]["foto"] = "fotoPorDefecto.jpg";
            }
 
            $sitios->setValores($_POST[$nombre]);
@@ -178,22 +180,22 @@ class sitiosControlador extends CControlador {
             if ($sitios->validar()) {
 
                if (!$sitios->guardar()) {
-                   $this->dibujaVista("nuevo", array("modelo"=>$sitios), "Crear plaza");
+                   $this->dibujaVista("nuevo", array("modelo"=>$sitios), "Crear sitio");
                    exit;
                }
 
-               Sistema::app()->irAPagina(array("plazas")); 
+               Sistema::app()->irAPagina(array("sitios")); 
                exit;
            }
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $sitios), "Crear plaza");
+       $this->dibujaVista("nuevo", array("modelo" => $sitios), "Crear sitio");
    }
 
    public function accionModificar () {
 
        if (!isset($_GET["id"])) {
-           Sistema::app()->paginaError(404, "No has indicado la reserva");
+           Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
 
@@ -204,7 +206,7 @@ class sitiosControlador extends CControlador {
        $sitios = new Sitios();
 
        if (!$sitios->buscarPorId($id)) {
-           Sistema::app()->paginaError(404, "No se encuentra la reserva");
+           Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
 
@@ -212,8 +214,8 @@ class sitiosControlador extends CControlador {
 
        $this->barra_ubi = [
            [
-               "texto" => "INICIAL",
-               "enlace" => ["inicial"]
+               "texto" => "MANAGER",
+               "enlace" => ["index"]
            ],
            [
                "texto" => "Gestión de Sitios",
@@ -229,40 +231,39 @@ class sitiosControlador extends CControlador {
            
            $nombre = $sitios->getNombre();
 
-           if(isset($_FILES["plazas"]))
+           if(isset($_FILES["sitios"]))
                {
-                   $nombre_imagen = $_FILES['plazas']['tmp_name']["icono"];
+                   $nombre_imagen = $_FILES['plazas']['sitios']["foto"];
                    //Guardamos tambien la ruta a donde ira
-                   $ruta = RUTA_BASE."/imagenes/terrenos/".$_FILES["plazas"]["name"]["icono"];
+                   $ruta = RUTA_BASE."/imagenes/sitios/".$_FILES["sitios"]["name"]["foto"];
                    move_uploaded_file($nombre_imagen, $ruta);
 
                    //Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-                   if($_FILES["plazas"]["name"]["icono"]!== "")
+                   if($_FILES["sitios"]["name"]["foto"]!== "")
                        //Como la imagen no es por post, sino por file, lo añadimos de esta manera
-                       $_POST[$nombre]["icono"] = $_FILES["plazas"]["name"]["icono"];
+                       $_POST[$nombre]["foto"] = $_FILES["sitios"]["name"]["foto"];
                    else 
                        //Sino seleccionamos la opción que estaba guardada
-                       $_POST[$nombre]["icono"] = $sitios->icono;
+                       $_POST[$nombre]["foto"] = $sitios->icono;
                }
 
-           
            $sitios->setValores($_POST[$nombre]);
    
             if ($sitios->validar()) {
 
                if (!$sitios->guardar()) {
-                   $this->dibujaVista("modificar", array("modelo"=>$sitios), "Modificar plaza ".$sitios->nombre_plaza);
+                   $this->dibujaVista("modificar", array("modelo"=>$sitios), "Modificar sitio ".$sitios->nombre_sitio);
                    exit;
                }
 
                $id = $sitios->cod_plaza;
 
-               Sistema::app()->irAPagina(array("plazas", "consultar/id=$id")); 
+               Sistema::app()->irAPagina(array("sitios", "consultar/id=$id")); 
                exit;
            }
        }
 
-       $this->dibujaVista("modificar", array("modelo" => $sitios), "Modificar plaza ".$sitios->nombre_plaza);
+       $this->dibujaVista("modificar", array("modelo" => $sitios), "Modificar sitio ".$sitios->nombre_sitio);
    }
 
    public function accionBorrar() {
@@ -287,8 +288,8 @@ class sitiosControlador extends CControlador {
 
        $this->barra_ubi = [
            [
-               "texto" => "INICIAL",
-               "enlace" => ["inicial"]
+               "texto" => "MANAGER",
+               "enlace" => ["index"]
            ],
            [
                "texto" => "Gestión de sitios",
@@ -307,19 +308,16 @@ class sitiosControlador extends CControlador {
             if ($sitios->validar()) {
 
                if (!$sitios->guardar()) {
-                   $this->dibujaVista("borrar", ["plazas" => $sitios], "Anular plaza ".$sitios->nombre_plaza);
+                   $this->dibujaVista("borrar", ["sitio" => $sitios], "Anular sitio ".$sitios->nombre_sitio);
                }
 
-               Sistema::app()->irAPagina(array("plazas")); 
+               Sistema::app()->irAPagina(array("sitios")); 
                exit;
            }
 
        }
 
-       $corr = "SI";
-       if ($sitios->corriente_electrica==0) $corr = "NO";
-
-       $this->dibujaVista("borrar", ["plaza" => $sitios, "corr" => $corr], "Anular plaza ".$sitios->nombre_plaza);
+       $this->dibujaVista("borrar", ["sitio" => $sitios], "Anular sitio ".$sitios->nombre_sitio);
 
    }
 
@@ -345,7 +343,7 @@ class sitiosControlador extends CControlador {
                 "enlace" => ["sitios", "nuevo"]
             ],
            [
-               "texto" => "Volver a Manajer", 
+               "texto" => "Volver a Manager", 
                "enlace" => ["index"]
            ],
        ];
@@ -366,8 +364,6 @@ class sitiosControlador extends CControlador {
        if (!$filas) return false;
 
        foreach ($filas as $clave=>$fila) {
-           if ($fila["leido"]==0) $fila["leido"] = "NO";
-           else $fila["leido"] = "SI";
 
            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
                                        Sistema::app()->generaURL(["sitios","consultar"],
@@ -390,11 +386,11 @@ class sitiosControlador extends CControlador {
    public function crearCabecera () : array {
 
        return [
-           ["ETIQUETA" => "NOMBRE", "CAMPO" => "nombre", "ALINEA" => "cen"],
-           ["ETIQUETA" => "RECIBIDO EL", "CAMPO" => "fechahora_recibido", "ALINEA" => "cen"],
-           ["ETIQUETA" => "CONTACTO", "CAMPO" => "contacto", "ALINEA" => "cen"],
-           ["ETIQUETA" => "ASUNTO", "CAMPO" => "asunto", "ALINEA" => "cen"],
-           ["ETIQUETA" => "LEIDO", "CAMPO" => "leido", "ALINEA" => "cen"],
+           ["ETIQUETA" => "NOMBRE", "CAMPO" => "nombre_sitio", "ALINEA" => "cen"],
+           ["ETIQUETA" => "FECHA ALTA", "CAMPO" => "alta", "ALINEA" => "cen"],
+           ["ETIQUETA" => "POBLACIÓN", "CAMPO" => "poblacion", "ALINEA" => "cen"],
+           ["ETIQUETA" => "CP", "CAMPO" => "cp", "ALINEA" => "cen"],
+           ["ETIQUETA" => "BORRADO", "CAMPO" => "borrado", "ALINEA" => "cen"],
            ["ETIQUETA" => "OPERACIONES", "CAMPO" => "oper", "ALINEA" => "cen"],
        ];
    }
@@ -450,8 +446,8 @@ class sitiosControlador extends CControlador {
        }
                
        // Si el usuario no tiene permiso de acceso, salta un error
-       if (!Sistema::app()->Acceso()->puedePermiso(1)  || 
-            !Sistema::app()->Acceso()->puedePermiso(3) || 
+       if (!Sistema::app()->Acceso()->puedePermiso(1)  && 
+            !Sistema::app()->Acceso()->puedePermiso(3) && 
             !Sistema::app()->Acceso()->puedePermiso(5)) 
         {
            Sistema::app()->paginaError(503, "Acceso no permitido");
