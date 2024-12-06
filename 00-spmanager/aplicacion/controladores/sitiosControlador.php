@@ -153,10 +153,28 @@ class sitiosControlador extends CControlador {
            ]
        ];
        
+       $sugerencias = false;
+
+       if (isset($_GET["sugerencia"])) {
+            $idSugerencia = intval($_GET["sugerencia"]);
+            $sugerencias = new Sugerencias();
+
+            if (!$sugerencias->buscarPorId($idSugerencia)) {
+                $sugerencias = false;
+            }
+       }
+       
        $sitios = new Sitios();
+       $categorias = new Categorias();
+       $caracteristicas = new Caracteristicas();
+       $comunidades = new Comunidades();
 
        if ($_POST) {
-           $nombre = $sitios->getNombre();
+
+           $nombreSitios = $sitios->getNombre();
+           $nombreCat = $categorias->getNombre();
+           $nombreCaract = $caracteristicas->getNombre();
+           $nombreComu = $comunidades->getNombre();
 
            if(isset($_FILES["sitios"])) {
                $nombre_imagen = $_FILES['sitios']['tmp_name']["foto"];
@@ -167,15 +185,15 @@ class sitiosControlador extends CControlador {
                //Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
                if($_FILES["sitios"]["name"]["foto"]!== "")
                    //Como la imagen no es por post, sino por file, lo añadimos de esta manera
-                   $_POST[$nombre]["foto"] = $_FILES["sitios"]["name"]["foto"];
+                   $_POST[$nombreSitios]["foto"] = $_FILES["sitios"]["name"]["foto"];
                else 
                    //Sino seleccionamos la opción por defecto
-                   $_POST[$nombre]["foto"] = "fotoSitioPorDefecto.jpg";
+                   $_POST[$nombreSitios]["foto"] = "fotoSitioPorDefecto.jpg";
            } else {
-               $_POST[$nombre]["foto"] = "fotoPorDefecto.jpg";
+               $_POST[$nombreSitios]["foto"] = "fotoSitioPorDefecto.jpg";
            }
 
-           $sitios->setValores($_POST[$nombre]);
+           $sitios->setValores($_POST[$nombreSitios]);
    
             if ($sitios->validar()) {
 
@@ -186,10 +204,12 @@ class sitiosControlador extends CControlador {
 
                Sistema::app()->irAPagina(array("sitios")); 
                exit;
+
            }
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $sitios), "Crear sitio");
+       $this->dibujaVista("nuevo", array("modelo" => $sitios, "sugerencia" => $sugerencias), 
+                "Crear sitio");
    }
 
    public function accionModificar () {
@@ -317,7 +337,11 @@ class sitiosControlador extends CControlador {
 
        }
 
-       $this->dibujaVista("borrar", ["sitio" => $sitios], "Anular sitio ".$sitios->nombre_sitio);
+       $categorias = Categorias::dameCategoriasDelSitio($id);
+       $caracteristicas= Caracteristicas::dameCaracteristicasDelSitio($id);
+       $comunidades = Comunidades::dameComunidadesDelSitio($id);
+
+       $this->dibujaVista("borrar", ["sitio" => $sitios, "cat" => $categorias, "caract" => $caracteristicas, "comu"=> $comunidades], "Anular sitio ".$sitios->nombre_sitio);
 
    }
 

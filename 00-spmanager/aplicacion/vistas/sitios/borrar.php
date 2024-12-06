@@ -1,5 +1,21 @@
 <?php
 
+echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
+    echo CHTML::dibujaEtiqueta("h2", [], "Anular Sitio:");
+
+    echo CHTML::iniciarForm();
+
+        echo CHTML::dibujaEtiqueta("div", [], null, false);
+            echo CHTML::modeloLabel($sitio, "borrado");
+            echo CHTML::modeloListaRadioButton($sitio, "borrado", [1 => "SI", 0 => "NO"], "&nbsp");
+            
+        echo CHTML::dibujaEtiquetaCierre("div");
+
+        echo CHTML::campoBotonSubmit("Guardar cambios");
+    echo CHTML::finalizarForm();
+
+echo CHTML::dibujaEtiquetaCierre("div");
+
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorInfo"], null, false);
 
 echo CHTML::dibujaEtiqueta("h2", [], "Datos del sitio:");
@@ -40,19 +56,4 @@ echo CHTML::dibujaEtiqueta("h2", [], "Datos del sitio:");
 
     echo CHTML::dibujaEtiquetaCierre("div");
 
-    echo CHTML::dibujaEtiqueta("div", ["class" => "botonesInfo"], null, false);
-
-        $boton1 = CHTML::boton("Modificar sitio");
-        echo CHTML::link($boton1, 
-            Sistema::app()->generaURL(["sitios","modificar"],
-            ["id" => $sitio->cod_sitio]));
-
-        $boton2 = CHTML::boton("Borrar sitio");
-        echo CHTML::link($boton2, 
-            Sistema::app()->generaURL(["sitios","borrar"],
-            ["id" => $sitio->cod_sitio]));
-
-    echo CHTML::dibujaEtiquetaCierre("div");
-
 echo CHTML::dibujaEtiquetaCierre("div");
-
