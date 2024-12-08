@@ -11,7 +11,6 @@
 	require_once($pedrosa);
 	require_once($configuracion);
 	
-	
 	//crea la aplicación y la ejecuta
 	Sistema::crearAplicacion($config)->ejecutar();
 	

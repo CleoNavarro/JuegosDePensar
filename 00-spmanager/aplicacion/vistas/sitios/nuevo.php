@@ -57,4 +57,17 @@ echo CHTML::campoBotonSubmit("Crear");
 echo CHTML::finalizarForm();
 
 echo CHTML::dibujaEtiquetaCierre("div");
-echo "<br>".PHP_EOL;
+
+if ($sugerencia) {
+    echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
+        echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Sugerencia en la que se basa");
+        echo CHTML::dibujaEtiqueta("ul", [], null, false);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Fecha y hora de la sugerencia:</b> ".$sugerencia->fecha);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Nombre sitio:</b> ".$sugerencia->nombre_sitio);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Dirección:</b> ".$sugerencia->direccion.", ".$sugerencia->poblacion);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Comentario:</b> ".$sugerencia->comentario);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Mail de quien lo ha solicitado:</b> ".$sugerencia->mail_contacto);
+            echo CHTML::dibujaEtiqueta("li", [], "<b>Anulada:</b> ".$sugerencia->anulado);
+        echo CHTML::dibujaEtiquetaCierre("ul");
+    echo CHTML::dibujaEtiquetaCierre("div");
+}

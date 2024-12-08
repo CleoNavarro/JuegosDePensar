@@ -92,7 +92,7 @@ class Reportes extends CActiveRecord {
      */
     public static function leerReporte (int $cod_reporte, int $cod_lector) : bool {
 
-        $sentencia = "UPDATE sugerencias ".
+        $sentencia = "UPDATE reportes ".
         "SET leido = 1, ".
         "leido_fecha = CURRENT_TIMESTAMP, ".
         "leido_por = $cod_lector ".

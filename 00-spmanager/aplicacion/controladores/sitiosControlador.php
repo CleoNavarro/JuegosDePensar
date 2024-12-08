@@ -165,16 +165,16 @@ class sitiosControlador extends CControlador {
        }
        
        $sitios = new Sitios();
-       $categorias = new Categorias();
-       $caracteristicas = new Caracteristicas();
-       $comunidades = new Comunidades();
+    //    $categorias = new Categorias();
+    //    $caracteristicas = new Caracteristicas();
+    //    $comunidades = new Comunidades();
 
        if ($_POST) {
 
            $nombreSitios = $sitios->getNombre();
-           $nombreCat = $categorias->getNombre();
-           $nombreCaract = $caracteristicas->getNombre();
-           $nombreComu = $comunidades->getNombre();
+        //    $nombreCat = $categorias->getNombre();
+        //    $nombreCaract = $caracteristicas->getNombre();
+        //    $nombreComu = $comunidades->getNombre();
 
            if(isset($_FILES["sitios"])) {
                $nombre_imagen = $_FILES['sitios']['tmp_name']["foto"];
@@ -443,7 +443,7 @@ class sitiosControlador extends CControlador {
            50=>"50"),
        "MOSTRAR_TAMANIOS"=>true,
        "PAGINAS_MOSTRADAS"=> 5,
-);
+        );
    }
        
    /**
