@@ -14,7 +14,7 @@ class sugerenciasControlador extends CControlador {
             ],
             [
                 "texto" => "Sugerencias",
-                "enlace" => ["sugrerencias"]
+                "enlace" => ["sugerencias"]
             ]
         ]; 
 
@@ -52,11 +52,6 @@ class sugerenciasControlador extends CControlador {
             return;
         }
 
-        foreach ($filas as $clave=>$fila) {
-                if ($fila["anulado"]==0) $filas[$clave]["anulado"] = "NO";
-                else $filas[$clave]["anulado"] = "SI";
-        }
-            
 
         $cabecera = $this->crearCabecera();
 
@@ -67,6 +62,102 @@ class sugerenciasControlador extends CControlador {
             "Gestión de Sugerencias - SP Manager");
     }
 
+    public function accionConsultar() {
+       
+        if (!isset($_GET["id"])) {
+            Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
+ 
+        $id = intval($_GET["id"]);
+ 
+        $this->tienePermisos("consultar",  $id);
+ 
+        $sugerencias = new Sugerencias();
+ 
+        if (!$sugerencias->buscarPorId($id)) {
+            Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
+ 
+        $this->menu();
+ 
+        $this->barra_ubi = [
+            [
+                "texto" => "Manager",
+                "enlace" => ["index"]
+            ],
+            [
+                "texto" => "Gestión de Sugerencias",
+                "enlace" => ["sugerencias"]
+            ],
+            [
+                "texto" => $sugerencias->nombre_sitio,
+                "enlace" => ["sugerencias", "consultar/id=$id",]
+            ]
+        ];
+ 
+        $this->dibujaVista("consultar", 
+            ["sugerencia" => $sugerencias],
+            "Consulta Sugerencia ".$sugerencias->nombre_sitio);
+ 
+    }
+
+    public function accionBorrar() {
+
+        if (!isset($_GET["id"])) {
+             Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
+ 
+        $id = intval($_GET["id"]);
+ 
+        $this->tienePermisos("borrar", $id);
+ 
+        $sugerencias = new Sugerencias();
+ 
+        if (!$sugerencias->buscarPorId($id)) {
+             Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
+ 
+        $this->menu();
+ 
+        $this->barra_ubi = [
+            [
+                "texto" => "MANAGER",
+                "enlace" => ["index"]
+            ],
+            [
+                "texto" => "Gestión de sugerencias",
+                "enlace" => ["sugerencias"]
+            ],
+            [
+                "texto" => "Anular sugerencia de ".$sugerencias->nombre_sitio,
+                "enlace" => ["sugerencias", "borrar/id=$id",]
+            ]
+        ];
+ 
+        if ($_POST) {
+            $nombre = $sugerencias->getNombre();
+            $sugerencias->setValores($_POST[$nombre]);
+    
+             if ($sugerencias->validar()) {
+ 
+                if (!$sugerencias->guardar()) {
+                    $this->dibujaVista("borrar", ["sugerencia" => $sugerencias], "Anular sugerencia ".$sugerencias->nombre_sitio);
+                }
+ 
+                Sistema::app()->irAPagina(array("sugerencias")); 
+                exit;
+            }
+ 
+        }
+ 
+        $this->dibujaVista("borrar", ["sugerencia" => $sugerencias], "Anular sugerencia ".$sugerencias->nombre_sitio);
+ 
+    }
+ 
     /**
     * Crea automáticamente las opciones del menú de navegación
     * @return void
@@ -103,6 +194,9 @@ class sugerenciasControlador extends CControlador {
 
         foreach ($filas as $clave=>$fila) {
 
+            if ($fila["anulado"]==0) $fila["anulado"] = "NO";
+                else $fila["anulado"] = "SI";
+
             $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
                                         Sistema::app()->generaURL(["sugerencias","consultar"],
                                         ["id" => $fila["cod_sugerencia"]]))." ".
@@ -134,7 +228,6 @@ class sugerenciasControlador extends CControlador {
 
     /**
      * Función que genera el array con los dartos del paginador
-     *
      * @param integer $registros Los registros
      * @param integer $pag La página dónde se encuentra
      * @param integer $tamPagina El tamaño de página actual
@@ -142,7 +235,7 @@ class sugerenciasControlador extends CControlador {
      */
     public function paginador (int $registros, int $pag, int $tamPagina) : array{
 
-        return array("URL" => Sistema::app()->generaURL(array("mensajes","index")),
+        return array("URL" => Sistema::app()->generaURL(array("sugerencias","index")),
         "TOTAL_REGISTROS" => $registros,
         "PAGINA_ACTUAL" => $pag,
         "REGISTROS_PAGINA" => $tamPagina,
@@ -174,13 +267,12 @@ class sugerenciasControlador extends CControlador {
         }
                 
         // Si el usuario no tiene permiso de acceso, salta un error
-        if (!Sistema::app()->Acceso()->puedePermiso(1)  && 
-             !Sistema::app()->Acceso()->puedePermiso(3) && 
-             !Sistema::app()->Acceso()->puedePermiso(5)) 
-         {
+        if (!Sistema::app()->Acceso()->puedePermiso(1) && 
+            !Sistema::app()->Acceso()->puedePermiso(4)) 
+        {
             Sistema::app()->paginaError(503, "Acceso no permitido");
             return;
-         }
+        }
     }
 
 }

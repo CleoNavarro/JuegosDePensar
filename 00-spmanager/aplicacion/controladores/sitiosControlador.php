@@ -430,7 +430,7 @@ class sitiosControlador extends CControlador {
     */
    public function paginador (int $registros, int $pag, int $tamPagina) : array{
 
-       return array("URL" => Sistema::app()->generaURL(array("mensajes","index")),
+       return array("URL" => Sistema::app()->generaURL(array("sitios","index")),
        "TOTAL_REGISTROS" => $registros,
        "PAGINA_ACTUAL" => $pag,
        "REGISTROS_PAGINA" => $tamPagina,

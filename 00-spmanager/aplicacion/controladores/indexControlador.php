@@ -138,10 +138,10 @@ class indexControlador extends CControlador {
 			$fila["fecha"] = CGeneral::fechahoraMysqlANormal($fila["fecha"]);
 
 			$fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
-						Sistema::app()->generaURL(["sugerencia","consultar"],
+						Sistema::app()->generaURL(["sugerencias","consultar"],
 									["id" => $fila["cod_sugerencia"]]))."  ".
 						CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png"),
-									Sistema::app()->generaURL(["sugerencia","anular"],
+									Sistema::app()->generaURL(["sugerencias","anular"],
 									["id" => $fila["cod_sugerencia"]]));
 			$filas[$clave] = $fila;
 		}
