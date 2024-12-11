@@ -197,6 +197,8 @@ class sugerenciasControlador extends CControlador {
             if ($fila["anulado"]==0) $fila["anulado"] = "NO";
                 else $fila["anulado"] = "SI";
 
+            $fila["fecha"] = CGeneral::fechahoraMysqlANormal($fila["fecha"]);
+
             $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
                                         Sistema::app()->generaURL(["sugerencias","consultar"],
                                         ["id" => $fila["cod_sugerencia"]]))." ".

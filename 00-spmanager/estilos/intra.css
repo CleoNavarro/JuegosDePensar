@@ -700,6 +700,10 @@
 	table.tabla1 tr td{
 		padding: 5px 10px;
 	}
+
+	.pager {
+		margin: 10px 5%;
+	}
 	
 
 	/*

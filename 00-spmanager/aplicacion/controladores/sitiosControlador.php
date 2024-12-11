@@ -70,12 +70,6 @@ class sitiosControlador extends CControlador {
            return;
        }
 
-       foreach ($filas as $clave=>$fila) {
-            if ($fila["borrado"]==0) $filas[$clave]["borrado"] = "NO";
-            else $filas[$clave]["borrado"] = "SI";
-       }
-        
-
        $cabecera = $this->crearCabecera();
 
        $opcPaginador = $this->paginador($registros, $pag, $tamPagina);
@@ -348,7 +342,6 @@ class sitiosControlador extends CControlador {
 
    /**
     * Crea automáticamente las opciones del menú de navegación
-    *
     * @return void
     */
    public function menu () : void {
@@ -376,7 +369,6 @@ class sitiosControlador extends CControlador {
 
    /**
     * Devuelve un array con todas las filas que cumplan tales condiciones
-    *
     * @param Mensajes $mensajes Modelo
     * @param array $condiciones Condiciones de búsqueda
     * @return  mixed array con todas las filas, false si la sentencia falla
@@ -389,10 +381,18 @@ class sitiosControlador extends CControlador {
 
        foreach ($filas as $clave=>$fila) {
 
-           $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
+            if ($fila["borrado"]==0) $fila["borrado"] = "NO";
+            else $fila["borrado"] = "SI";
+
+            $fila["alta"] = CGeneral::fechahoraMysqlANormal($fila["alta"]);
+
+            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
                                        Sistema::app()->generaURL(["sitios","consultar"],
                                        ["id" => $fila["cod_sitio"]]))." ".
-                           CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png"),
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png"),
+                                       Sistema::app()->generaURL(["sitios","modificar"],
+                                       ["id" => $fila["cod_sitio"]]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png"),
                                        Sistema::app()->generaURL(["sitios","borrar"],
                                        ["id" => $fila["cod_sitio"]]));
            $filas[$clave] = $fila;
@@ -448,7 +448,6 @@ class sitiosControlador extends CControlador {
        
    /**
     * Función que chequea si hay un usuario validado o tiene permisos para acceder
-    *
     * @param string $ubicacion Se le puede pasar una ubicación para que puedas volver
     * 		donde estabas antes
     * @param integer $id Se le puede pasar un id por si lo necesita para hacer un GET

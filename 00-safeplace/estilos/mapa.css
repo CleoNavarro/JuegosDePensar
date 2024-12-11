@@ -19,7 +19,7 @@ header {
 }
 
 img#logo{
-    filter:drop-shadow(1px 1px 3px grey);
+    filter:drop-shadow(0 0 2px rgb(126, 126, 126));
 }
 
 input#txtbuscador {
