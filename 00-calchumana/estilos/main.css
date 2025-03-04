@@ -1,0 +1,82 @@
+/* Cargar las fuentes */
+@font-face {
+	font-family: IBMPlex;
+	src: url(IBMPlexMono-Regular.ttf);
+}
+
+@font-face {
+	font-family: IBMPlex;
+	src: url(IBMPlexMono-Bold.ttf);
+	font-weight: bold;
+}
+
+/* Parámetros generales del estilo */
+
+* {
+	font-family: IBMPlex, Consolas, sans-serif;
+	box-sizing: border-box;
+}
+
+a { 
+    text-decoration: none;
+    color: white;
+}
+
+body {
+    background-color: rgb(58, 58, 71);
+    color: white;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+header.logo {
+    width: 100%;
+    text-align: center;
+    align-content: center  
+}
+
+img#logo{
+    margin: 20px;
+    text-align: center;
+    align-content: center;
+    filter:drop-shadow(0 0 2px rgb(126, 126, 126));
+}
+
+nav.barraNav {
+    font-size: larger;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+nav.barraNav ul {
+    width: 100%;
+    display: flex;
+    list-style: none;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    
+}
+
+nav.barraNav ul li {
+    margin: 5px 15px;
+}
+
+nav.barraNav ul li a:hover {
+    font-weight: bold;
+    color:rgb(255, 221, 28);
+}
+
+
+
+

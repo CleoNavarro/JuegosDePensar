@@ -7,11 +7,9 @@
 	<title><?php echo $titulo; ?></title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width; initial-scale=1.0;">
-	<link rel="stylesheet" id="mapa" type="text/css" href="/estilos/mapa.css" />
+	<!--<link rel="stylesheet" id="mapa" type="text/css" href="/estilos/mapa.css" /> -->
+	<link rel="stylesheet" type="text/css" href="/estilos/main.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="/estilos/accesibilidad.css" /> -->
-	<script src="/js/mapa.js" defer></script>
-	<link rel="stylesheet" href="/leaflet/leaflet.css" />
-	<script src="/leaflet/leaflet.js"></script>
 	<link rel="icon" type="image/png" href="/imagenes/favicon.png" />
 	<?php
 	if (isset($this->textoHead))
@@ -23,14 +21,9 @@
 		<header>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="30px" /></a>
+				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="60px" /></a>
 				</div>
 			</div>
-			<div class="buscadorcontainer">
-				<input type="text" id="txtbuscador" placeholder="Buscar por nombre" onKeyPress="Enter(event)">
-				<input type="button" id="btnbuscar" value="&#128270;">
-			</div>
-
 		</header>
 
 		<nav class="barraNav">
@@ -44,15 +37,9 @@
 								"",
 								false
 							);
-                            echo CHTML::link(
-								CHTML::imagen($opcion["imagen"], "" , 
-                                    ["width" => "40px"]),
-								$opcion["enlace"]
-							);
 							echo CHTML::link(
 								$opcion["texto"],
-								$opcion["enlace"],
-                                ["color" => $opcion["textcolor"]]
+								$opcion["enlace"]
 							);
 							echo CHTML::dibujaEtiquetaCierre("li");
 							echo CHTML::dibujaEtiqueta("br") . "\r\n";
@@ -66,8 +53,7 @@
 		<?php //echo $contenido; ?><!-- #content -->
 
 
-		<div id="map">
-		</div>
+		
 
 		
 

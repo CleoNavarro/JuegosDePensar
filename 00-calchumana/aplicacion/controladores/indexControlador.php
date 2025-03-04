@@ -11,7 +11,7 @@ class indexControlador extends CControlador {
 	 * Constructor
 	 */	
 	public function __construct() {
-		$this->plantilla = "mapa";
+		$this->plantilla = "test";
 		$this->menu = $this->menu();
 	}
 
@@ -21,7 +21,7 @@ class indexControlador extends CControlador {
 	public function accionIndex() {
 
 		$this->dibujaVista("index",
-			[], "SafePlace");
+			[], "JUGAR - Calculadora humana");
 			
 	}
 
@@ -33,29 +33,23 @@ class indexControlador extends CControlador {
 
 		return [
 			[
-				"texto" => "Favoritos", 
-				"enlace" => ["favoritos"],
-				"textcolor" => "red",
-				"imagen" => "imagenes/web/iconos/like.png"
+				"texto" => "Jugar Ahora", 
+				"enlace" => ["index"] //,
+				//"textcolor" => "red",
+				//"imagen" => "imagenes/web/iconos/like.png"
 			],
 			[
-				"texto" => "Recientes", 
-				"enlace" => ["recientes"],
-				"textcolor" => "blue",
-				"imagen" => "imagenes/web/iconos/like.png"
+				"texto" => "Calendario", 
+				"enlace" => ["calendario"]//,
+				//"textcolor" => "blue",
+				//"imagen" => "imagenes/web/iconos/like.png"
 			],
 			[
-				"texto" => "Ajustes", 
-				"enlace" => ["ajustes"],
-				"textcolor" => "blue",
-				"imagen" => "imagenes/web/iconos/like.png"
-			],
-			[
-				"texto" => "Intra", 
-				"enlace" => ["intra", "index"],
-				"textcolor" => "black",
-				"imagen" => "imagenes/usuarios/fotoUsuarioPorDefecto.png"
-			],
+				"texto" => "Ranking", 
+				"enlace" => ["ranking"]
+				//"textcolor" => "blue",
+				// "imagen" => "imagenes/web/iconos/like.png"
+			]
 			
 		];
 	}

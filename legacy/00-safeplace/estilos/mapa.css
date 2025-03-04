@@ -60,6 +60,7 @@ body {margin: 0; padding: 0;  width: 100%;
 nav.barraNav {
     z-index: 1;
     background-color: white;
+    font-size: larger;
     position: fixed;
     width: 120px;
     height: 100%;

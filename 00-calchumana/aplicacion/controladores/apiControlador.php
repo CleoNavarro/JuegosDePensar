@@ -2,20 +2,20 @@
 	 
 class apiControlador extends CControlador {
 
-    public function accionSitios() {
+    public function accionTest() {
 
         if ($_SERVER["REQUEST_METHOD"]=="POST") {
 
-            if (isset($_POST["coor_x"]) && isset($_POST["coor_y"])) {
+            if (isset($_POST["cod_test"])) {
                 //se ha indicado un elemento se consulta
-                $coor_x = $_POST["coor_x"];
-                $coor_y = $_POST["coor_y"];
-                $sitios = new Sitios();
+                $cod_test = $_POST["cod_test"];
+               
+                $test = new Test();
         
                 // Si no existe el sitio
-                if (!$sitios->buscarPor([" coor_x = $coor_x and coor_y = $coor_y "])) {
+                if (!$test->buscarPor([" cod_test = $cod_test "])) {
                     $resultado=[
-                        "datos"=>"Sitio no encontrado",
+                        "datos"=>"Test no encontrado",
                         "correcto"=>false
                     ]; //error,
                     
@@ -26,17 +26,18 @@ class apiControlador extends CControlador {
         
                 // si existe
                 $resultado=[
-                    "datos"=> Sitios::dameSitioPorCoordenadas($coor_x, $coor_y),
+                    "datos"=> Test::damePreguntas($cod_test),
                     "correcto"=>true
                 ]; 
-            } else if (isset($_POST["nombre"])) {
+            } else if (isset($_POST["fecha"])) {
 
-                $nombre = $_POST["nombre"];
-                $sitios = new Sitios();
+                $fecha = $_POST["fecha"];
+                $test = new Test();
+                $datos = $test::dameTestPorFecha($fecha);
 
-                if (!$sitios->buscarPor([" nombre_sitio = $nombre "])) {
+                if (!$datos) {
                     $resultado=[
-                        "datos"=>"Sitio no encontrado",
+                        "datos"=>"Test no encontrado",
                         "correcto"=>false
                     ]; //error,
                     
@@ -46,7 +47,7 @@ class apiControlador extends CControlador {
                 }
 
                 $resultado=[
-                    "datos"=> Sitios::dameSitiosPorNombre($nombre),
+                    "datos"=> $datos,
                     "correcto"=>true
                 ]; 
 
@@ -54,7 +55,7 @@ class apiControlador extends CControlador {
                
         } else {
             $resultado=[
-                "datos"=>"Sitio no encontrado",
+                "datos"=>"Test no encontrado",
                 "correcto"=>false
             ]; //error,
         
