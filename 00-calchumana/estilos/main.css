@@ -77,6 +77,24 @@ nav.barraNav ul li a:hover {
     color:rgb(255, 221, 28);
 }
 
+div#test {
+    text-align: center;
+}
+
+a.boton {
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    background-color: rgb(255, 81, 0);
+    box-shadow: 6px 6px 5px black;
+}
+
+a.boton:hover {
+    color: black;
+    font-weight: bold;
+    background-color: rgb(255, 122, 60);
+    box-shadow: 6px 6px 5px rgb(32, 32, 32);
+}
 
 
 

@@ -12,19 +12,29 @@ class indexControlador extends CControlador {
 	 */	
 	public function __construct() {
 		$this->plantilla = "test";
-		$this->menu = $this->menu();
+		
 	}
 
 	/**
 	 * Acción para la página principal
 	 */
 	public function accionIndex() {
+		$this->menu = $this->menu();
 
 		$this->dibujaVista("index",
 			[], "JUGAR - Calculadora humana");
 			
 	}
 
+	/**
+	 * Acción para la página principal
+	 */
+	public function accionJugar() {
+
+		$this->dibujaVista("jugar",
+			[], "JUGANDO - Calculadora humana");
+			
+	}
 	
 	/**
 	 * Función que genera los links del menú para el header
@@ -34,21 +44,15 @@ class indexControlador extends CControlador {
 		return [
 			[
 				"texto" => "Jugar Ahora", 
-				"enlace" => ["index"] //,
-				//"textcolor" => "red",
-				//"imagen" => "imagenes/web/iconos/like.png"
+				"enlace" => ["index"]
 			],
 			[
 				"texto" => "Calendario", 
-				"enlace" => ["calendario"]//,
-				//"textcolor" => "blue",
-				//"imagen" => "imagenes/web/iconos/like.png"
+				"enlace" => ["calendario"]
 			],
 			[
 				"texto" => "Ranking", 
 				"enlace" => ["ranking"]
-				//"textcolor" => "blue",
-				// "imagen" => "imagenes/web/iconos/like.png"
 			]
 			
 		];

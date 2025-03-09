@@ -50,7 +50,7 @@
 			</ul>
 		</nav>
 
-		<?php //echo $contenido; ?><!-- #content -->
+		<?php echo $contenido; ?><!-- #content -->
 
 
 		
