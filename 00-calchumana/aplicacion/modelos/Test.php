@@ -127,7 +127,7 @@ class Test extends CActiveRecord {
 
         $preguntas = [];
 
-        foreach ($filas as $fila) {$preguntas[intval($fila["cod_test"])] = $fila;}
+        foreach ($filas as $fila) {$preguntas[intval($fila["orden"])] = $fila;}
 
         return $preguntas;
     }

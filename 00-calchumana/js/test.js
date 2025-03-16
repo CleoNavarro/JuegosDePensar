@@ -9,9 +9,9 @@ desafioDiario()
 
 function desafioDiario () {
 
-    let fecha= new Date().getDate() + "/" + new Date().getMonth() + "/" + new Date().getFullYear()
+    //let fecha= new Date().getDate() + "/" + new Date().getMonth() + "/" + new Date().getFullYear()
 
-    //let fecha= "18/02/2025"
+    let fecha= "18/02/2025"
 
     let loc = location.href + "api/test"
 

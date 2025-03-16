@@ -21,7 +21,7 @@
 		<header>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="60px" /></a>
+				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="100px" /></a>
 				</div>
 			</div>
 		</header>

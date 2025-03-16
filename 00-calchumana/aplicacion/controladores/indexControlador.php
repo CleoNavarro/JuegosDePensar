@@ -31,8 +31,18 @@ class indexControlador extends CControlador {
 	 */
 	public function accionJugar() {
 
+		if (!isset($_GET["cod_test"])) {
+			Sistema::app()->paginaError(404, "¿Cómo has llegado hasta aquí?");
+            return;
+		}
+
+		if (!Test::dameTest($_GET["cod_test"])) {
+			Sistema::app()->paginaError(404, "No, este test no existe (o no es un test)");
+            return;
+		}
+
 		$this->dibujaVista("jugar",
-			[], "JUGANDO - Calculadora humana");
+			["cod_test" => intval($_GET["cod_test"])], "JUGANDO - Calculadora humana");
 			
 	}
 	
