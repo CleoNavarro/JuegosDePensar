@@ -84,23 +84,19 @@ class indexControlador extends CControlador {
 
 		$arrayMenu = [];
 
-		$perm3 = false;  $perm4 = false; $perm5 = false; $perm6 = false; $perm7 = false; 
+		$perm3 = false;  $perm4 = false; $perm5 = false; 
 
 		if ($acceso->puedePermiso(1)) {
-			$perm3 = true;  $perm4 = true; $perm5 = true; $perm6 = true; $perm7 = true; 
+			$perm3 = true;  $perm4 = true; $perm5 = true;
 		} else {
 			$perm3 = $acceso->puedePermiso(3);
 			$perm4 = $acceso->puedePermiso(4);
 			$perm5 = $acceso->puedePermiso(5);
-			$perm6 = $acceso->puedePermiso(6);
-			$perm7 = $acceso->puedePermiso(7);
 		}
 
-		if ($perm3) array_push($arrayMenu, ["texto" => "Sitios", "enlace" => ["sitios"]]);
-		if ($perm4) array_push($arrayMenu, ["texto" => "Sugerencias", "enlace" => ["sugerencias"]]);
-		if ($perm5) array_push($arrayMenu, ["texto" => "Reportes", "enlace" => ["reportes"]]);
-		if ($perm6) array_push($arrayMenu, ["texto" => "Reseñas", "enlace" => ["resenias"]]);
-		if ($perm7) array_push($arrayMenu, ["texto" => "Administración", "enlace" => ["admin"]]);
+		if ($perm3) array_push($arrayMenu, ["texto" => "Permisos", "enlace" => ["permisos"]]);
+		if ($perm4) array_push($arrayMenu, ["texto" => "Usuarios", "enlace" => ["usuarios"]]);
+		if ($perm5) array_push($arrayMenu, ["texto" => "Calculadora", "enlace" => ["calculadora"]]);
 
 		return $arrayMenu;
 	}
