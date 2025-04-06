@@ -384,10 +384,13 @@ class calculadoraControlador extends CControlador {
 
        foreach ($filas as $clave=>$fila) {
 
-            // if ($fila["borrado"]==0) $fila["borrado"] = "NO";
-            // else $fila["borrado"] = "SI";
-
             $fila["fecha"] = CGeneral::fechaMysqlANormal($fila["fecha"]);
+            $fila["creado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["creado_fecha"]);
+            if (!is_null($fila["borrado_fecha"])) {
+                $fila["borrado"] = "SI";
+                $fila["borrado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["borrado_fecha"]);
+            } 
+            else $fila["borrado"] = "NO";
 
             $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
                                        Sistema::app()->generaURL(["calculadora","consultar"],
@@ -417,6 +420,7 @@ class calculadoraControlador extends CControlador {
            ["ETIQUETA" => "TÍTULO", "CAMPO" => "titulo", "ALINEA" => "cen"],
            ["ETIQUETA" => "DIFICULTAD", "CAMPO" => "dificultad", "ALINEA" => "cen"],
            ["ETIQUETA" => "PREGUNTAS", "CAMPO" => "num_preguntas", "ALINEA" => "cen"],
+           ["ETIQUETA" => "BORRADO", "CAMPO" => "borrado", "ALINEA" => "cen"],
            ["ETIQUETA" => "OPERACIONES", "CAMPO" => "oper", "ALINEA" => "cen"],
        ];
    }
