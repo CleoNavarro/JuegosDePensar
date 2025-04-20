@@ -768,6 +768,18 @@
 		background-color: rgb(240, 232, 224);
 		padding:5px 5%;
 	}
+
+	/* Definición de elementos varios:
+	- Separador
+	*/
+
+	hr.separador {
+		width: 100%;
+		border: 4px solid #F60;
+		margin: 13px 0;
+	}
+
+
 }
 
 /* Ajustes de tamaño añadidos al estilo anterior */

@@ -145,72 +145,69 @@ class calculadoraControlador extends CControlador {
                "enlace" => ["index"]
            ],
            [
-               "texto" => "Gestion de Sitios",
-               "enlace" => ["sitios"]
+               "texto" => "Calculadora",
+               "enlace" => ["calculadora"]
            ],
            [
-               "texto" => "Nuevo Sitio",
-               "enlace" => ["sitios", "nuevo"]
+               "texto" => "Nuevo Test",
+               "enlace" => ["calculadora", "nuevo"]
            ]
        ];
        
-       $sugerencias = false;
-
-       if (isset($_GET["sugerencia"])) {
-            $idSugerencia = intval($_GET["sugerencia"]);
-            $sugerencias = new Sugerencias();
-
-            if (!$sugerencias->buscarPorId($idSugerencia)) {
-                $sugerencias = false;
-            }
-       }
-       
-       $sitios = new Sitios();
-    //    $categorias = new Categorias();
-    //    $caracteristicas = new Caracteristicas();
-    //    $comunidades = new Comunidades();
+      
+       $test = new Test();
 
        if ($_POST) {
 
-           $nombreSitios = $sitios->getNombre();
-        //    $nombreCat = $categorias->getNombre();
-        //    $nombreCaract = $caracteristicas->getNombre();
-        //    $nombreComu = $comunidades->getNombre();
-
-           if(isset($_FILES["sitios"])) {
-               $nombre_imagen = $_FILES['sitios']['tmp_name']["foto"];
-               //Guardamos tambien la ruta a donde ira
-               $ruta = RUTA_BASE."/imagenes/sitios/".$_FILES["sitios"]["name"]["foto"];
-               move_uploaded_file($nombre_imagen, $ruta);
-
-               //Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-               if($_FILES["sitios"]["name"]["foto"]!== "")
-                   //Como la imagen no es por post, sino por file, lo añadimos de esta manera
-                   $_POST[$nombreSitios]["foto"] = $_FILES["sitios"]["name"]["foto"];
-               else 
-                   //Sino seleccionamos la opción por defecto
-                   $_POST[$nombreSitios]["foto"] = "fotoSitioPorDefecto.jpg";
-           } else {
-               $_POST[$nombreSitios]["foto"] = "fotoSitioPorDefecto.jpg";
-           }
-
-           $sitios->setValores($_POST[$nombreSitios]);
+           $testNombre = $test->getNombre();
+           $fechaAux =  $_POST[$testNombre]["fecha"] ;
+           $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+           $_POST[$testNombre]["fecha"] = $fechaAux;
+           $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+           $test->setValores($_POST[$testNombre]);
    
-            if ($sitios->validar()) {
+            if ($test->validar()) {
 
-               if (!$sitios->guardar()) {
-                   $this->dibujaVista("nuevo", array("modelo"=>$sitios), "Crear sitio");
+                $pregunta = new Pregunta();
+                $preguntaNombre = $pregunta->getNombre();
+                $arrPreguntas = $_POST["preguntas"];
+                $valido = true;
+
+                for ($i = 1; $i <= count($arrPreguntas); $i++){
+                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = 0;
+                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    if (!$pregunta->validar()) {
+                            $valido = false;
+                    }
+                }
+
+                if (!$valido || !$test->guardar()) {
+                   $this->dibujaVista("nuevo", array("modelo"=>$test), "Nuevo Test de Calculadora");
                    exit;
-               }
+                }
 
-               Sistema::app()->irAPagina(array("sitios")); 
-               exit;
-
+                $codTest = $test->cod_test;
+                for ($i = 1; $i <= count($arrPreguntas); $i++){
+                    $pregunta = new Pregunta();
+                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = $codTest;
+                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    if (!$pregunta->guardar()) {
+                            $i = count($arrPreguntas) + 2;
+                            $valido = false;
+                    }    
+                }
+                
+                if ($valido) {
+                    Sistema::app()->irAPagina(array("calculadora")); 
+                    exit;
+                }
            }
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $sitios, "sugerencia" => $sugerencias), 
-                "Crear sitio");
+       $this->dibujaVista("nuevo", array("modelo" => $test), 
+                "Nuevo Test de Calculadora");
    }
 
    public function accionModificar () {

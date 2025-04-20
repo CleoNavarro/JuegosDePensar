@@ -49,7 +49,7 @@ class indexControlador extends CControlador {
                 $acl = Sistema::app()->ACL();
                 $acceso = Sistema::app()->Acceso();
                 $cod_usuario = $acl->getCodUsuario($login->nick);
-                $acceso->registrarUsuario($login->nick, $acl->getNombre($cod_usuario), $acl->getPermisos($cod_usuario));   
+                $acceso->registrarUsuario($cod_usuario, $login->nick, $acl->getNombre($cod_usuario), $acl->getPermisos($cod_usuario));   
             }
         }
 

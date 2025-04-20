@@ -225,35 +225,6 @@ class Usuarios extends CActiveRecord {
         return CValidaciones::validaEMail($mail);
     }
 
-
-        /**
-     * Undocumented function
-     *
-     * @param integer|null $cod_pro
-     * @return mixed
-     */
-    public static function damePronombres(?int $cod_pro = null) : mixed {
-
-        $pronombres = array(
-            0 => "No especificar",
-            1 => "She/Her",
-            2 => "He/Him",
-            3 => "They/Them",
-            4 => "She/They",
-            5 => "He/They",
-            6 => "All/Any"
-        );
-
-        if ($cod_pro === null)
-            return $pronombres;
-        else {
-            if (isset($pronombres[$cod_pro]))
-                return $pronombres[$cod_pro];
-            else
-                return false;
-        }
-    }
-
     /**
      * Undocumented function
      *

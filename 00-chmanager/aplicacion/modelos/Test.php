@@ -44,9 +44,6 @@ class Test extends CActiveRecord {
                     "ATRI" => "cod_dificultad,titulo",
                     "TIPO" => "REQUERIDO"
                 ),
-                array(
-                    "ATRI" => "cod_test", "TIPO" => "ENTERO", "MIN" => 0
-                ),
                 array( 
                     "ATRI" => "fecha", "TIPO" => "FECHA", "DEFECTO" => date("d/m/Y")
                 ),
@@ -175,6 +172,40 @@ class Test extends CActiveRecord {
         }
     }
 
+    /**
+     * Devuelve los tipos de preguntas disponibles, o el tipo seleccionado
+     *
+     * @param integer|null $cod_tipo
+     * @return mixed Array con los tipos disponibles, o con el seleccionado. False si falla
+     */
+    public static function dameTipo(?int $cod_tipo = null) : mixed {
+
+        $sentencia = "SELECT * from tipos";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+    
+        $filas=$consulta->filas();
+
+        if (is_null($filas))
+            return false;
+
+        $tipos = [];
+
+        foreach ($filas as $fila) {
+            $tipos[intval($fila["cod_tipo"])] = $fila["tipo"];
+        }
+
+        if ($cod_tipo === null)
+            return $tipos;
+        else {
+            if (isset($tipos[$cod_tipo]))
+                return $tipos[$cod_tipo];
+            else
+                return false;
+        }
+    }
+
+
      /**
      * Función para borrar un test. Le asigna fecha de borrado y el código de quien lo ha hecho
      */
@@ -216,7 +247,7 @@ class Test extends CActiveRecord {
     protected function afterBuscar(): void {
 
         $fechaAux = $this->fecha;
-        $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
+        $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
         $this->fecha = $fechaAux;
 
         if (!is_null($this->fecha_borrado)) {
@@ -236,7 +267,7 @@ class Test extends CActiveRecord {
         
         $sentencia = "INSERT INTO test ". 
             "(fecha, cod_dificultad, titulo, creado_fecha, creado_por)". 
-            " VALUES ('$fecha', $cod_dificultad, '$titulo', CURRENT_DATETIME, $creado_por); ";
+            " VALUES ('$fecha', $cod_dificultad, '$titulo', CURRENT_TIMESTAMP, $creado_por); ";
 
         return $sentencia;
     }
@@ -250,7 +281,7 @@ class Test extends CActiveRecord {
 
         $sentencia = "UPDATE test ".
             "SET fecha = '$fecha', cod_dificultad = $cod_dificultad, ".
-            "titulo = '$titulo', ".
+            "titulo = '$titulo' ".
             "WHERE cod_test = $cod_test;";
      
         return $sentencia;
