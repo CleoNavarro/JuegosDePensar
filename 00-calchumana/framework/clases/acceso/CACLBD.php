@@ -167,7 +167,7 @@ class CACLBD extends CACLBase {
         for($cont=1;$cont<11;$cont++)
             $perm[$cont]=(bool)$resul["perm".$cont];
             
-        return ($perm);
+        return $perm;
 
     }
 

@@ -15,8 +15,8 @@ class Test extends CActiveRecord {
 
     protected function fijarAtributos(): array {
         return array(
-            "cod_test", "fecha", "cod_dificultad",
-            "titulo", "dificultad", "num_preguntas"
+            "cod_test", "fecha", "cod_dificultad", "titulo", "puntuacion_base", "dificultad", "num_preguntas",
+            "creado_fecha", "creado_por", "autor", "borrado_fecha", "borrado_por", "borrador"
         );
     }
 
@@ -26,8 +26,15 @@ class Test extends CActiveRecord {
             "fecha" => "Fecha", 
             "cod_dificultad" => "Dificultad", 
             "titulo" => "Título",
+            "puntuacion_base" => "Puntuación_base",
             "dificultad" => "Dificultad", 
-            "num_preguntas" => "Nº preguntas"
+            "num_preguntas" => "Nº preguntas",
+            "creado_fecha" => "Fecha de creación",
+            "creado_por" => "Autor",
+            "autor" => "Autor",
+            "borrado_fecha" => "Fecha de borrado",
+            "borrado_por" => "Borrado por",
+            "borrador" => "Borrado por",
         );
     }
 
@@ -38,9 +45,6 @@ class Test extends CActiveRecord {
                     "ATRI" => "cod_dificultad,titulo",
                     "TIPO" => "REQUERIDO"
                 ),
-                array(
-                    "ATRI" => "cod_test", "TIPO" => "ENTERO", "MIN" => 0
-                ),
                 array( 
                     "ATRI" => "fecha", "TIPO" => "FECHA", "DEFECTO" => date("d/m/Y")
                 ),
@@ -49,9 +53,14 @@ class Test extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "titulo", "TIPO" => "CADENA", "TAMANIO" => 255
-                )  
+                ), 
+                array(
+                    "ATRI" => "borrado", "TIPO" => "ENTERO", "RANGO" => [0, 1], "DEFECTO" => 0
+                )
+
             );
     }
+
 
     /**
      * Devuelve los test que existen, o el que seleccionaste
@@ -131,13 +140,19 @@ class Test extends CActiveRecord {
 
         return $preguntas;
     }
-
+   
 
     protected function afterBuscar(): void {
 
         $fechaAux = $this->fecha;
         $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
         $this->fecha = $fechaAux;
+
+        if (!is_null($this->fecha_borrado)) {
+            $fechaAux = $this->fecha_borrado;
+            $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
+            $this->fecha_borrado = $fechaAux;
+        }
    
     }
 
@@ -146,10 +161,12 @@ class Test extends CActiveRecord {
         $fecha =  CGeneral::fechaNormalAMysql($this->fecha);
         $cod_dificultad = intval($this->cod_dificultad);
         $titulo = CGeneral::addSlashes($this->titulo);
+        $puntuacion_base = intval($this->puntuacion_base);
+        $creado_por = intval($this->creado_por);
         
         $sentencia = "INSERT INTO test ". 
-            "(fecha, cod_dificultad, titulo)". 
-            " VALUES ('$fecha', $cod_dificultad, '$titulo'); ";
+            "(fecha, cod_dificultad, titulo, puntuacion_base, creado_fecha, creado_por)". 
+            " VALUES ('$fecha', $cod_dificultad, '$titulo', $puntuacion_base, CURRENT_TIMESTAMP, $creado_por); ";
 
         return $sentencia;
     }
@@ -160,13 +177,15 @@ class Test extends CActiveRecord {
         $fecha =  CGeneral::fechaNormalAMysql($this->fecha);
         $cod_dificultad = intval($this->cod_dificultad);
         $titulo = CGeneral::addSlashes($this->titulo);
+        $puntuacion_base = intval($this->puntuacion_base);
 
         $sentencia = "UPDATE test ".
             "SET fecha = '$fecha', cod_dificultad = $cod_dificultad, ".
-            "titulo = '$titulo', ".
+            "titulo = '$titulo', puntuacion_base = $puntuacion_base ".
             "WHERE cod_test = $cod_test;";
      
         return $sentencia;
     }
+
 
 }

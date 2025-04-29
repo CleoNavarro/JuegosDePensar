@@ -23,7 +23,7 @@ echo $cajaFiltrado->dibujaApertura();
         echo "<br>".PHP_EOL;
         echo CHTML::modeloLabel($modelo, "cod_dificultad");
         echo CHTML::modeloListaDropDown($modelo, "cod_dificultad", 
-            Test::dameDificultad()
+            Test::dameDificultadDrop()
         );
         echo "<br>".PHP_EOL;
 

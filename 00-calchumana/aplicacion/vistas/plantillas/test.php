@@ -19,14 +19,31 @@
 <body>
 
 		<header>
+			<div class="iniciarSesion">
+			<?php
+
+				if (Sistema::app()->Acceso()->hayUsuario()) {
+					$usuario = new Usuarios();
+					$foto = $usuario::dameFoto(Sistema::app()->Acceso()->getCodUsuario());
+					if (!$foto) $foto = "fotoUsuarioPorDefecto.png";
+					echo CHTML::imagen("/imagenes/web/usuarios/".$foto, "", ["class" => "fotouser"]);
+					echo CHTML::dibujaEtiqueta("span", ["class" => "nick"], 
+							Sistema::app()->Acceso()->getNick());
+					echo CHTML::link("Cerrar Sesión", ["index", "cerrarSesion"]);
+				} else {
+					echo CHTML::link("Regístrate", ["index", "registrate"]);
+					echo CHTML::link("Iniciar sesión", ["index", "login"]);
+				}
+
+			?>
+			</div>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/index.php"><img id="logo" src="/imagenes/logo.png" height="100px" /></a>
+				<a href="/"><img id="logo" src="/imagenes/logo.png" height="100px" /></a>
 				</div>
 			</div>
-		</header>
 
-		<nav class="barraNav">
+			<nav class="barraNav">
 			<ul>
 				<?php
 					if (isset($this->menu)) {
@@ -46,9 +63,14 @@
 						}
 					}
 
-				?>
-			</ul>
-		</nav>
+					?>
+				</ul>
+			</nav>
+		</header>
+
+		
+
+		
 
 		<?php echo $contenido; ?><!-- #content -->
 

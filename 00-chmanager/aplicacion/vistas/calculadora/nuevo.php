@@ -17,7 +17,7 @@ echo CHTML::modeloError($modelo, "fecha");
 
 echo CHTML::modeloLabel($modelo, "cod_dificultad");
 echo CHTML::modeloListaDropDown($modelo, "cod_dificultad", 
-    Test::dameDificultad()  
+    Test::dameDificultadDrop()  
 );
 
 echo CHTML::campoLabel("Preguntas: ", "num_preguntas");
@@ -33,7 +33,7 @@ for ($i = 1; $i <= 5; $i++){
     echo CHTML::campoText("preguntas[pregunta".$i."][enunciado]", "", ["id" => "textenunciado".$i]);
     
     echo CHTML::campoLabel("Tipo Pregunta", "preguntas[pregunta".$i."][cod_tipo]", ["id" => "labeltipo".$i]);
-    echo CHTML::campoListaDropDown("preguntas[pregunta".$i."][cod_tipo]", 1, Test::dameTipo(), ["id" => "listtipo".$i]);
+    echo CHTML::campoListaDropDown("preguntas[pregunta".$i."][cod_tipo]", 1, Pregunta::dameTipoDrop(), ["id" => "listtipo".$i]);
     
     echo CHTML::campoLabel("Respuesta (hasta este punto) ", "preguntas[pregunta".$i."][cantidad]", ["id" => "labelrespuesta".$i]);
     echo CHTML::campoNumber("preguntas[pregunta".$i."][cantidad]", 0, ["id" => "textrespuesta".$i]);

@@ -29,6 +29,57 @@ class indexControlador extends CControlador {
 	/**
 	 * Acción para la página principal
 	 */
+	public function accionLogin() {
+
+		//Creamos el modelo
+        $login = new Login();
+
+        //Obtenemos el nombre del modelo (fijarNombre) sobre el que actuará el post
+        $nombre = $login->getNombre();
+
+        //Comprobamos que existe POST del nombre
+        if(isset($_POST[$nombre])) {
+            //Asigno los valores de registro segun lo introducido en el formulario
+            $login->setValores($_POST[$nombre]);
+
+            //Validamos 
+            if ($login->validar())  {
+                $acl = Sistema::app()->ACL();
+                $acceso = Sistema::app()->Acceso();
+                $cod_usuario = $acl->getCodUsuario($login->nick);
+				$permisos = $acl->getPermisos($cod_usuario);
+                $acceso->registrarUsuario($cod_usuario, $login->nick, $acl->getNombre($cod_usuario), $permisos);   
+            }
+        }
+
+        if (Sistema::app()->Acceso()->hayUsuario()) {
+
+            Sistema::app()->irAPagina([]);
+            exit;
+        }  
+
+        $this->dibujaVista("login", array("modelo" => $login), "Login");
+			
+	}
+
+	public function accionCerrarSesion () {
+
+        Sistema::app()->Acceso()->quitarRegistroUsuario();
+
+        Sistema::app()->irAPagina(["index", "login"]); 
+		exit;
+
+    }
+
+	public function accionRegistrate() {
+
+        $this->dibujaVista("registrate", [], "¡Régistrate!");
+			
+	}
+
+	/**
+	 * Acción para la página principal
+	 */
 	public function accionJugar() {
 
 		if (!isset($_GET["cod_test"])) {
@@ -67,7 +118,6 @@ class indexControlador extends CControlador {
 			
 		];
 	}
-	
 
 
 

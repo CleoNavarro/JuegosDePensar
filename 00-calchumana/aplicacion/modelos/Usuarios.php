@@ -16,10 +16,9 @@ class Usuarios extends CActiveRecord {
     protected function fijarAtributos(): array {
         return array(
             "cod_usuario", "nombre", "nick", "contrasenia", 
-            "repite_contrasenia" ,"descripcion", "mail", 
-            "telefono", "pronombres", "foto", "fecha_registrado", 
-            "verificado", "borrado", "borrado_fecha", 
-            "borrado_por", "cod_acl_role"
+            "repite_contrasenia" , "mail", "telefono", "foto", 
+            "fecha_registrado", "verificado", "borrado", 
+            "borrado_fecha", "borrado_por", "cod_acl_role"
         );
     }
 
@@ -30,10 +29,8 @@ class Usuarios extends CActiveRecord {
             "nick" => "Nick", 
             "contrasenia" => "Contraseña",
             "repite_contrasenia" => "Repite Contraseña",
-            "descripcion" => "Sobre mí",
             "mail" => "Mail", 
             "telefono" => "Teléfono", 
-            "pronombres" => "Tratamiento (pronombres)",
             "foto" => "Foto",
             "fecha_registrado" => "Fecha de registro",
             "verificado" => "Usuario Verificado",
@@ -77,9 +74,6 @@ class Usuarios extends CActiveRecord {
                     "MENSAJE" => "Las contraseñas deben ser idénticas"
                 ),
                 array(
-                    "ATRI" => "descripcion", "TIPO" => "CADENA", "TAMANIO" => 400
-                ),
-                array(
                     "ATRI" => "mail", "TIPO" => "CADENA", "TAMANIO" => 255
                 ),
                 array(
@@ -89,15 +83,6 @@ class Usuarios extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "telefono",  "TIPO" => "CADENA", "TAMANIO" => 15
-                ),
-                array(
-                    "ATRI" => "pronombres",  "TIPO" => "ENTERO", "MIN" => 0,
-                    "DEFECTO" => 0
-                ),
-                array(
-                    "ATRI" => "pronombres", "TIPO" => "RANGO",
-                    "RANGO" => array_keys(Usuarios::damePronombres()),
-                    "MENSAJE" => "Pronombre no existente"
                 ),
                 array(
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
@@ -225,35 +210,6 @@ class Usuarios extends CActiveRecord {
         return CValidaciones::validaEMail($mail);
     }
 
-
-        /**
-     * Undocumented function
-     *
-     * @param integer|null $cod_pro
-     * @return mixed
-     */
-    public static function damePronombres(?int $cod_pro = null) : mixed {
-
-        $pronombres = array(
-            0 => "No especificar",
-            1 => "She/Her",
-            2 => "He/Him",
-            3 => "They/Them",
-            4 => "She/They",
-            5 => "He/They",
-            6 => "All/Any"
-        );
-
-        if ($cod_pro === null)
-            return $pronombres;
-        else {
-            if (isset($pronombres[$cod_pro]))
-                return $pronombres[$cod_pro];
-            else
-                return false;
-        }
-    }
-
     /**
      * Undocumented function
      *
@@ -348,6 +304,28 @@ class Usuarios extends CActiveRecord {
         return true;
     }
 
+    /**
+     * Función que devuelve la foto de un usuario
+     *
+     * @param integer|null $cod_usu
+     * @return mixed link de la foto. False si no la encuentra
+     */
+    public static function dameFoto(int $cod_usu) : mixed {
+
+        $sentencia = "SELECT foto from usuarios where cod_usuario = $cod_usu";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+    
+        $filas=$consulta->filas();
+
+        if (is_null($filas))
+            return false;
+
+        $foto = $filas[0]["foto"];
+
+        return $foto;
+    }
+
     
     protected function afterBuscar(): void {
 
@@ -377,13 +355,12 @@ class Usuarios extends CActiveRecord {
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
-        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
 
         $sentencia = "INSERT INTO usuarios ". 
-            "(nombre, nick, descripcion, mail, telefono, pronombres, ".
-            "foto, fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
-            " VALUES ('$nombre', '$nick', '', '$mail', ".
-            "'$telefono', '$pronombres', 'fotoUsuarioPorDefecto.png', ".
+            "(nombre, nick, mail, telefono, foto, fecha_registrado, ".
+            "verificado, borrado, borrado_fecha, borrado_por)". 
+            " VALUES ('$nombre', '$nick', '$mail', ".
+            "'$telefono', 'fotoUsuarioPorDefecto.png', ".
             "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ".
 
             "INSERT INTO acl_usuarios ". 
@@ -400,10 +377,8 @@ class Usuarios extends CActiveRecord {
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
-        $descripcion = CGeneral::addSlashes($this->descripcion);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
-        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
         $foto = CGeneral::addSlashes($this->foto);
         $cod_acl_role = intval($this->cod_acl_role);
 
@@ -411,11 +386,9 @@ class Usuarios extends CActiveRecord {
         $sentencia = "UPDATE usuarios ".
             "SET nombre = '$nombre', ".
             "nick = '$nick', ".
-            "descripcion = '$descripcion', ".
             "mail = '$mail', ".
             "telefono = '$telefono', ".
-            "pronombres = '$pronombres', ".
-            "foto = '$foto', ".
+            "foto = '$foto' ".
             "WHERE cod_usuario = $cod_usuario; ".
 
             "UPDATE acl_usuarios ".

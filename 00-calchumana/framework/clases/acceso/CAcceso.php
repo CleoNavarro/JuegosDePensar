@@ -7,7 +7,7 @@ class CAcceso {
     private $_nombre;
     private $_permisos;
     private $_sesion;
-    
+    private $_codusuario;
     
     // Constructor
     public function __construct() {
@@ -17,6 +17,7 @@ class CAcceso {
         $this->_nombre="";
         $this->_permisos=[];
         $this->_sesion = new CSesion();
+        $this->_codusuario=0;
 
         $this->_sesion->crearSesion();
         $this->recogerDeSesion();
@@ -38,6 +39,7 @@ class CAcceso {
             $_SESSION["acceso"]["nick"]=$this->_nick;
             $_SESSION["acceso"]["nombre"]=$this->_nombre;
             $_SESSION["acceso"]["permisos"]=$this->_permisos;
+            $_SESSION["acceso"]["codusuario"]=$this->_codusuario;
             return true;
         } else {
             $_SESSION["acceso"]["validado"]=false;
@@ -64,6 +66,7 @@ class CAcceso {
            $this->_nick=$_SESSION["acceso"]["nick"];
            $this->_nombre=$_SESSION["acceso"]["nombre"];
            $this->_permisos=$_SESSION["acceso"]["permisos"];
+           $this->_codusuario=$_SESSION["acceso"]["codusuario"];
        }
 
        return true;
@@ -80,7 +83,7 @@ class CAcceso {
      * @param array $permisos permisos del usuario a registrar
      * @return boolean Devuelve true si ha podido registrar el usuario
      */
-    public function registrarUsuario(string $nick, string $nombre, array $permisos):bool {
+    public function registrarUsuario(int $codusuario, string $nick, string $nombre, array $permisos):bool {
         if ($nick == "")
             $this->_validado = false;
         else
@@ -88,6 +91,7 @@ class CAcceso {
             $this->_nick = $nick;
             $this->_nombre = $nombre;
             $this->_permisos = $permisos;
+            $this->_codusuario = $codusuario;
         
         if (!$this->escribirASesion())
             return false;
@@ -163,6 +167,18 @@ class CAcceso {
             return false;
         
         return $this->_nombre; 
+    }    
+
+     /**
+     * Devuelve el código del usuario registrado o false si no hay usuario
+     *
+     * @return int|false
+     */
+    public function getCodUsuario():int|false { 
+        if (!$this->hayUsuario())
+            return false;
+        
+        return $this->_codusuario; 
     }    
     
 }

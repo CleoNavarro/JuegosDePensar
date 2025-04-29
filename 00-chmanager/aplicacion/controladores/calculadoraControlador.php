@@ -164,6 +164,7 @@ class calculadoraControlador extends CControlador {
            $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
            $_POST[$testNombre]["fecha"] = $fechaAux;
            $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+           $_POST[$testNombre]["puntuacion_base"] = 0;
            $test->setValores($_POST[$testNombre]);
    
             if ($test->validar()) {
@@ -172,17 +173,25 @@ class calculadoraControlador extends CControlador {
                 $preguntaNombre = $pregunta->getNombre();
                 $arrPreguntas = $_POST["preguntas"];
                 $valido = true;
+                $puntuacion = 0;
 
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
+                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$preguntaNombre.$i]["cod_tipo"]));
+                    $puntuacion += intval($arrTipo["puntuacion_base"]);
                     $arrPreguntas[$preguntaNombre.$i]["cod_test"] = 0;
                     $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
                     $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
-                    if (!$pregunta->validar()) {
+                    if (!$pregunta->validar()) 
                             $valido = false;
-                    }
                 }
 
+                $arrDificultad = Test::dameDificultad(intval($_POST[$testNombre]["cod_dificultad"]));
+                $_POST[$testNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
+                $test->setValores($_POST[$testNombre]);
+                if (!$test->validar()) $valido = false;
+
                 if (!$valido || !$test->guardar()) {
+
                    $this->dibujaVista("nuevo", array("modelo"=>$test), "Nuevo Test de Calculadora");
                    exit;
                 }

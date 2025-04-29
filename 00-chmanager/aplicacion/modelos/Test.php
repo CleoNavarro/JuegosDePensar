@@ -15,7 +15,7 @@ class Test extends CActiveRecord {
 
     protected function fijarAtributos(): array {
         return array(
-            "cod_test", "fecha", "cod_dificultad", "titulo", "dificultad", "num_preguntas",
+            "cod_test", "fecha", "cod_dificultad", "titulo", "puntuacion_base", "dificultad", "num_preguntas",
             "creado_fecha", "creado_por", "autor", "borrado_fecha", "borrado_por", "borrador"
         );
     }
@@ -26,6 +26,7 @@ class Test extends CActiveRecord {
             "fecha" => "Fecha", 
             "cod_dificultad" => "Dificultad", 
             "titulo" => "Título",
+            "puntuacion_base" => "Puntuación_base",
             "dificultad" => "Dificultad", 
             "num_preguntas" => "Nº preguntas",
             "creado_fecha" => "Fecha de creación",
@@ -159,7 +160,7 @@ class Test extends CActiveRecord {
         $dificultades = [];
 
         foreach ($filas as $fila) {
-            $dificultades[intval($fila["cod_dificultad"])] = $fila["dificultad"];
+            $dificultades[intval($fila["cod_dificultad"])] = $fila;
         }
 
         if ($cod_dificultad === null)
@@ -170,6 +171,24 @@ class Test extends CActiveRecord {
             else
                 return false;
         }
+    }
+
+
+     /**
+     * Devuelve las dificultades disponibles para un drop down
+     * @return mixed Array con las dificultades disponibles. False su falla
+     */
+    public static function dameDificultadDrop() : mixed {
+
+        $arrayDificultad = Test::dameDificultad();
+
+        $arraDrop = [];
+
+        foreach ($arrayDificultad as $fila) {
+            $arraDrop[intval($fila["cod_dificultad"])] = $fila["dificultad"];
+        }
+
+        return $arraDrop;
     }
 
     /**
@@ -263,11 +282,12 @@ class Test extends CActiveRecord {
         $fecha =  CGeneral::fechaNormalAMysql($this->fecha);
         $cod_dificultad = intval($this->cod_dificultad);
         $titulo = CGeneral::addSlashes($this->titulo);
+        $puntuacion_base = intval($this->puntuacion_base);
         $creado_por = intval($this->creado_por);
         
         $sentencia = "INSERT INTO test ". 
-            "(fecha, cod_dificultad, titulo, creado_fecha, creado_por)". 
-            " VALUES ('$fecha', $cod_dificultad, '$titulo', CURRENT_TIMESTAMP, $creado_por); ";
+            "(fecha, cod_dificultad, titulo, puntuacion_base, creado_fecha, creado_por)". 
+            " VALUES ('$fecha', $cod_dificultad, '$titulo', $puntuacion_base, CURRENT_TIMESTAMP, $creado_por); ";
 
         return $sentencia;
     }
@@ -278,10 +298,11 @@ class Test extends CActiveRecord {
         $fecha =  CGeneral::fechaNormalAMysql($this->fecha);
         $cod_dificultad = intval($this->cod_dificultad);
         $titulo = CGeneral::addSlashes($this->titulo);
+        $puntuacion_base = intval($this->puntuacion_base);
 
         $sentencia = "UPDATE test ".
             "SET fecha = '$fecha', cod_dificultad = $cod_dificultad, ".
-            "titulo = '$titulo' ".
+            "titulo = '$titulo', puntuacion_base = $puntuacion_base ".
             "WHERE cod_test = $cod_test;";
      
         return $sentencia;

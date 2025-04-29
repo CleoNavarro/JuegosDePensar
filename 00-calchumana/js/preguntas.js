@@ -1,9 +1,31 @@
 var test = []
 var ordenPreg = 1
 var totalPreg = 1;
+var puntuacionBase = 0;
+var bonificador = 0;
+var segundos = 0;
+var fallos = 0;
+var apiResp = [];
+
+// Intervalo para cronómetro
+var intervalo = setInterval(function() {
+
+    segundos++
+    let minutos = Math.floor(segundos / 60);
+    let secs = Math.floor(segundos % 60);
+    let tiempoString = "Tiempo: " + minutos + ":" + (secs < 10 ? "0" : "") + secs
+      
+    document.getElementById("tiempo").innerHTML = tiempoString
+
+    if (segundos > 900) {
+      clearInterval(intervalo);
+    }
+  }, 1000);
+
 
 cargarPreguntas()
 
+// Función que busca las preguntas del test y las carga
 function cargarPreguntas () {
 
     let cod_test= document.getElementById("cod_test").value
@@ -25,7 +47,7 @@ function cargarPreguntas () {
                         test = resp["datos"]
                         ordenPreg = 1
                         totalPreg = Object.keys(test).length
-                        console.log("Total Preguntas " + totalPreg)
+                        bonificador = parseFloat(test[1]["bonificador"])
                         realizarPregunta()
                     } else {
                         noHaytest()
@@ -39,9 +61,12 @@ function cargarPreguntas () {
     
 }
 
+// Aparece una pregunta en pantalla
 function realizarPregunta () {
 
     let divPreg = document.getElementById('preguntas')
+
+    puntuacionBase += parseInt(test[ordenPreg]["puntuacion_base"])
 
     let artPregunta = document.createElement("article")
     artPregunta.setAttribute("class", "pregunta")
@@ -57,7 +82,7 @@ function realizarPregunta () {
     inputResp.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {responder()}
     })
-
+    
     let inputBoton = document.createElement("input")
     inputBoton.setAttribute("id" , "botonResponder")
     inputBoton.setAttribute("class" , "boton")
@@ -71,12 +96,14 @@ function realizarPregunta () {
     artPregunta.appendChild(inputBoton)
 
     divPreg.appendChild(artPregunta)
-
-    console.log("Pregunta " + test[ordenPreg]["orden"])
+    inputResp.focus();
 
 }
 
+// Si no hay un test con ese código, sale pantalla de error
 function noHaytest () {
+
+    clearInterval(intervalo);
     let divTest = document.getElementById('preguntas')
 
     let pIntrod = document.createElement("p")
@@ -101,7 +128,12 @@ function noHaytest () {
 }
 
 
-
+/**
+ * Responder a la pregunta
+ * - Si es correcta, pasa a la siguiente
+ * - Si es la última pregunta, carga los resultados
+ * - Si es incorrecta, acumulas un fallo
+ */
 function responder () {
 
     let respuesta = parseInt(document.getElementById("respuesta" + test[ordenPreg]["orden"]).value)
@@ -111,17 +143,133 @@ function responder () {
         ordenPreg += 1
 
         if (ordenPreg > totalPreg) {
-            window.location.href = "https://www.google.com/search?client=opera-gx&q=Victoria&sourceid=opera&ie=UTF-8&oe=UTF-8"
+            terminar()
         } else {
             document.getElementById("preguntas").innerHTML = ""
+            document.getElementById("sumatorio").innerHTML = correcta
             realizarPregunta()
         }
     
     } else {
-        console.log("Has fallado, la respuesta es " + correcta)
+        fallido()
     }
-
 
 }
 
+// Cuando fallas
+function fallido () {
+    fallos ++
+    document.getElementById("fallos").innerHTML = "Fallos: " + fallos
+    document.getElementById("respuesta" + test[ordenPreg]["orden"]).value = null
+}
+
+// 
+/**
+ * Cuando se ha terminado el test, calcula la puntuación.
+ * Esta puntuación se registra en la base de datos mediante la API.
+ * Luego carga la pantalla final
+ */
+function terminar () {
+
+    clearInterval(intervalo)
+
+    let puntuacionTotal = Math.floor(puntuacionBase * bonificador)
+    let puntosPorSegundo = Math.floor(puntuacionTotal/900)
+    puntuacionTotal -= (puntosPorSegundo * fallos * 10)
+    puntuacionTotal -= (segundos * puntosPorSegundo)
+    if (puntuacionTotal <= 10) puntuacionTotal = 10
+
+    document.getElementById("preguntas").innerHTML = ""
+
+    let cod_test = document.getElementById("cod_test").value
+
+    let loc = "http://www.calculadorahumana.com/api/calcResultado"
+
+        let busqueda = new Request(loc, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "cod_test=" + cod_test + "&puntos=" + puntuacionTotal
+        })
+        
+        fetch(busqueda).then(function (resp) {
+            if (resp.ok) {
+                let res = resp.json();
+    
+                res.then( function (resp) {
+                        apiResp = resp["datos"]
+                    if (resp["correcto"]) {
+                        pantallaFinal(puntuacionTotal)
+                    } else {
+                        errorPuntuacion()
+                    }            
+                })
+            }
+        }
+        ).catch(function (error) {
+            console.log(error)
+        })
+}
+
+/**
+ * Carga la pantalla final con el resultado obtenido y un mensaje distinto en cada ocasión
+ * @param {*} puntuacionTotal Puntuación que se muestra
+ */
+function pantallaFinal (puntuacionTotal) {
+
+    let container = document.getElementById("contenedorTest")
+    container.innerHTML = "";
+
+    let pIntrod = document.createElement("p")
+    pIntrod.setAttribute("style", "font-size:3em");
+    let textIntrod = document.createTextNode("Tu puntuación: ")
+    pIntrod.appendChild(textIntrod);
+
+    let pPuntos = document.createElement("p")
+    pPuntos.setAttribute("style", "font-size:4em; color:rgb(255, 221, 28); margin-top:0.5em; margin-bottom:5px");
+    let textPuntos = document.createTextNode(puntuacionTotal + " puntos")
+    pPuntos.appendChild(textPuntos);
+
+    let pMensaje = document.createElement("p")
+    pMensaje.setAttribute("style", "font-size:1em; margin-top:5px; margin-bottom: 70px")
+    let textMensaje = document.createTextNode(apiResp["mensaje"])
+    pMensaje.appendChild(textMensaje);
+
+    let botonSalir = document.createElement("a")
+    botonSalir.setAttribute("class", "boton")
+    let textSalir
+
+    if (!apiResp["codigo"]) {
+        botonSalir.setAttribute("href", "/index/registrate")
+        textSalir = document.createTextNode("¡Regístrate!")
+    } else {
+        botonSalir.setAttribute("href", "/")
+        textSalir = document.createTextNode("Salir")
+    }
+    
+    botonSalir.appendChild(textSalir)
+
+    container.appendChild(pIntrod)
+    container.appendChild(pPuntos)
+    container.appendChild(pMensaje)
+    container.appendChild(botonSalir)
+
+}
+
+// En caso de que haya surgido algun error al registrar la puntuación
+function errorPuntuacion () {
+
+    let container = document.getElementById("contenedorTest")
+    container.innerHTML = "";
+
+    let pIntrod = document.createElement("p")
+    pIntrod.setAttribute("style", "font-size:3em");
+    let textIntrod = document.createTextNode("Error")
+    pIntrod.appendChild(textIntrod);
+
+    let pError = document.createElement("p")
+    pError.setAttribute("style", "font-size:1.5em");
+    let textError = document.createTextNode(apiResp["mensaje"])
+    pError.appendChild(textError);
+
+}
 

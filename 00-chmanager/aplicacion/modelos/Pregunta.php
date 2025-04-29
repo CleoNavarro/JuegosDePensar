@@ -107,7 +107,7 @@ class Pregunta extends CActiveRecord {
         $tipos = [];
 
         foreach ($filas as $fila) {
-            $tipos[intval($fila["cod_tipo"])] = $fila["tipo"];
+            $tipos[intval($fila["cod_tipo"])] = $fila;
         }
 
         if ($cod_tipo === null)
@@ -118,6 +118,23 @@ class Pregunta extends CActiveRecord {
             else
                 return false;
         }
+    }
+
+    /**
+     * Devuelve los tipos disponibles para un drop down
+     * @return mixed Array con las dificultades disponibles. False su falla
+     */
+    public static function dameTipoDrop() : mixed {
+
+        $arrayTipo = Pregunta::dameTipo();
+
+        $arraDrop = [];
+
+        foreach ($arrayTipo as $fila) {
+            $arraDrop[intval($fila["cod_tipo"])] = $fila["tipo"];
+        }
+
+        return $arraDrop;
     }
 
 

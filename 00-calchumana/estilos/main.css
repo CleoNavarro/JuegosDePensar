@@ -31,26 +31,42 @@ body {
 header {
     display: flex;
     justify-content: center;
-    align-items: center;
+    
     width: 100%;
 }
 
-header.logo {
-    width: 100%;
+div.iniciarSesion {
+    width: 33%;
+    display: flex;
+    justify-content: left;
+}
+
+div.iniciarSesion * {
+    margin: 15px 10px;
+}
+
+div.iniciarSesion span, div.iniciarSesion a {
+    padding: 12px 0;
+}
+
+div.iniciarSesion a:hover {
+    font-weight: bold;
+    color:rgb(255, 221, 28);
+}
+
+div.logocontainer {
+    width: 34%;
     text-align: center;
-    align-content: center  
 }
 
 img#logo{
     margin: 20px;
-    text-align: center;
     align-content: center;
     filter:drop-shadow(0 0 2px rgb(126, 126, 126));
 }
 
 nav.barraNav {
-    font-size: larger;
-    width: 100%;
+    width: 33%;
     display: flex;
     text-align: center;
     justify-content: center;
@@ -75,6 +91,28 @@ nav.barraNav ul li {
 nav.barraNav ul li a:hover {
     font-weight: bold;
     color:rgb(255, 221, 28);
+}
+
+/* Diseño Registrarte / Iniciar sesión */
+div.contenedorForm {
+    margin: 0 25% 20px;
+    text-align: center;
+}
+
+div.contenedorForm  input[type=text], div.contenedorForm input[type=password] {
+    color: white;
+    background-color: rgb(137, 137, 168);
+    font-size: 1.5em;
+    border-radius: 5px;
+    margin: 5px;
+    width: 300px;
+}
+
+img.fotouser {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 
@@ -104,6 +142,24 @@ a.boton:hover, input.boton:hover {
     font-weight: bold;
     background-color: rgb(248, 163, 105);
     box-shadow: 6px 6px 5px rgb(32, 32, 32);
+}
+
+section#contenedorTest {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div#marcador {
+    font-weight: bold;
+    text-align: center;
+    color:rgb(255, 221, 28);
+}
+
+div#sumatorio{
+    font-size: 5em;
+    margin: 30px;
 }
 
 input[type=number] {
