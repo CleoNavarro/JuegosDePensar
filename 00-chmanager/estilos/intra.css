@@ -42,7 +42,7 @@
 	body {
 		margin:0;
 		padding:0;
-		background-color: white;
+		background-color: rgb(58, 58, 71);
 		min-height: 100vh;
 	}
 
@@ -56,7 +56,8 @@
 	}
 
 	.contenido{
-		background-color:white;
+		background-color:rgb(58, 58, 71);
+		color: white;
 		padding: 0 0;
 	}
 
@@ -72,10 +73,10 @@
 
 	/* Header, título y logo  */
 	header {
-		background:rgb(240, 232, 224);
+		background-color: rgb(35, 35, 46);
 		min-height:50px;
 		padding: 5px 10% 5px;
-		border-top:20px solid #ef1717;
+		border-top:20px solid  #F60;
 		display: flex;
 		display: flex;
 		justify-content: space-between;
@@ -139,7 +140,7 @@
 	nav.barraNav li a {	
 		display: block;
 		text-decoration:none;
-	    color: #4c4c4c;
+	    color: #b3b3b3;
 	    text-align:center;
 	    line-height:40px;    
 	
@@ -147,7 +148,7 @@
 	
 	nav.barraNav li a:hover {
 		text-decoration: none;
-	    color: #094e1f;
+	    color: rgb(255, 221, 28);;
 	}
 	
 	nav.barraNav li a:active, nav.barraNav li a:focus, nav.barraNav li a:visited {
@@ -584,13 +585,13 @@
 		padding: 10px;
 		border: none;
 		border-radius: 5px;		
-		background-color: #094e20;
+		background-color: #F60;
 		color: white;
 		font-weight: bold;
 	}
 
 	button:hover, input[type=button]:hover, input[type=submit]:hover  {
-		background-color: #37c271;
+		background-color: rgb(241, 168, 118);;
 	}
 
 	button:disabled ,input[type=button]:disabled, input[type=submit]:disabled{	
@@ -607,7 +608,7 @@
 	/* Definiciones para el objeto CPager*/
 
 	.pager{
-		background-color: rgb(155, 194, 158);
+		background-color: rgb(241, 168, 118);
 		color:black;
 		padding: 5px;
 		margin: 0 5%;
@@ -618,7 +619,7 @@
 		float: left;
 		/*width: 40%;*/
 		padding-left: 5px;
-		color: white; 
+		color: black; 
 	}
 	
 	.pager .der{
@@ -683,7 +684,7 @@
 	}
 	
 	table.tabla1 th{
-		background-color: rgb(10, 172, 80);
+		background-color: #F60;
 		color:white;
 		padding: 10px;
 	}
@@ -711,7 +712,7 @@
 	 */
 
 	.caja{
-		background-color: rgb(139, 202, 177);
+		background-color: rgb(241, 168, 118);
 		border-radius: 5px;
 		margin: 20px auto 0;
 	}
@@ -723,7 +724,7 @@
 		padding: 0 10px;
 	} 
 	.caja tr.cuerpo{
-		background-color: #d8fdea;
+		background-color: rgb(238, 238, 238);
 		color: black;
 	}
 
@@ -765,7 +766,7 @@
 
 	aside.ubicacion {
 		border: 0;
-		background-color: rgb(240, 232, 224);
+		background-color: rgb(238, 238, 238);
 		padding:5px 5%;
 	}
 

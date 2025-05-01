@@ -20,7 +20,7 @@ var intervalo = setInterval(function() {
     if (segundos > 900) {
       clearInterval(intervalo);
     }
-  }, 1000);
+}, 1000);
 
 
 cargarPreguntas()

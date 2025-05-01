@@ -6,7 +6,7 @@ class Usuarios extends CActiveRecord {
     }
 
     protected function fijarTabla():string {
-        return "usuarios";
+        return "vista_usuarios";
     }
     
     protected function fijarId():string {
@@ -30,10 +30,8 @@ class Usuarios extends CActiveRecord {
             "nick" => "Nick", 
             "contrasenia" => "Contraseña",
             "repite_contrasenia" => "Repite Contraseña",
-            "descripcion" => "Sobre mí",
             "mail" => "Mail", 
             "telefono" => "Teléfono", 
-            "pronombres" => "Tratamiento (pronombres)",
             "foto" => "Foto",
             "fecha_registrado" => "Fecha de registro",
             "verificado" => "Usuario Verificado",
@@ -77,9 +75,6 @@ class Usuarios extends CActiveRecord {
                     "MENSAJE" => "Las contraseñas deben ser idénticas"
                 ),
                 array(
-                    "ATRI" => "descripcion", "TIPO" => "CADENA", "TAMANIO" => 400
-                ),
-                array(
                     "ATRI" => "mail", "TIPO" => "CADENA", "TAMANIO" => 255
                 ),
                 array(
@@ -89,15 +84,6 @@ class Usuarios extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "telefono",  "TIPO" => "CADENA", "TAMANIO" => 15
-                ),
-                array(
-                    "ATRI" => "pronombres",  "TIPO" => "ENTERO", "MIN" => 0,
-                    "DEFECTO" => 0
-                ),
-                array(
-                    "ATRI" => "pronombres", "TIPO" => "RANGO",
-                    "RANGO" => array_keys(Usuarios::damePronombres()),
-                    "MENSAJE" => "Pronombre no existente"
                 ),
                 array(
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
