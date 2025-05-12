@@ -72,13 +72,133 @@ class PuntuacionTest extends CActiveRecord {
 
         $filas=$consulta->filas();
 
-        if (is_null($filas)) return false;
+        if (is_null($filas) || count($filas)==0) return false;
 
-        $puntuacion = 10;
+        $puntuacion = [];
 
-        foreach ($filas as $fila) {$puntuacion = intval($fila["puntos"]);}
+        foreach ($filas as $fila) {$puntuacion = $fila;}
 
         return $puntuacion;
+    }
+
+
+    /**
+     * Función que devuelve todas las puntuaciónes de los test hecho por un usuario
+     * @param integer $cod_usuario Código usuario
+     * @param bool $limit Opcional. Pon true si quieres que solo devuelva las 10 primeras instancias
+     * @return mixed Devuelve los test hechos. False si no hay ninguno
+     */
+    public static function damePuntuaciones (int $cod_usuario, bool $limit = false) : mixed {
+
+        $sentencia = "SELECT * from vista_puntuacion_test ".
+            "where cod_usuario = $cod_usuario ".
+            "order by fecha_realizado desc";
+
+        if ($limit) $sentencia .= " LIMIT 10";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        $filas=$consulta->filas();
+
+        if (is_null($filas) || count($filas)==0) return false;
+
+        $puntuaciones = [];
+        $indexFila = 0;
+
+        foreach ($filas as $fila) {
+            $fila["fecha"] = CGeneral::fechaMysqlANormal($fila["fecha"]);
+            $fila["fecha_realizado"] = CGeneral::fechahoraMysqlANormal($fila["fecha_realizado"]);
+            $puntuaciones[$indexFila] = $fila;
+            $indexFila++;
+        }
+
+        return $puntuaciones;
+    }
+
+    /**
+     * Función que devuelve el ranking diario de la fecha introducida. 
+     * Puede devolver la puntuación y posición en el ranking de un usuario
+     * @param string $fecha Fecha en formato dd/mm/yyyy
+     * @param integer $cod_usuario Código usuario
+     * @return mixed Devuelve la clasificación diaria, la puntuación del usuario seleccionado
+     * o false en caso de que no encuentre nada
+     */
+    public static function rankingDiario (string $fecha, ?int $cod_usuario = null) : mixed {
+
+        $test = Test::dameTestPorFecha($fecha);
+
+        $cod_test = $test["cod_test"];
+
+        $sentencia = "SELECT ROW_NUMBER() OVER(ORDER BY pt.puntos DESC) AS posicion,
+            pt.cod_usuario, pt.nick, pt.puntos
+            from vista_puntuacion_test pt
+            WHERE pt.cod_test = $cod_test
+            ORDER BY pt.puntos DESC;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        $filas=$consulta->filas();
+        
+        if (is_null($filas) || count($filas)==0) return false;
+
+        $ranking = [];
+
+        foreach ($filas as $fila) {
+            $ranking[intval($fila["cod_usuario"])] = $fila;
+        }
+
+        if ($cod_usuario === null)
+            return $ranking;
+        else {
+            if (isset($ranking[$cod_usuario]))
+                return $ranking[$cod_usuario];
+        }
+
+        return false;
+    }
+
+    /**
+     * Función que devuelve el ranking mensual de la fecha introducida. 
+     * Puede devolver la puntuación y posición en el ranking de un usuario
+     * @param integer $mes Mes
+     * @param integer $anio Año
+     * @param integer $cod_usuario Código usuario
+     * @return mixed Devuelve la clasificación mensual, la puntuación del usuario seleccionado
+     * o false en caso de que no encuentre nada
+     */
+    public static function rankingMensual (int $mes, int $anio, ?int $cod_usuario = null) : mixed {
+
+        $sentencia = "With m as (
+                            SELECT pt.cod_usuario, pt.nick, COALESCE(SUM(pt.puntos),0) as total_puntos
+                            From vista_puntuacion_test pt
+                            WHERE MONTH(pt.fecha) = $mes and YEAR(pt.fecha) = $anio
+                            group by pt.cod_usuario
+                        )
+                        SELECT ROW_NUMBER() OVER(ORDER BY m.total_puntos DESC) AS posicion,
+                        m.cod_usuario, m.nick, m.total_puntos
+                        From m
+                        ORDER by m.total_puntos DESC";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        $filas=$consulta->filas();
+        
+        if (is_null($filas) || count($filas)==0) return false;
+
+        $ranking = [];
+
+        foreach ($filas as $fila) {
+            $ranking[intval($fila["cod_usuario"])] = $fila;
+        }
+
+        if ($cod_usuario === null)
+            return $ranking;
+        else {
+            if (isset($ranking[$cod_usuario]))
+                return $ranking[$cod_usuario];
+        }
+
+        return false;
     }
 
     protected function afterBuscar(): void {

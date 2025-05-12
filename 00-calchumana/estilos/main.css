@@ -12,6 +12,18 @@
 
 /* Parámetros generales del estilo */
 
+:root {
+    --texto-defecto: white;
+    --amarillo-destacado: rgb(255, 221, 28);
+    --naranja-principal: rgb(255, 102, 0);
+    --naranja-suave: rgb(248, 163, 105);
+    --gris-fondo: rgb(58, 58, 71);
+    --gris-suave:rgb(137, 137, 168);
+    --gris-azulado: rgb(49, 82, 116);
+    --tabs-width: 180px;
+    --tabs-height: 40px;
+}
+
 * {
 	font-family: IBMPlex, Consolas, sans-serif;
 	box-sizing: border-box;
@@ -19,19 +31,18 @@
 
 a { 
     text-decoration: none;
-    color: white;
+    color: var(--texto-defecto);
 }
 
 body {
-    background-color: rgb(58, 58, 71);
-    color: white;
+    background-color: var(--gris-fondo);
+    color: var(--texto-defecto);
 }
 
 /* Header */
 header {
     display: flex;
     justify-content: center;
-    
     width: 100%;
 }
 
@@ -51,7 +62,7 @@ div.iniciarSesion span, div.iniciarSesion a {
 
 div.iniciarSesion a:hover {
     font-weight: bold;
-    color:rgb(255, 221, 28);
+    color: var(--amarillo-destacado);
 }
 
 div.logocontainer {
@@ -90,7 +101,7 @@ nav.barraNav ul li {
 
 nav.barraNav ul li a:hover {
     font-weight: bold;
-    color:rgb(255, 221, 28);
+    color:var(--amarillo-destacado);
 }
 
 /* Diseño Registrarte / Iniciar sesión */
@@ -100,8 +111,8 @@ div.contenedorForm {
 }
 
 div.contenedorForm  input[type=text], div.contenedorForm input[type=password] {
-    color: white;
-    background-color: rgb(137, 137, 168);
+    color: var(--texto-defecto);
+    background-color: var(--gris-suave);
     font-size: 1.5em;
     border-radius: 5px;
     margin: 5px;
@@ -124,23 +135,23 @@ div#test {
 a.boton {
     padding: 20px;
     border-radius: 10px;
-    color: white;
-    background-color: #F60;
+    color: var(--texto-defecto);
+    background-color: var(--naranja-principal);
     box-shadow: 6px 6px 5px black;
 }
 
 input.boton {
     padding: 10px;
     border-radius: 5px;
-    color: white;
-    background-color: #F60;
+    color: var(--texto-defecto);
+    background-color: var(--naranja-principal);
     box-shadow: 6px 6px 5px black;
 }
 
 a.boton:hover, input.boton:hover {
     color: black;
     font-weight: bold;
-    background-color: rgb(248, 163, 105);
+    background-color: var(--naranja-suave);
     box-shadow: 6px 6px 5px rgb(32, 32, 32);
 }
 
@@ -154,7 +165,7 @@ section#contenedorTest {
 div#marcador {
     font-weight: bold;
     text-align: center;
-    color:rgb(255, 221, 28);
+    color:var(--amarillo-destacado);
 }
 
 div#sumatorio{
@@ -163,8 +174,8 @@ div#sumatorio{
 }
 
 input[type=number] {
-    color: white;
-    background-color: rgb(137, 137, 168);
+    color: var(--texto-defecto);
+    background-color: var(--gris-suave);
     font-size: 1.5em;
     border-radius: 5px;
     margin: 5px;
@@ -175,3 +186,114 @@ input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
 
+/* Página de datos */
+
+div.datosInfo {
+    margin: 3vh 25%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 20px;
+    background-color: rgb(100, 100, 100);
+    border: 3px solid rgb(145, 145, 145);
+    border-radius: 8px;
+}
+
+div.datosInfo ul { 
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 0.2em;
+}
+
+img.imagenInfo {
+    width: 30%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px;
+}
+
+table.tablaPuntuacion {
+    width: 50%;
+    margin: 3vh 25%;
+	overflow: auto;
+}
+
+table.tablaPuntuacion tr th {
+    padding: 5px;
+    color: var(--amarillo-destacado);
+    border-bottom: 2px solid var(--amarillo-destacado);
+}
+
+table.tablaPuntuacion tr td {
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid var(--gris-suave);
+}
+
+
+
+/* Estilo para las pestañas */
+
+/* Displays del sistema de pestañas */
+.tab-content {
+    display: none;
+}
+
+.tab:target .tab-content, .tab:last-of-type .tab-content {
+    display: block;
+}
+
+.tab:target ~ .tab:last-of-type .tab-content {
+    display: none;
+}
+
+/* Cómo posicionar las pestañas */
+.tab-container {
+    position: relative;
+    padding-top: var(--tabs-height);
+} 
+
+#tab1>a { --tabs-position: 0; }
+#tab2>a { --tabs-position: 1; }
+#tab3>a { --tabs-position: 2; }
+
+.tab>a {
+    text-align: center;
+    position: absolute;
+    width: calc(var(--tabs-width));
+    height: calc(var(--tabs-height)); 
+    top: 0;
+    left: calc(var(--tabs-width) * var(--tabs-position));
+}
+
+/* Aspecto de las pestañas */
+.tabs { 
+    padding: 10px;
+}
+.tab-content {
+    background-color: var(--gris-azulado); 
+    padding: 20px;
+    position: relative;
+    z-index: 100;
+}
+
+.tab>a {
+    color: var(--amarillo-destacado);
+    font-weight: bold;
+    background-color: var(--gris-fondo); 
+    padding: 10px;
+}
+
+.tab:target>a, .tab:last-of-type>a {
+    background-color: var(--gris-azulado); 
+    z-index: 200;
+}
+
+.tab:target ~ .tab:last-of-type>a {
+    background-color: var(--gris-fondo); 
+    z-index: 0; 
+}

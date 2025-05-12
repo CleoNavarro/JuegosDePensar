@@ -6,7 +6,7 @@ class Usuarios extends CActiveRecord {
     }
 
     protected function fijarTabla():string {
-        return "usuarios";
+        return "vista_usuarios";
     }
     
     protected function fijarId():string {
@@ -16,9 +16,10 @@ class Usuarios extends CActiveRecord {
     protected function fijarAtributos(): array {
         return array(
             "cod_usuario", "nombre", "nick", "contrasenia", 
-            "repite_contrasenia" , "mail", "telefono", "foto", 
-            "fecha_registrado", "verificado", "borrado", 
-            "borrado_fecha", "borrado_por", "cod_acl_role"
+            "repite_contrasenia" ,"descripcion", "mail", 
+            "telefono", "pronombres", "foto", "fecha_registrado", 
+            "verificado", "borrado", "borrado_fecha", "borrado_por", 
+            "cod_usuario_borrador", "nick_borrador", "cod_acl_role"
         );
     }
 
@@ -37,6 +38,8 @@ class Usuarios extends CActiveRecord {
             "borrado" => "Usuario Borrado",
             "borrado_fecha" => "Fecha del Borrado",
             "borrado_por" => "Borrado por",
+            "cod_usuario_borrador" => "Código Usuario Borrador", 
+            "nick_borrador" => "Nick borrador", 
             "cod_acl_role" => "Asignar rol"
         );
     }
@@ -143,18 +146,21 @@ class Usuarios extends CActiveRecord {
      */
     public static function dameUsuarios(?int $cod_usu = null) : mixed {
 
-        $sentencia = "SELECT * from usuarios";
+        $sentencia = "SELECT * from vista_usuarios";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     
         $filas=$consulta->filas();
 
-        if (is_null($filas))
+        if (is_null($filas) || count($filas)==0)
             return false;
 
         $usuarios = [];
 
         foreach ($filas as $fila) {
+            $fila["fecha_registrado"] = CGeneral::fechahoraMysqlANormal($fila["fecha_registrado"]);
+            if (!is_null($fila["verificado"]))
+                $fila["verificado"] = CGeneral::fechahoraMysqlANormal($fila["verificado"]);
             $usuarios[intval($fila["cod_usuario"])] = $fila;
         }
 
@@ -167,6 +173,17 @@ class Usuarios extends CActiveRecord {
                 return false;
         }
     }
+
+    public static function dameFoto(int $cod_usu) : mixed {
+
+        $usuario = Usuarios::dameUsuarios($cod_usu);
+
+        if ($usuario) return $usuario["foto"];
+
+        return false;
+    }
+
+
 
     /**
      * Undocumented function
@@ -224,7 +241,7 @@ class Usuarios extends CActiveRecord {
     
         $filas=$consulta->filas();
 
-        if (is_null($filas))
+        if (is_null($filas) || count($filas)==0)
             return false;
 
         $roles = [];
@@ -241,6 +258,28 @@ class Usuarios extends CActiveRecord {
             else
                 return false;
         }
+    }
+
+    /**
+     * Función que devuelve las estadísticas de un usuario
+     * @param integer $cod_usuario - Código usuario
+     * @return mixed Stats con las estadísticas del usuario. False si no existe
+     */
+    public static function estadisticas (int $cod_usuario) : mixed {
+        $sentencia = "SELECT * from vista_estadísticas where cod_usuario = $cod_usuario";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+    
+        $filas=$consulta->filas();
+
+        if (is_null($filas) || count($filas)==0) return false;
+
+        $stats = [];
+
+        foreach ($filas as $fila) {$stats = $fila;}
+
+        return $stats;
+
     }
 
     /**
@@ -304,28 +343,6 @@ class Usuarios extends CActiveRecord {
         return true;
     }
 
-    /**
-     * Función que devuelve la foto de un usuario
-     *
-     * @param integer|null $cod_usu
-     * @return mixed link de la foto. False si no la encuentra
-     */
-    public static function dameFoto(int $cod_usu) : mixed {
-
-        $sentencia = "SELECT foto from usuarios where cod_usuario = $cod_usu";
-
-        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
-    
-        $filas=$consulta->filas();
-
-        if (is_null($filas))
-            return false;
-
-        $foto = $filas[0]["foto"];
-
-        return $foto;
-    }
-
     
     protected function afterBuscar(): void {
 
@@ -355,12 +372,13 @@ class Usuarios extends CActiveRecord {
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
+        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
 
         $sentencia = "INSERT INTO usuarios ". 
-            "(nombre, nick, mail, telefono, foto, fecha_registrado, ".
-            "verificado, borrado, borrado_fecha, borrado_por)". 
-            " VALUES ('$nombre', '$nick', '$mail', ".
-            "'$telefono', 'fotoUsuarioPorDefecto.png', ".
+            "(nombre, nick, descripcion, mail, telefono, pronombres, ".
+            "foto, fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
+            " VALUES ('$nombre', '$nick', '', '$mail', ".
+            "'$telefono', '$pronombres', 'fotoUsuarioPorDefecto.png', ".
             "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ".
 
             "INSERT INTO acl_usuarios ". 
@@ -377,8 +395,10 @@ class Usuarios extends CActiveRecord {
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
+        $descripcion = CGeneral::addSlashes($this->descripcion);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
+        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
         $foto = CGeneral::addSlashes($this->foto);
         $cod_acl_role = intval($this->cod_acl_role);
 
@@ -386,9 +406,11 @@ class Usuarios extends CActiveRecord {
         $sentencia = "UPDATE usuarios ".
             "SET nombre = '$nombre', ".
             "nick = '$nick', ".
+            "descripcion = '$descripcion', ".
             "mail = '$mail', ".
             "telefono = '$telefono', ".
-            "foto = '$foto' ".
+            "pronombres = '$pronombres', ".
+            "foto = '$foto', ".
             "WHERE cod_usuario = $cod_usuario; ".
 
             "UPDATE acl_usuarios ".

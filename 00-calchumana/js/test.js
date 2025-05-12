@@ -1,19 +1,12 @@
-
-// function Enter (e) {
-//    if (e.keyCode === 13) {
-//        e.preventDefault();
-//        buscar.click();
-//    }
-//}
 desafioDiario()
 
 function desafioDiario () {
 
-    //let fecha= new Date().getDate() + "/" + new Date().getMonth() + "/" + new Date().getFullYear()
+    let fecha = new Date().getDate() + "/" + (new Date().getMonth()+1) + "/" + new Date().getFullYear()
 
-    let fecha= "18/02/2025"
+    //let fecha= "18/05/2025"
 
-    let loc = location.href + "api/test"
+    let loc = "http://www.calculadorahumana.com/api/test"
 
         let busqueda = new Request(loc, {
             method: "POST",

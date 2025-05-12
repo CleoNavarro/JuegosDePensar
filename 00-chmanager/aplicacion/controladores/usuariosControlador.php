@@ -106,49 +106,49 @@ class usuariosControlador extends CControlador {
     public function accionConsultar() {
 		
         if (!isset($_GET["id"])) {
-            Sistema::app()->paginaError("No has indicado la plaza");
+            Sistema::app()->paginaError("¿A dónde pretendes ir?");
 			exit;
         }
 
         $id = intval($_GET["id"]);
 
-		$this->tienePermisos("consultar",  $id);
+		//$this->tienePermisos("consultar",  $id);
 
-        $plazas = new Plazas();
+        $usuario = new Usuarios();
 
-        if (!$plazas->buscarPorId($id)) {
-			Sistema::app()->paginaError("No se encuentra la plaza");
+        if (!$usuario->buscarPorId($id)) {
+			Sistema::app()->paginaError("No se encuentra el usuario");
 			exit;
 		}
 
 
-        $this->menuIzquierda();
+        $this->menu();
 
 		$this->barra_ubi = [
 			[
-				"texto" => "INICIAL",
-				"enlace" => ["inicial"]
+				"texto" => "Manager",
+				"enlace" => ["index"]
 			],
 			[
-				"texto" => "Gestión de Plazas",
-				"enlace" => ["plazas"]
+				"texto" => "Gestión de Usuarios",
+				"enlace" => ["usuarios"]
             ],
             [
-				"texto" => "Plaza ".$plazas->nombre_plaza,
-				"enlace" => ["plazas", "consultar/id=$id",]
+				"texto" => "Usuario: ".$usuario->nick,
+				"enlace" => ["usuarios", "consultar/id=$id",]
 			]
 		];
 
-		$corr = "SI";
-		if ($plazas->corriente_electrica==0) $corr = "NO";
+		$borr = "NO";
+		if ($usuario->borrado==1) $borr = $usuario->borrado_fecha." por ".$usuario->nick_borrador ;
 		
-		$disp = "SI";
-		if ($plazas->disponible==0) $corr = "NO";
+		$verificado = "NO";
+		if (!is_null($usuario->verificado==0)) $verificado = $usuario->verificado;
 
 
         $this->dibujaVista("consultar", 
-			["plaza" => $plazas, "corr" => $corr, "disp" => $disp],
-			"Consulta Plaza ".$plazas->nombre_plaza);
+			["usuario" => $usuario, "borr" => $borr, "verificado" => $verificado],
+			"Consulta Usuario: ".$usuario->nick);
 
     }
 

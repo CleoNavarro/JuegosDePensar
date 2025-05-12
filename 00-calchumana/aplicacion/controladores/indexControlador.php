@@ -64,6 +64,8 @@ class indexControlador extends CControlador {
 
 	public function accionCerrarSesion () {
 
+		$this->menu = $this->menu();
+
         Sistema::app()->Acceso()->quitarRegistroUsuario();
 
         Sistema::app()->irAPagina(["index", "login"]); 
@@ -73,9 +75,30 @@ class indexControlador extends CControlador {
 
 	public function accionRegistrate() {
 
+		$this->menu = $this->menu();
+
         $this->dibujaVista("registrate", [], "¡Régistrate!");
 			
 	}
+
+	public function accionDatos() {
+
+		$this->menu = $this->menu();
+
+		if (!isset($_GET["id"])) {
+			Sistema::app()->paginaError(404, "¿Cómo has llegado hasta aquí?");
+            return;
+		}
+
+		if (!Usuarios::dameUsuarios($_GET["id"])) {
+			Sistema::app()->paginaError(404, "No, este usuario no existe (o no es un usuario)");
+            return;
+		}
+
+        $this->dibujaVista("datos", ["cod_usuario" => intval($_GET["id"])], "Estadísticas - Juegos de Pensar");
+			
+	}
+
 
 	/**
 	 * Acción para la página principal
@@ -105,7 +128,7 @@ class indexControlador extends CControlador {
 		return [
 			[
 				"texto" => "Jugar Ahora", 
-				"enlace" => ["index"]
+				"enlace" => []
 			],
 			[
 				"texto" => "Calendario", 

@@ -72,7 +72,7 @@ class Login extends CActiveRecord {
     
             $fila=$consulta->fila();
 
-            if (is_null($fila))
+            if (is_null($fila)|| count($fila)==0)
                 return false;
             
             $nick = $fila["nick"];
@@ -87,7 +87,7 @@ class Login extends CActiveRecord {
     
         $filas=$consulta->filas();
 
-        if (is_null($filas))
+        if (is_null($filas) || count($filas)==0)
             return false;
 
         return true;

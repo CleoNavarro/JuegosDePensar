@@ -27,8 +27,7 @@
 					$foto = $usuario::dameFoto(Sistema::app()->Acceso()->getCodUsuario());
 					if (!$foto) $foto = "fotoUsuarioPorDefecto.png";
 					echo CHTML::imagen("/imagenes/web/usuarios/".$foto, "", ["class" => "fotouser"]);
-					echo CHTML::dibujaEtiqueta("span", ["class" => "nick"], 
-							Sistema::app()->Acceso()->getNick());
+					echo CHTML::link(Sistema::app()->Acceso()->getNick(), ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]);
 					echo CHTML::link("Cerrar Sesión", ["index", "cerrarSesion"]);
 				} else {
 					echo CHTML::link("Regístrate", ["index", "registrate"]);

@@ -80,7 +80,7 @@ class Test extends CActiveRecord {
     
         $filas=$consulta->filas();
 
-        if (is_null($filas)) return false;
+        if (is_null($filas) || count($filas)==0) return false;
 
         $test = [];
 
@@ -100,13 +100,13 @@ class Test extends CActiveRecord {
         if (is_null($fecha)) $fecha = date("d/M/Y");
 
         $sentencia = "SELECT * from vista_test where fecha = '".
-        CGeneral::fechaNormalAMysql($fecha)."';";
+        CGeneral::fechaNormalAMysql($fecha)."' ORDER BY creado_fecha ASC;";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     
         $filas=$consulta->filas();
 
-        if (is_null($filas)) return false;
+        if (is_null($filas) || count($filas)==0) return false;
 
         $test = [];
 
@@ -132,7 +132,7 @@ class Test extends CActiveRecord {
     
         $filas=$consulta->filas();
 
-        if (is_null($filas)) return false;
+        if (is_null($filas) || count($filas)==0) return false;
 
         $preguntas = [];
 

@@ -91,16 +91,19 @@ class apiControlador extends CControlador {
                 "puntos" => $puntos
             ];
            
-            $test = new PuntuacionTest();
-            $hayTest = $test->buscarPor([" cod_test = $cod_test and cod_usuario = $cod_usuario"]);
+            $hayTest = PuntuacionTest::damePuntuacion($cod_test, $cod_usuario);
     
             if ($hayTest) {
                 
-                $puntosAnterior = $test::damePuntuacion($cod_test, $cod_usuario);
+                $puntosAnterior = $hayTest["puntos"];
+                $codPuntTest = $hayTest["cod_punt_test"];
 
                 if ($puntos > $puntosAnterior) { // Hiciste el test antes y mejoraste la puntuación
                     
+                    $test = new PuntuacionTest();
+                    $test->buscarPorId($codPuntTest);
                     $test->setValores($arrPuntTest);
+
                     if (!$test->guardar()) {
                         $funciona = false;
                         $error = "Fallo al actualizar las puntuaciones";
@@ -127,6 +130,7 @@ class apiControlador extends CControlador {
                 
             } else  { // Es tu primera vez haciendo el test
 
+                $test = new PuntuacionTest();
                 $test->setValores($arrPuntTest);
                 
                 if (!$test->guardar()) {
@@ -163,6 +167,63 @@ class apiControlador extends CControlador {
             ]; 
         }
 
+
+        $res=json_encode($resultado, JSON_PRETTY_PRINT);
+        echo $res;
+        exit;
+    }
+
+
+    public function accionDatos() {
+
+        $resultado = [
+            "datos"=>[
+                "codigo" => -1,
+                "mensaje" => "No se llamó al método correcto"
+            ],
+            "correcto"=>false
+        ]; 
+
+        if ($_SERVER["REQUEST_METHOD"]=="POST") {
+
+            if (isset($_POST["cod_usuario"])) {
+
+                $cod_usuario = $_POST["cod_usuario"];
+               
+                $usuario = new Usuarios();
+        
+                if (!$usuario->buscarPor([" cod_usuario = $cod_usuario "])) {
+                    $resultado=[
+                        "datos"=>"Usuario no encontrado",
+                        "correcto"=>false
+                    ]; 
+                    
+                } else {
+
+                    $datosUsuario = Usuarios::dameUsuarios($cod_usuario);
+                    $estadisticas = Usuarios::estadisticas($cod_usuario);
+                    $recientes = PuntuacionTest::damePuntuaciones($cod_usuario, true);
+                    $rdiario = PuntuacionTest::rankingDiario(date("d/m/Y"), $cod_usuario);
+                    $rmensual = PuntuacionTest::rankingMensual(date("m"), date("Y"), $cod_usuario);
+                    $ranking = [
+                        "puntos_hoy" => !$rdiario ? "0" : $rdiario["puntos"],
+                        "posicion_hoy" => !$rdiario ?  "-" : $rdiario["posicion"],
+                        "puntos_mes" => !$rmensual ?  "0" : $rmensual["total_puntos"],
+                        "posicion_mes" => !$rmensual ?  "-" : $rmensual["posicion"],
+                    ]; 
+
+                    $resultado=[
+                        "datos"=> [
+                            "datos" => $datosUsuario,
+                            "estadisticas" => $estadisticas, 
+                            "recientes" => $recientes,
+                            "ranking" => $ranking
+                        ],
+                        "correcto"=>true
+                    ]; 
+                }
+            }
+        }
 
         $res=json_encode($resultado, JSON_PRETTY_PRINT);
         echo $res;

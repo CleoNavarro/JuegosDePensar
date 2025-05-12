@@ -90,46 +90,47 @@ class calculadoraControlador extends CControlador {
 
    public function accionConsultar() {
        
-       if (!isset($_GET["id"])) {
-           Sistema::app()->paginaError(404, "Página no encontrada");
-           exit;
-       }
+        if (!isset($_GET["id"])) {
+            Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
 
-       $id = intval($_GET["id"]);
+        $id = intval($_GET["id"]);
 
-       $this->tienePermisos("consultar",  $id);
+        $this->tienePermisos("consultar",  $id);
 
-       $sitios = new Sitios();
+        $test = new Test();
 
-       if (!$sitios->buscarPorId($id)) {
-           Sistema::app()->paginaError(404, "Página no encontrada");
-           exit;
-       }
+        if (!$test->buscarPorId($id)) {
+            Sistema::app()->paginaError(404, "Página no encontrada");
+            exit;
+        }
 
-       $this->menu();
+        $this->menu();
 
-       $this->barra_ubi = [
-           [
-               "texto" => "Manager",
-               "enlace" => ["index"]
-           ],
-           [
-               "texto" => "Gestión de Sitios",
-               "enlace" => ["sitios"]
-           ],
-           [
-               "texto" => $sitios->nombre_sitio,
-               "enlace" => ["sitios", "consultar/id=$id",]
-           ]
-       ];
+        $this->barra_ubi = [
+            [
+                "texto" => "Manager",
+                "enlace" => ["index"]
+            ],
+            [
+                "texto" => "Gestión de Calculadota",
+                "enlace" => ["calculadora"]
+            ],
+            [
+                "texto" => "Test del día ".$test->fecha,
+                "enlace" => ["calculadora", "consultar/id=$id",]
+            ]
+        ];
 
-       $categorias = Categorias::dameCategoriasDelSitio($id);
-       $caracteristicas= Caracteristicas::dameCaracteristicasDelSitio($id);
-       $comunidades = Comunidades::dameComunidadesDelSitio($id);
+        $borr = "NO";
+        if (!is_null($test->borrado_fecha)) $borr = $test->borrado_fecha." por ".$test->nick_borrador ;
+    
+        $preguntas = Test::damePreguntas($id);
 
-       $this->dibujaVista("consultar", 
-           ["sitio" => $sitios, "cat" => $categorias, "caract" => $caracteristicas, "comu"=> $comunidades],
-           "Consulta Sitio ".$sitios->nombre_sitio);
+        $this->dibujaVista("consultar", 
+            ["test" => $test, "preguntas" => $preguntas, "borr" => $borr],
+            "Consulta Test del día ".$test->fecha);
 
    }
 
