@@ -30,7 +30,7 @@
 					echo CHTML::link(Sistema::app()->Acceso()->getNick(), ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]);
 					echo CHTML::link("Cerrar Sesión", ["index", "cerrarSesion"]);
 				} else {
-					echo CHTML::link("Regístrate", ["index", "registrate"]);
+					echo CHTML::link("Regístrate", ["registrate", "index"]);
 					echo CHTML::link("Iniciar sesión", ["index", "login"]);
 				}
 
@@ -38,7 +38,7 @@
 			</div>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/"><img id="logo" src="/imagenes/logo.png" height="100px" /></a>
+				<a href="/"><img class="logo" src="/imagenes/logo.png" /></a>
 				</div>
 			</div>
 

@@ -16,10 +16,9 @@ class Usuarios extends CActiveRecord {
     protected function fijarAtributos(): array {
         return array(
             "cod_usuario", "nombre", "nick", "contrasenia", 
-            "repite_contrasenia" ,"descripcion", "mail", 
-            "telefono", "pronombres", "foto", "fecha_registrado", 
-            "verificado", "borrado", "borrado_fecha", "borrado_por", 
-            "cod_usuario_borrador", "nick_borrador", "cod_acl_role"
+            "repite_contrasenia" , "mail", "telefono", "foto", 
+            "fecha_registrado", "verificado", "borrado", "borrado_fecha", 
+            "borrado_por", "cod_usuario_borrador", "nick_borrador", "cod_acl_role"
         );
     }
 
@@ -89,34 +88,8 @@ class Usuarios extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
-                ),
-                array( 
-                    "ATRI" => "fecha_registrado", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "verificado", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "borrado", "TIPO" => "ENTERO",
-                    "RANGO" => [0, 1], "DEFECTO" => 0
-                ),
-                array( 
-                    "ATRI" => "borrado_fecha", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "borrado_por", "TIPO" => "ENTERO", "MIN" => 0
-                ),
-                array(
-                    "ATRI" => "cod_acl_role",  "TIPO" => "ENTERO", "MIN" => 0,
-                    "DEFECTO" => 2
-                ),
-                array(
-                    "ATRI" => "cod_acl_role", "TIPO" => "RANGO",
-                    "RANGO" => array_keys(Usuarios::dameRoles()),
-                    "MENSAJE" => "Rol no existente"
-                ),
-
-
+                )
+                
             );
     }
 
@@ -127,10 +100,8 @@ class Usuarios extends CActiveRecord {
         $this->nick = "";
         $this->contrasenia = "";
         $this->repetir_contrasenia = "";
-        $this->descripcion = "";
         $this->mail = "";
         $this->telefono = "";
-        $this->pronombres = 0;
         $this->foto = "fotoUsuarioPorDefecto.png";
         $this->verificado = 0;
         $this->borrado = 0;
@@ -139,10 +110,10 @@ class Usuarios extends CActiveRecord {
     }
 
     /**
-     * Undocumented function
+     * Devuelve la lista de usuarios, o los datos del usuario seleccionado
      *
-     * @param integer|null $cod_usu
-     * @return mixed
+     * @param integer|null $cod_usu Código Usuario
+     * @return mixed Datos del usuario o los usuarios. False en caso de que no haya o no exista
      */
     public static function dameUsuarios(?int $cod_usu = null) : mixed {
 
@@ -369,22 +340,16 @@ class Usuarios extends CActiveRecord {
 
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
-        $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
-        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
+        $foto = CGeneral::addSlashes($this->foto);
+
 
         $sentencia = "INSERT INTO usuarios ". 
-            "(nombre, nick, descripcion, mail, telefono, pronombres, ".
-            "foto, fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
-            " VALUES ('$nombre', '$nick', '', '$mail', ".
-            "'$telefono', '$pronombres', 'fotoUsuarioPorDefecto.png', ".
-            "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ".
-
-            "INSERT INTO acl_usuarios ". 
-            "(nick, nombre, contrasenia, cod_acl_role, borrado, borrado_fecha, borrado_por)".
-            " VALUES ('$nick', '$nombre', sha1('$contrasenia'), ".
-            "2, 0, NULL, 0);";
+            "(nombre, nick, mail, telefono, foto, ".
+            "fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
+            " VALUES ('$nombre', '$nick', '$mail', '$telefono', '$foto', ".
+            "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ";
 
         return $sentencia;
     }
@@ -394,31 +359,18 @@ class Usuarios extends CActiveRecord {
         $cod_usuario = intval($this->cod_usuario);
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
-        $contrasenia = CGeneral::addSlashes($this->contrasenia);
-        $descripcion = CGeneral::addSlashes($this->descripcion);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
-        $pronombres = Usuarios::damePronombres(intval($this->pronombres));
         $foto = CGeneral::addSlashes($this->foto);
-        $cod_acl_role = intval($this->cod_acl_role);
 
 
         $sentencia = "UPDATE usuarios ".
             "SET nombre = '$nombre', ".
             "nick = '$nick', ".
-            "descripcion = '$descripcion', ".
             "mail = '$mail', ".
             "telefono = '$telefono', ".
-            "pronombres = '$pronombres', ".
             "foto = '$foto', ".
-            "WHERE cod_usuario = $cod_usuario; ".
-
-            "UPDATE acl_usuarios ".
-            "SET nombre = '$nombre', ".
-            "nick = '$nick', ".
-            "contrasenia = sha1('$contrasenia'), ".
-            "cod_acl_role = $cod_acl_role, ".
-            "WHERE cod_acl_usuario = $cod_usuario;";
+            "WHERE cod_usuario = $cod_usuario; ";
      
         return $sentencia;
     }

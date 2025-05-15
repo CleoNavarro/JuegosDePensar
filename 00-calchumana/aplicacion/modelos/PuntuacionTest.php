@@ -127,6 +127,8 @@ class PuntuacionTest extends CActiveRecord {
 
         $test = Test::dameTestPorFecha($fecha);
 
+        if (!$test) return false;
+
         $cod_test = $test["cod_test"];
 
         $sentencia = "SELECT ROW_NUMBER() OVER(ORDER BY pt.puntos DESC) AS posicion,
@@ -139,19 +141,22 @@ class PuntuacionTest extends CActiveRecord {
 
         $filas=$consulta->filas();
         
-        if (is_null($filas) || count($filas)==0) return false;
+        if (!$filas || count($filas)==0) return false;
 
         $ranking = [];
+        $usuario = null;
 
         foreach ($filas as $fila) {
-            $ranking[intval($fila["cod_usuario"])] = $fila;
+            $ranking[intval($fila["posicion"])] = $fila;
+            if (!is_null($cod_usuario) && intval($fila["cod_usuario"]) == $cod_usuario)
+                $usuario = $fila;
         }
 
-        if ($cod_usuario === null)
+        if (is_null($cod_usuario))
             return $ranking;
         else {
-            if (isset($ranking[$cod_usuario]))
-                return $ranking[$cod_usuario];
+            if (!is_null($usuario))
+                return $usuario;
         }
 
         return false;
@@ -169,33 +174,36 @@ class PuntuacionTest extends CActiveRecord {
     public static function rankingMensual (int $mes, int $anio, ?int $cod_usuario = null) : mixed {
 
         $sentencia = "With m as (
-                            SELECT pt.cod_usuario, pt.nick, COALESCE(SUM(pt.puntos),0) as total_puntos
+                            SELECT pt.cod_usuario, pt.nick, COALESCE(SUM(pt.puntos),0) as puntos
                             From vista_puntuacion_test pt
                             WHERE MONTH(pt.fecha) = $mes and YEAR(pt.fecha) = $anio
                             group by pt.cod_usuario
                         )
-                        SELECT ROW_NUMBER() OVER(ORDER BY m.total_puntos DESC) AS posicion,
-                        m.cod_usuario, m.nick, m.total_puntos
+                        SELECT ROW_NUMBER() OVER(ORDER BY m.puntos DESC) AS posicion,
+                        m.cod_usuario, m.nick, m.puntos
                         From m
-                        ORDER by m.total_puntos DESC";
+                        ORDER by m.puntos DESC";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
 
         $filas=$consulta->filas();
         
-        if (is_null($filas) || count($filas)==0) return false;
+        if (!$filas || count($filas)==0) return false;
 
         $ranking = [];
+        $usuario = null;
 
         foreach ($filas as $fila) {
-            $ranking[intval($fila["cod_usuario"])] = $fila;
+            $ranking[intval($fila["posicion"])] = $fila;
+            if (!is_null($cod_usuario) && intval($fila["cod_usuario"]) == $cod_usuario)
+                $usuario = $fila;
         }
 
-        if ($cod_usuario === null)
+        if (is_null($cod_usuario))
             return $ranking;
         else {
-            if (isset($ranking[$cod_usuario]))
-                return $ranking[$cod_usuario];
+            if (!is_null($usuario))
+                return $usuario;
         }
 
         return false;

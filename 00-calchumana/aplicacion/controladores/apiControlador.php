@@ -33,11 +33,12 @@ class apiControlador extends CControlador {
 
                 $fecha = $_POST["fecha"];
                 $test = new Test();
-                $datos = $test::dameTestPorFecha($fecha);
+                $datosCalc = $test::dameTestPorFecha($fecha);
+                $datosAdiv = false; // TO DO
 
-                if (!$datos) {
+                if (!$datosCalc && !$datosAdiv) {
                     $resultado=[
-                        "datos"=>"Test no encontrado",
+                        "datos"=>"Juegos no encontrados",
                         "correcto"=>false
                     ]; //error,
                     
@@ -47,7 +48,10 @@ class apiControlador extends CControlador {
                 }
 
                 $resultado=[
-                    "datos"=> $datos,
+                    "datos"=> [
+                        "calculadora" => $datosCalc,
+                        "adivina" => $datosAdiv
+                    ],
                     "correcto"=>true
                 ]; 
 
@@ -208,7 +212,7 @@ class apiControlador extends CControlador {
                     $ranking = [
                         "puntos_hoy" => !$rdiario ? "0" : $rdiario["puntos"],
                         "posicion_hoy" => !$rdiario ?  "-" : $rdiario["posicion"],
-                        "puntos_mes" => !$rmensual ?  "0" : $rmensual["total_puntos"],
+                        "puntos_mes" => !$rmensual ?  "0" : $rmensual["puntos"],
                         "posicion_mes" => !$rmensual ?  "-" : $rmensual["posicion"],
                     ]; 
 
@@ -229,5 +233,50 @@ class apiControlador extends CControlador {
         echo $res;
         exit;
     }
+
+    public function accionRanking() {
+
+        $resultado = [
+            "datos"=>[
+                "codigo" => -1,
+                "mensaje" => "No se llamó al método correcto"
+            ],
+            "correcto"=>false
+        ]; 
+
+        if ($_SERVER["REQUEST_METHOD"]=="GET") {
+
+            $rankingVacio = [
+                1 => [
+                    "cod_usuario" => 0,
+                    "posicion" => "-",
+                    "nick"=> "-",
+                    "puntos"=> "-"
+                ]
+            ];
+
+            $rdiarioCalc = PuntuacionTest::rankingDiario(date("d/m/Y"));
+            $rmensualCalc = PuntuacionTest::rankingMensual(date("m"), date("Y"));
+            $rdiarioAdiv = false;
+            $rmensualAdiv = false;
+                
+            $resultado=[
+                "datos"=> [
+                    "calc_diario" => !$rdiarioCalc ? $rankingVacio : $rdiarioCalc,
+                    "calc_mes" => !$rmensualCalc ? $rankingVacio : $rmensualCalc, 
+                    "adiv_diario" => !$rdiarioAdiv ? $rankingVacio : $rdiarioAdiv,
+                    "adiv_mes" => !$rmensualAdiv ? $rankingVacio : $rmensualAdiv
+                ],
+                "correcto"=>true
+            ]; 
+        }
+            
+        
+
+        $res=json_encode($resultado, JSON_PRETTY_PRINT);
+        echo $res;
+        exit;
+    }
+
 
 }

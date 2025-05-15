@@ -1,6 +1,5 @@
 var datos = [];
 
-
 obtenerDatos()
 
 function obtenerDatos () {

@@ -118,8 +118,8 @@ function noHaytest () {
 
     let botonCalendar = document.createElement("a")
     botonCalendar.setAttribute("class", "boton")
-    botonCalendar.setAttribute("href", "/index/calendario")
-    let textBoton = document.createTextNode("Ir al calendario")
+    botonCalendar.setAttribute("href", "/ranking")
+    let textBoton = document.createTextNode("Ir al ranking")
     botonCalendar.appendChild(textBoton)
 
     divTest.appendChild(pIntrod)

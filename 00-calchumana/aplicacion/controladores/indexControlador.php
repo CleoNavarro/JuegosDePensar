@@ -125,14 +125,10 @@ class indexControlador extends CControlador {
 	 */
 	public function menu () : array {
 
-		return [
+		$arrayMenu = [
 			[
 				"texto" => "Jugar Ahora", 
 				"enlace" => []
-			],
-			[
-				"texto" => "Calendario", 
-				"enlace" => ["calendario"]
 			],
 			[
 				"texto" => "Ranking", 
@@ -140,6 +136,33 @@ class indexControlador extends CControlador {
 			]
 			
 		];
+
+		if (Sistema::app()->Acceso()->hayUsuario()) {
+			array_push($arrayMenu,
+				[
+					"texto" => "Tus datos", 
+					"enlace" => ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]
+				],
+				[
+					"texto" => "Cerrar Sesión", 
+					"enlace" => ["index", "cerrarSesion"]
+				]
+			);
+		} else {
+			array_push($arrayMenu,
+				[
+					"texto" => "Regístrate", 
+					"enlace" => ["registrate", "index"]
+				],
+				[
+					"texto" => "Iniciar sesión", 
+					"enlace" => ["index", "login"]
+				]
+			);
+		}
+
+
+		return $arrayMenu;
 	}
 
 
