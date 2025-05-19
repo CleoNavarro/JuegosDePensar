@@ -32,7 +32,7 @@ class usuariosControlador extends CControlador {
 			"borrado" => -1
 		];
 
-		$where = "";
+		$where = " t.nombre != '--' ";
 
 		if ($_POST) {
 
@@ -44,7 +44,7 @@ class usuariosControlador extends CControlador {
 			$postuser["borrado"] = intval($_POST["usuarios"]["borrado"]);
 
 			
-			$where .= "t.nombre like '%".$postuser["nombre"]."%' ".
+			$where .= " and t.nombre like '%".$postuser["nombre"]."%' ".
 				"and t.nick like '%".$postuser["nick"]."%' ".
 				"and t.mail like '%".$postuser["mail"]."%' ";
 
@@ -382,17 +382,17 @@ class usuariosControlador extends CControlador {
 			if (is_null($fila["verificado"])) $fila["verificado"] = "NO";
             else $fila["verificado"] = "SI";
 
-            $fila["icono"] = CHTML::imagen("/imagenes/usuarios/".$fila["foto"],
+            $fila["foto"] = CHTML::imagen("/imagenes/usuarios/".$fila["foto"],
                                             "Foto ".$fila["nombre"],
                                         ["style" => "width: 50px; height: 50px;"]);
 
-			$fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
+			$fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-menu"]),
 				                        Sistema::app()->generaURL(["usuarios","consultar"],
-										["id" => $fila["cod_usuario"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png"),
+										["id" => $fila["cod_usuario"], "class" => "icon-menu"]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-menu"]),
 				                        Sistema::app()->generaURL(["usuarios","modificar"],
-										["id" => $fila["cod_usuario"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png"),
+										["id" => $fila["cod_usuario"], "class" => "icon-menu"]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png", "", ["class" => "icon-menu"]),
 				                        Sistema::app()->generaURL(["usuarios","borrar"],
 										["id" => $fila["cod_usuario"]]));
 			$filas[$clave] = $fila;
@@ -406,7 +406,7 @@ class usuariosControlador extends CControlador {
 
         return [
 			["ETIQUETA" => "NOMBRE", "CAMPO" => "nombre", "ALINEA" => "cen"],
-			["ETIQUETA" => "NICK", "CAMPO" => "nombre", "NICK" => "cen"],
+			["ETIQUETA" => "NICK", "CAMPO" => "nick", "NICK" => "cen"],
 			["ETIQUETA" => "FOTO", "CAMPO" => "foto", "ALINEA" => "cen"],
 			["ETIQUETA" => "MAIL", "CAMPO" => "mail", "ALINEA" => "cen"],
             ["ETIQUETA" => "ROL", "CAMPO" => "nombre_rol", "ALINEA" => "cen"],

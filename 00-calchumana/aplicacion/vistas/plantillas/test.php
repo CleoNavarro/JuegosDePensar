@@ -7,7 +7,6 @@
 	<title><?php echo $titulo; ?></title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width; initial-scale=1.0;">
-	<!--<link rel="stylesheet" id="mapa" type="text/css" href="/estilos/mapa.css" /> -->
 	<link rel="stylesheet" type="text/css" href="/estilos/main.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="/estilos/accesibilidad.css" /> -->
 	<link rel="icon" type="image/png" href="/imagenes/favicon.png" />
@@ -19,52 +18,17 @@
 <body>
 
 		<header>
-			<div class="iniciarSesion">
-			<?php
-
-				if (Sistema::app()->Acceso()->hayUsuario()) {
-					$usuario = new Usuarios();
-					$foto = $usuario::dameFoto(Sistema::app()->Acceso()->getCodUsuario());
-					if (!$foto) $foto = "fotoUsuarioPorDefecto.png";
-					echo CHTML::imagen("/imagenes/web/usuarios/".$foto, "", ["class" => "fotouser"]);
-					echo CHTML::link(Sistema::app()->Acceso()->getNick(), ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]);
-					echo CHTML::link("Cerrar Sesión", ["index", "cerrarSesion"]);
-				} else {
-					echo CHTML::link("Regístrate", ["registrate", "index"]);
-					echo CHTML::link("Iniciar sesión", ["index", "login"]);
-				}
-
-			?>
+			<div class="container-boton-menu">
+				<label for="boton-menu"><img class="icon-menu" src="/imagenes/icon-menu.png" /></label>
 			</div>
 			 <div class="logocontainer">
 				<div class="logo">
 				<a href="/"><img class="logo" src="/imagenes/logo.png" /></a>
 				</div>
 			</div>
+			<div class="vacio">
 
-			<nav class="barraNav">
-			<ul>
-				<?php
-					if (isset($this->menu)) {
-						foreach ($this->menu as $opcion) {
-							echo CHTML::dibujaEtiqueta(
-								"li",
-								array(),
-								"",
-								false
-							);
-							echo CHTML::link(
-								$opcion["texto"],
-								$opcion["enlace"]
-							);
-							echo CHTML::dibujaEtiquetaCierre("li");
-							echo CHTML::dibujaEtiqueta("br") . "\r\n";
-						}
-					}
-
-					?>
-				</ul>
-			</nav>
+			</div>
 		</header>
 
 		
@@ -72,12 +36,28 @@
 		
 
 		<?php echo $contenido; ?><!-- #content -->
-
-
 		
+	<input type="checkbox" id="boton-menu">
 
-		
-
+	<div class="container-menu">
+		<div class="cont-menu">
+			<nav class="barraNav">
+				<?php
+					if (isset($this->menu)) {
+						foreach ($this->menu as $opcion) {
+							echo CHTML::link(
+								$opcion["texto"],
+								$opcion["enlace"]
+							);
+							//echo CHTML::dibujaEtiqueta("br") . "\r\n";
+						}
+					}
+					?>
+			</nav>
+			<label for="boton-menu" class="icon-x">X</label>
+		</div>
+	</div>
+	
 	</div><!-- #wrapper -->
 </body>
 

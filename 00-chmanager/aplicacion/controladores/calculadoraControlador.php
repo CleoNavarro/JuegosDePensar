@@ -231,12 +231,14 @@ class calculadoraControlador extends CControlador {
 
        $this->tienePermisos("modificar", $id);
 
-       $sitios = new Sitios();
+       $test = new Test();
 
-       if (!$sitios->buscarPorId($id)) {
+       if (!$test->buscarPorId($id)) {
            Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
+
+       $arrPreguntas = Test::damePreguntas($id);
 
        $this->menu();
 
@@ -246,52 +248,78 @@ class calculadoraControlador extends CControlador {
                "enlace" => ["index"]
            ],
            [
-               "texto" => "Gestión de Sitios",
-               "enlace" => ["sitios"]
+               "texto" => "Calculadora",
+               "enlace" => ["calculadora"]
            ],
            [
-               "texto" => "Modificar sitio ".$sitios->nombre_sitio,
-               "enlace" => ["sitios", "modificar/id=$id",]
-           ]
-       ];
+                "texto" => "Modificar test del día ".$test->fecha,
+                "enlace" => ["calculadora", "modificar/id=$id",]
+            ]
+        ];
 
-       if ($_POST) {
-           
-           $nombre = $sitios->getNombre();
+        if ($_POST) {
 
-           if(isset($_FILES["sitios"]))
-               {
-                   $nombre_imagen = $_FILES['plazas']['sitios']["foto"];
-                   //Guardamos tambien la ruta a donde ira
-                   $ruta = RUTA_BASE."/imagenes/sitios/".$_FILES["sitios"]["name"]["foto"];
-                   move_uploaded_file($nombre_imagen, $ruta);
+            // TODO: REVISAR BIEN Y PROBAR
 
-                   //Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-                   if($_FILES["sitios"]["name"]["foto"]!== "")
-                       //Como la imagen no es por post, sino por file, lo añadimos de esta manera
-                       $_POST[$nombre]["foto"] = $_FILES["sitios"]["name"]["foto"];
-                   else 
-                       //Sino seleccionamos la opción que estaba guardada
-                       $_POST[$nombre]["foto"] = $sitios->icono;
-               }
+            $testNombre = $test->getNombre();
+            $fechaAux =  $_POST[$testNombre]["fecha"] ;
+            $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+            $_POST[$testNombre]["fecha"] = $fechaAux;
+            $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+            $_POST[$testNombre]["puntuacion_base"] = 0;
+            $test->setValores($_POST[$testNombre]);
 
-           $sitios->setValores($_POST[$nombre]);
-   
-            if ($sitios->validar()) {
+            if ($test->validar()) {
 
-               if (!$sitios->guardar()) {
-                   $this->dibujaVista("modificar", array("modelo"=>$sitios), "Modificar sitio ".$sitios->nombre_sitio);
-                   exit;
-               }
+                $pregunta = new Pregunta();
+                $preguntaNombre = $pregunta->getNombre();
+                $arrPreguntas = $_POST["preguntas"];
+                $valido = true;
+                $puntuacion = 0;
 
-               $id = $sitios->cod_plaza;
+                for ($i = 1; $i <= count($arrPreguntas); $i++){
+                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$preguntaNombre.$i]["cod_tipo"]));
+                    $puntuacion += intval($arrTipo["puntuacion_base"]);
+                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = 0;
+                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    if (!$pregunta->validar()) 
+                            $valido = false;
+                }
 
-               Sistema::app()->irAPagina(array("sitios", "consultar/id=$id")); 
-               exit;
-           }
-       }
+                $arrDificultad = Test::dameDificultad(intval($_POST[$testNombre]["cod_dificultad"]));
+                $_POST[$testNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
+                $test->setValores($_POST[$testNombre]);
+                if (!$test->validar()) $valido = false;
 
-       $this->dibujaVista("modificar", array("modelo" => $sitios), "Modificar sitio ".$sitios->nombre_sitio);
+                if (!$valido || !$test->guardar()) {
+
+                    $this->dibujaVista("modificar", array("modelo"=>$test, "preguntas"=> $arrPreguntas), 
+                            "Modificar test del día ".$test->fecha);
+                    exit;
+                }
+
+                $codTest = $test->cod_test;
+                for ($i = 1; $i <= count($arrPreguntas); $i++){
+                    $pregunta = new Pregunta();
+                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = $codTest;
+                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    if (!$pregunta->guardar()) {
+                            $i = count($arrPreguntas) + 2;
+                            $valido = false;
+                    }    
+                }
+                
+                if ($valido) {
+                    Sistema::app()->irAPagina(array("calculadora")); 
+                    exit;
+                }
+            }
+        }
+
+       $this->dibujaVista("modificar", array("modelo" => $test, "preguntas"=> $arrPreguntas), 
+                "Modificar test del día ".$test->fecha);
    }
 
    public function accionBorrar() {
@@ -399,13 +427,13 @@ class calculadoraControlador extends CControlador {
             } 
             else $fila["borrado"] = "NO";
 
-            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png"),
+            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-menu"]),
                                        Sistema::app()->generaURL(["calculadora","consultar"],
                                        ["id" => $fila["cod_test"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png"),
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-menu"]),
                                        Sistema::app()->generaURL(["calculadora","modificar"],
                                        ["id" => $fila["cod_test"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png"),
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png", "", ["class" => "icon-menu"]),
                                        Sistema::app()->generaURL(["calculadora","borrar"],
                                        ["id" => $fila["cod_test"]]));
            $filas[$clave] = $fila;

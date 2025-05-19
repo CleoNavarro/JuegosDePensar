@@ -31,6 +31,8 @@ class indexControlador extends CControlador {
 	 */
 	public function accionLogin() {
 
+		$this->menu = $this->menu();
+
 		//Creamos el modelo
         $login = new Login();
 
@@ -105,6 +107,8 @@ class indexControlador extends CControlador {
 	 */
 	public function accionJugar() {
 
+		$this->menu = $this->menu();
+
 		if (!isset($_GET["cod_test"])) {
 			Sistema::app()->paginaError(404, "¿Cómo has llegado hasta aquí?");
             return;
@@ -138,21 +142,26 @@ class indexControlador extends CControlador {
 		];
 
 		if (Sistema::app()->Acceso()->hayUsuario()) {
-			array_push($arrayMenu,
+			array_unshift($arrayMenu,
 				[
-					"texto" => "Tus datos", 
+					"texto" => CHTML::imagen("imagenes/web/usuarios/".
+						Usuarios::dameFoto(Sistema::app()->Acceso()->getCodUsuario()), "", 
+						["class" => "fotouser"])." <br/> ".
+						Sistema::app()->Acceso()->getNick(), 
 					"enlace" => ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]
-				],
+				]
+			);
+			array_push($arrayMenu,
 				[
 					"texto" => "Cerrar Sesión", 
 					"enlace" => ["index", "cerrarSesion"]
 				]
 			);
 		} else {
-			array_push($arrayMenu,
+			array_unshift($arrayMenu,
 				[
 					"texto" => "Regístrate", 
-					"enlace" => ["registrate", "index"]
+					"enlace" => ["registrate"]
 				],
 				[
 					"texto" => "Iniciar sesión", 

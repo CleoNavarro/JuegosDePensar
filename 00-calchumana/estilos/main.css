@@ -47,28 +47,20 @@ body {
 header {
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
     background-color: var(--gris-oscuro);
     border-bottom: 1px solid var(--gris-suave);
 }
 
-div.iniciarSesion {
-    width: 33%;
-    display: flex;
-    justify-content: left;
+img.icon-menu {
+    width: 50px;
+    margin: 10px;
+    cursor: pointer;
 }
 
-div.iniciarSesion * {
-    margin: 15px 10px;
-}
-
-div.iniciarSesion span, div.iniciarSesion a {
-    padding: 12px 0;
-}
-
-div.iniciarSesion a:hover {
-    font-weight: bold;
-    color: var(--amarillo-destacado);
+img.icon-menu:hover{
+    filter:drop-shadow(0 0 2px rgb(255, 255, 255));
 }
 
 div.logocontainer {
@@ -83,32 +75,86 @@ img.logo{
     filter:drop-shadow(0 0 2px rgb(126, 126, 126));
 }
 
-nav.barraNav {
+div.vacio{
     width: 33%;
-    display: flex;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
 }
 
-nav.barraNav ul {
+/* Menú Lateral */
+
+div.container-boton-menu {
+    width: 33%;
+    float: left;
+    margin: 0 50px;
+}
+
+input#boton-menu {
+    display: none;
+}
+
+input#boton-menu:checked ~ div.container-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+div.container-menu {
+    position: absolute;
     width: 100%;
-    display: flex;
-    list-style: none;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    padding-left: 0;
-    
+    height: 100vh;
+    top: 0;
+    left: 0;
+    transition: all .5s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 3;
 }
 
-nav.barraNav ul li {
-    margin: 5px 15px;
+div.cont-menu {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--gris-fondo2);
+    border-right: 1px solid var(--gris-suave);
+    transition: all .2s ease;
+    transform: translateX(-100%);
+    z-index: 3;
 }
 
-nav.barraNav ul li a:hover {
+input#boton-menu:checked ~ div.container-menu div.cont-menu {
+    transform: translateX(0%);
+}
+
+nav.barraNav {
+    transform: translateY(15%);
+    z-index: 3;
+}
+
+nav.barraNav a {
+    display: block;
+    align-content: center;
+    padding: 20px;
+    z-index: 3;
+}
+
+nav.barraNav a:hover {
     font-weight: bold;
     color:var(--amarillo-destacado);
+    border-left: 3px solid var(--naranja-principal);
+    background-color: var(--gris-suave);
+}
+
+label.icon-x {
+    position: absolute;
+    right: 10px;
+    top:10px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 3;
+}
+
+label.icon-x:hover {
+    filter:drop-shadow(0 0 2px rgb(126, 126, 126));
 }
 
 /* Diseño Registrarte / Iniciar sesión */
@@ -164,9 +210,6 @@ div.contJuego{
     margin: 20px auto;
     padding: 20px;
 }
-
-
-
 
 a.boton {
     padding: 20px;
@@ -314,7 +357,7 @@ table.tablaPuntuacion tr td {
     background-color: var(--gris-azulado); 
     padding: 20px;
     position: relative;
-    z-index: 100;
+    z-index: 1;
 }
 
 .tab>a {
@@ -326,7 +369,7 @@ table.tablaPuntuacion tr td {
 
 .tab:target>a, .tab:last-of-type>a {
     background-color: var(--gris-azulado); 
-    z-index: 200;
+    z-index: 2;
 }
 
 .tab:target ~ .tab:last-of-type>a {

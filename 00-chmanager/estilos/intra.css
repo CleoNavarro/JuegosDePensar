@@ -686,6 +686,11 @@
 	div.tabla table.tabla tr td{
 		padding: 2px;
 	}
+
+	img.icon-menu{
+		width: 24px;
+		height: 24px;
+	}
 	
 	/*
 	 * Definiciones de tabla para el objeto CGrid con estilo propio

@@ -31,14 +31,10 @@ class rankingControlador extends CControlador {
 	 */
 	public function menu () : array {
 
-		return [
+		$arrayMenu = [
 			[
 				"texto" => "Jugar Ahora", 
 				"enlace" => []
-			],
-			[
-				"texto" => "Calendario", 
-				"enlace" => ["calendario"]
 			],
 			[
 				"texto" => "Ranking", 
@@ -46,5 +42,39 @@ class rankingControlador extends CControlador {
 			]
 			
 		];
+
+		if (Sistema::app()->Acceso()->hayUsuario()) {
+			array_unshift($arrayMenu,
+				[
+					"texto" => CHTML::imagen("imagenes/web/usuarios/".
+						Usuarios::dameFoto(Sistema::app()->Acceso()->getCodUsuario()), "", 
+						["class" => "fotouser"])." <br/> ".
+						Sistema::app()->Acceso()->getNick(), 
+					"enlace" => ["index", "datos?id=".Sistema::app()->Acceso()->getCodUsuario()]
+				]
+			);
+			array_push($arrayMenu,
+				[
+					"texto" => "Cerrar Sesión", 
+					"enlace" => ["index", "cerrarSesion"]
+				]
+			);
+		} else {
+			array_unshift($arrayMenu,
+				[
+					"texto" => "Regístrate", 
+					"enlace" => ["registrate"]
+				],
+				[
+					"texto" => "Iniciar sesión", 
+					"enlace" => ["index", "login"]
+				]
+			);
+		}
+
+
+		return $arrayMenu;
 	}
+
+
 }
