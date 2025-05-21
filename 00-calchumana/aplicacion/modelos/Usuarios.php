@@ -18,7 +18,8 @@ class Usuarios extends CActiveRecord {
             "cod_usuario", "nombre", "nick", "contrasenia", 
             "repite_contrasenia" , "mail", "telefono", "foto", 
             "fecha_registrado", "verificado", "borrado", "borrado_fecha", 
-            "borrado_por", "cod_usuario_borrador", "nick_borrador", "cod_acl_role"
+            "borrado_por", "cod_usuario_borrador", "nick_borrador", "cod_acl_role",
+            "nombre_rol"
         );
     }
 
@@ -39,7 +40,8 @@ class Usuarios extends CActiveRecord {
             "borrado_por" => "Borrado por",
             "cod_usuario_borrador" => "Código Usuario Borrador", 
             "nick_borrador" => "Nick borrador", 
-            "cod_acl_role" => "Asignar rol"
+            "cod_acl_role" => "Asignar rol",
+            "nombre_rol" => "Rol"
         );
     }
 

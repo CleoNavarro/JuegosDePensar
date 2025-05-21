@@ -4,7 +4,7 @@ obtenerDatos()
 
 function obtenerDatos () {
 
-    let loc = "http://www.calculadorahumana.com/api/datos"
+    let loc = "http://www.juegosdepensar.com/api/datos"
 
     let cod_usuario = document.getElementById("cod_usuario").value
 
@@ -70,8 +70,10 @@ function cargarDatos () {
 
     let stats = datos["estadisticas"];
 
-    let tituloCalc = document.createElement("h3");
-    tituloCalc.innerHTML = "Calculadora Humana";
+    let logoCalc = document.createElement("img");
+    logoCalc.setAttribute("class", "logo");
+    logoCalc.setAttribute("src", "/imagenes/logocalculadora.png");
+    logoCalc.setAttribute("alt", "Logo Calculadora Humana");
 
     let pJuegosCalc = document.createElement("p");
     pJuegosCalc.innerHTML = "Partidas a Calculadora Humana: " + stats["total"];
@@ -90,7 +92,7 @@ function cargarDatos () {
     let pPuntosCalc = document.createElement("p");
     pPuntosCalc.innerHTML = "Puntos totales en Calculadora Humana: " + stats["puntuacion_total"];
 
-    contEstadisticas.appendChild(tituloCalc);
+    contEstadisticas.appendChild(logoCalc);
     contEstadisticas.appendChild(pJuegosCalc);
     contEstadisticas.appendChild(listaCalc);
     contEstadisticas.appendChild(pPuntosCalc);
@@ -153,8 +155,10 @@ function cargarDatos () {
 
     let ranking = datos["ranking"];
 
-    let tituloCalc2 = document.createElement("h3");
-    tituloCalc2.innerHTML = "Calculadora Humana";
+    let logoCalc2 = document.createElement("img");
+    logoCalc2.setAttribute("class", "logo");
+    logoCalc2.setAttribute("src", "/imagenes/logocalculadora.png");
+    logoCalc2.setAttribute("alt", "Logo Calculadora Humana");
 
     let pRankingHoy = document.createElement("p");
     pRankingHoy.innerHTML = "Posición en el desafio de hoy: " + ranking["posicion_hoy"];
@@ -168,7 +172,7 @@ function cargarDatos () {
     let pPuntosMes = document.createElement("p");
     pPuntosMes.innerHTML = "Puntos en el ranking mensual: " + ranking["puntos_mes"];
 
-    contRaking.appendChild(tituloCalc2);
+    contRaking.appendChild(logoCalc2);
     contRaking.appendChild(pRankingHoy);
     contRaking.appendChild(pPuntosHoy);
     contRaking.appendChild(pRankingMes);

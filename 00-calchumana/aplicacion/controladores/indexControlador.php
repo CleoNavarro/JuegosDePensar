@@ -22,7 +22,7 @@ class indexControlador extends CControlador {
 		$this->menu = $this->menu();
 
 		$this->dibujaVista("index",
-			[], "JUGAR - Calculadora humana");
+			[], "JUEGOS DE PENSAR");
 			
 	}
 
@@ -60,7 +60,7 @@ class indexControlador extends CControlador {
             exit;
         }  
 
-        $this->dibujaVista("login", array("modelo" => $login), "Login");
+        $this->dibujaVista("login", array("modelo" => $login), "Login - JUEGOS DE PENSAR");
 			
 	}
 
@@ -79,7 +79,7 @@ class indexControlador extends CControlador {
 
 		$this->menu = $this->menu();
 
-        $this->dibujaVista("registrate", [], "¡Régistrate!");
+        $this->dibujaVista("registrate", [], "¡Régistrate! - JUEGOS DE PENSAR");
 			
 	}
 
@@ -97,32 +97,10 @@ class indexControlador extends CControlador {
             return;
 		}
 
-        $this->dibujaVista("datos", ["cod_usuario" => intval($_GET["id"])], "Estadísticas - Juegos de Pensar");
+        $this->dibujaVista("datos", ["cod_usuario" => intval($_GET["id"])], "Estadísticas - JUEGOS DE PENSAR");
 			
 	}
 
-
-	/**
-	 * Acción para la página principal
-	 */
-	public function accionJugar() {
-
-		$this->menu = $this->menu();
-
-		if (!isset($_GET["cod_test"])) {
-			Sistema::app()->paginaError(404, "¿Cómo has llegado hasta aquí?");
-            return;
-		}
-
-		if (!Test::dameTest($_GET["cod_test"])) {
-			Sistema::app()->paginaError(404, "No, este test no existe (o no es un test)");
-            return;
-		}
-
-		$this->dibujaVista("jugar",
-			["cod_test" => intval($_GET["cod_test"])], "JUGANDO - Calculadora humana");
-			
-	}
 	
 	/**
 	 * Función que genera los links del menú para el header

@@ -4,7 +4,7 @@ obtenerDatos()
 
 function obtenerDatos () {
 
-    let loc = "http://www.calculadorahumana.com/api/ranking"
+    let loc = "http://www.juegosdepensar.com/api/ranking"
 
     let busqueda = new Request(loc, {
         method: "GET",

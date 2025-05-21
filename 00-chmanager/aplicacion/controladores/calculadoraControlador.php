@@ -171,17 +171,16 @@ class calculadoraControlador extends CControlador {
             if ($test->validar()) {
 
                 $pregunta = new Pregunta();
-                $preguntaNombre = $pregunta->getNombre();
                 $arrPreguntas = $_POST["preguntas"];
                 $valido = true;
                 $puntuacion = 0;
 
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$preguntaNombre.$i]["cod_tipo"]));
+                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$i]["cod_tipo"]));
                     $puntuacion += intval($arrTipo["puntuacion_base"]);
-                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = 0;
-                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    $arrPreguntas[$i]["cod_test"] = 0;
+                    $arrPreguntas[$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$i]);
                     if (!$pregunta->validar()) 
                             $valido = false;
                 }
@@ -200,9 +199,9 @@ class calculadoraControlador extends CControlador {
                 $codTest = $test->cod_test;
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
                     $pregunta = new Pregunta();
-                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = $codTest;
-                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    $arrPreguntas[$i]["cod_test"] = $codTest;
+                    $arrPreguntas[$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$i]);
                     if (!$pregunta->guardar()) {
                             $i = count($arrPreguntas) + 2;
                             $valido = false;
@@ -272,17 +271,16 @@ class calculadoraControlador extends CControlador {
             if ($test->validar()) {
 
                 $pregunta = new Pregunta();
-                $preguntaNombre = $pregunta->getNombre();
                 $arrPreguntas = $_POST["preguntas"];
                 $valido = true;
                 $puntuacion = 0;
 
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$preguntaNombre.$i]["cod_tipo"]));
+                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$i]["cod_tipo"]));
                     $puntuacion += intval($arrTipo["puntuacion_base"]);
-                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = 0;
-                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    $arrPreguntas[$i]["cod_test"] = 0;
+                    $arrPreguntas[$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$i]);
                     if (!$pregunta->validar()) 
                             $valido = false;
                 }
@@ -302,9 +300,9 @@ class calculadoraControlador extends CControlador {
                 $codTest = $test->cod_test;
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
                     $pregunta = new Pregunta();
-                    $arrPreguntas[$preguntaNombre.$i]["cod_test"] = $codTest;
-                    $arrPreguntas[$preguntaNombre.$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$preguntaNombre.$i]);
+                    $arrPreguntas[$i]["cod_test"] = $codTest;
+                    $arrPreguntas[$i]["orden"] = $i;
+                    $pregunta->setValores($arrPreguntas[$i]);
                     if (!$pregunta->guardar()) {
                             $i = count($arrPreguntas) + 2;
                             $valido = false;

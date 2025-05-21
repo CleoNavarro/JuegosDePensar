@@ -19,23 +19,23 @@ function preguntaMas () {
     separador.setAttribute("class", "separador");
 
     let labelenunciado = document.createElement("label");
-    labelenunciado.setAttribute("for", "preguntas[pregunta"+valor+"][enunciado]");
+    labelenunciado.setAttribute("for", "preguntas["+valor+"][enunciado]");
     labelenunciado.setAttribute("id", "labelenunciado"+valor);
     labelenunciado.innerHTML = "Pregunta " + valor;
 
     let textenunciado = document.createElement("input");
     textenunciado.setAttribute("type", "text");
-    textenunciado.setAttribute("name", "preguntas[pregunta"+valor+"][enunciado]");
+    textenunciado.setAttribute("name", "preguntas["+valor+"][enunciado]");
     labelenunciado.setAttribute("id", "textenunciado"+valor);
 
     let labeltipo = document.createElement("label");
-    labeltipo.setAttribute("for", "preguntas[pregunta"+valor+"][cod_tipo]");
+    labeltipo.setAttribute("for", "preguntas["+valor+"][cod_tipo]");
     labeltipo.setAttribute("id", "labeltipo"+valor);
     labeltipo.innerHTML = "Tipo Pregunta";
 
     let listtipo = document.createElement("select");
     listtipo.setAttribute("id", "listtipo"+valor);
-    listtipo.setAttribute("name", "preguntas[pregunta"+valor+"][cod_tipo]");
+    listtipo.setAttribute("name", "preguntas["+valor+"][cod_tipo]");
     let option0 = document.createElement("option");
     option0.innerHTML = "Seleccione una opción";
     let option1 = document.createElement("option");
@@ -50,13 +50,13 @@ function preguntaMas () {
     listtipo.appendChild(option2);
 
     let labelrespuesta = document.createElement("label");
-    labelrespuesta.setAttribute("for", "preguntas[pregunta"+valor+"][cantidad]");
+    labelrespuesta.setAttribute("for", "preguntas["+valor+"][cantidad]");
     labelrespuesta.setAttribute("id", "labelrespuesta"+valor);
     labelrespuesta.innerHTML = "Respuesta (hasta este punto)";
 
     let textrespuesta = document.createElement("input");
     textrespuesta.setAttribute("type", "number");
-    textrespuesta.setAttribute("name", "preguntas[pregunta"+valor+"][cantidad]");
+    textrespuesta.setAttribute("name", "preguntas["+valor+"][cantidad]");
     textrespuesta.setAttribute("id", "textrespuesta"+valor);
 
     let botonSubmit = document.createElement("input");

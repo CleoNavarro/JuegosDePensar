@@ -29,14 +29,14 @@ echo CHTML::boton("-", ["id" => "preguntamenos", "class" => "botonmas"]);
 for ($i = 1; $i <= 5; $i++){
     echo CHTML::dibujaEtiqueta("hr", ["class" => "separador", "id" => "separador".$i], null. false);
 
-    echo CHTML::campoLabel("Pregunta ".$i.": ", "preguntas[pregunta".$i."][enunciado]", ["id" => "labelenunciado".$i]);
-    echo CHTML::campoText("preguntas[pregunta".$i."][enunciado]", "", ["id" => "textenunciado".$i]);
+    echo CHTML::campoLabel("Pregunta ".$i.": ", "preguntas[".$i."][enunciado]", ["id" => "labelenunciado".$i]);
+    echo CHTML::campoText("preguntas[".$i."][enunciado]", "", ["id" => "textenunciado".$i]);
     
-    echo CHTML::campoLabel("Tipo Pregunta", "preguntas[pregunta".$i."][cod_tipo]", ["id" => "labeltipo".$i]);
-    echo CHTML::campoListaDropDown("preguntas[pregunta".$i."][cod_tipo]", 1, Pregunta::dameTipoDrop(), ["id" => "listtipo".$i]);
+    echo CHTML::campoLabel("Tipo Pregunta", "preguntas[".$i."][cod_tipo]", ["id" => "labeltipo".$i]);
+    echo CHTML::campoListaDropDown("preguntas[".$i."][cod_tipo]", 1, Pregunta::dameTipoDrop(), ["id" => "listtipo".$i]);
     
-    echo CHTML::campoLabel("Respuesta (hasta este punto) ", "preguntas[pregunta".$i."][cantidad]", ["id" => "labelrespuesta".$i]);
-    echo CHTML::campoNumber("preguntas[pregunta".$i."][cantidad]", 0, ["id" => "textrespuesta".$i]);
+    echo CHTML::campoLabel("Respuesta (hasta este punto) ", "preguntas[".$i."][cantidad]", ["id" => "labelrespuesta".$i]);
+    echo CHTML::campoNumber("preguntas[".$i."][cantidad]", 0, ["id" => "textrespuesta".$i]);
 }
 
 

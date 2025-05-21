@@ -6,7 +6,7 @@ function desafioDiario () {
 
     //let fecha= "18/05/2025"
 
-    let loc = "http://www.calculadorahumana.com/api/test"
+    let loc = "http://www.juegosdepensar.com/api/test"
 
         let busqueda = new Request(loc, {
             method: "POST",
@@ -62,7 +62,7 @@ function testDiario (test) {
 
     let botonJugar = document.createElement("a")
     botonJugar.setAttribute("class", "boton")
-    botonJugar.setAttribute("href", "/index/jugar?cod_test=" + test["cod_test"])
+    botonJugar.setAttribute("href", "/calculadora/jugar?cod_test=" + test["cod_test"])
     let textBoton = document.createTextNode("¡A jugar!")
     botonJugar.appendChild(textBoton)
 
@@ -93,7 +93,7 @@ function adivinaDiario (test) {
 
     let botonJugar = document.createElement("a")
     botonJugar.setAttribute("class", "boton")
-    botonJugar.setAttribute("href", "/index/jugar?cod_adivina=" + test["cod_adivina"])
+    botonJugar.setAttribute("href", "/adivina/jugar?cod_adivina=" + test["cod_adivina"])
     let textBoton = document.createTextNode("¡A jugar!")
     botonJugar.appendChild(textBoton)
 

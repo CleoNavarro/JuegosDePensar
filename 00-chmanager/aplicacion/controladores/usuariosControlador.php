@@ -112,7 +112,7 @@ class usuariosControlador extends CControlador {
 
         $id = intval($_GET["id"]);
 
-		//$this->tienePermisos("consultar",  $id);
+		$this->tienePermisos("consultar",  $id);
 
         $usuario = new Usuarios();
 
@@ -130,7 +130,7 @@ class usuariosControlador extends CControlador {
 				"enlace" => ["index"]
 			],
 			[
-				"texto" => "Gestión de Usuarios",
+				"texto" => "Usuarios",
 				"enlace" => ["usuarios"]
             ],
             [
@@ -143,7 +143,7 @@ class usuariosControlador extends CControlador {
 		if ($usuario->borrado==1) $borr = $usuario->borrado_fecha." por ".$usuario->nick_borrador ;
 		
 		$verificado = "NO";
-		if (!is_null($usuario->verificado==0)) $verificado = $usuario->verificado;
+		if (!is_null($usuario->verificado)) $verificado = $usuario->verificado;
 
 
         $this->dibujaVista("consultar", 
@@ -156,66 +156,76 @@ class usuariosControlador extends CControlador {
 
 		$this->tienePermisos("nuevo");
 
-        $this->menuIzquierda();
+        $this->menu();
 
         $this->barra_ubi = [
 			[
-				"texto" => "INICIAL",
-				"enlace" => ["inicial"]
+				"texto" => "MANAGER",
+				"enlace" => ["index"]
 			],
 			[
-				"texto" => "Gestion de Plazas",
-				"enlace" => ["plazas"]
+				"texto" => "Usuarios",
+				"enlace" => ["usuarios"]
             ],
             [
-				"texto" => "Nueva Plaza",
-				"enlace" => ["plazas", "nuevo",]
+				"texto" => "Nuevo Usuario",
+				"enlace" => ["usuarios", "nuevo"]
 			]
 		];
         
-        $plazas = new Plazas();
+        $usuarios = new Usuarios();
 
-        if ($_POST) {
-            $nombre = $plazas->getNombre();
+		if ($_POST) {
+            $nombre = $usuarios->getNombre();
+        
+				if(isset($_FILES["usuarios"])) {
+					$nombre_imagen = $_FILES['usuarios']['tmp_name']["foto"];
+					//Guardamos tambien la ruta a donde ira
+					$ruta = RUTA_BASE."/imagenes/usuarios/".$_FILES["usuarios"]["name"]["foto"];
+					move_uploaded_file($nombre_imagen, $ruta);
 
-			if(isset($_FILES["plazas"])) {
-				$nombre_imagen = $_FILES['plazas']['tmp_name']["icono"];
-				//Guardamos tambien la ruta a donde ira
-				$ruta = RUTA_BASE."/imagenes/terrenos/".$_FILES["plazas"]["name"]["icono"];
-				move_uploaded_file($nombre_imagen, $ruta);
-
-				//Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-				if($_FILES["plazas"]["name"]["icono"]!== "")
-					//Como la imagen no es por post, sino por file, lo añadimos de esta manera
-					$_POST[$nombre]["icono"] = $_FILES["plazas"]["name"]["icono"];
-				else 
-					//Sino seleccionamos la opción por defecto
-					$_POST[$nombre]["icono"] = "fotoPorDefecto.jpg";
-			} else {
-				$_POST[$nombre]["icono"] = "fotoPorDefecto.jpg";
-			}
-
-            $plazas->setValores($_POST[$nombre]);
-    
-		 	if ($plazas->validar()) {
-
-				if (!$plazas->guardar()) {
-					$this->dibujaVista("nuevo", array("modelo"=>$plazas), "Crear plaza");
-					exit;
+					//Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
+					if($_FILES["usuarios"]["name"]["foto"]!== "")
+						//Como la imagen no es por post, sino por file, lo añadimos de esta manera
+						$_POST[$nombre]["foto"] = $_FILES["usuarios"]["name"]["foto"];
+					else 
+						//Sino seleccionamos la opción por defecto
+						$_POST[$nombre]["foto"] = "fotoUsuarioPorDefecto.png";
+				} else {
+					$_POST[$nombre]["foto"] = "fotoUsuarioPorDefecto.png";
 				}
 
-				Sistema::app()->irAPagina(array("plazas")); 
-				exit;
-			}
-        }
+				$usuarios->setValores($_POST[$nombre]);
 
-        $this->dibujaVista("nuevo", array("modelo" => $plazas), "Crear plaza");
+				if ($usuarios->validar()) {
+
+					if (!$usuarios->guardar()) {
+						$this->dibujaVista("nuevo", array("modelo" => $usuarios), "Crear Usuario");
+						exit;
+					}
+
+					$usuarioACL = new UsuariosACL();
+					$usuarioACL->setValores($_POST[$nombre]);
+					if ($usuarioACL->validar() ) {
+							if (!$usuarioACL->guardar()) {
+								$this->dibujaVista("nuevo", array("modelo" => $usuarios), "Crear Usuario");
+								exit;
+							}
+
+					}
+
+					Sistema::app()->irAPagina(array("usuarios")); 
+					exit;
+				}
+			}	
+
+        $this->dibujaVista("nuevo", array("modelo" => $usuarios), "Crear Usuario");
     }
 
 	public function accionModificar () {
 
 		if (!isset($_GET["id"])) {
-            Sistema::app()->paginaError(404, "No has indicado la reserva");
+            Sistema::app()->paginaError(404, "No has indicado ningún usuario");
 			exit;
         }
 
@@ -223,68 +233,73 @@ class usuariosControlador extends CControlador {
 
 		$this->tienePermisos("modificar", $id);
 
-		$plazas = new Plazas();
+		$usuarios = new Usuarios();
+		$usuarioACL = new UsuariosACL();
 
-        if (!$plazas->buscarPorId($id)) {
-			Sistema::app()->paginaError(404, "No se encuentra la reserva");
+        if (!$usuarios->buscarPorId($id) || !$usuarioACL->buscarPorId($id)) {
+			Sistema::app()->paginaError(404, "No se encuentra el usuario");
 			exit;
 		}
 
-        $this->menuIzquierda();
+        $this->menu();
 
 		$this->barra_ubi = [
 			[
-				"texto" => "INICIAL",
-				"enlace" => ["inicial"]
+				"texto" => "MANAGER",
+				"enlace" => ["index"]
 			],
 			[
-				"texto" => "Gestión de Plazas",
-				"enlace" => ["plazas"]
+				"texto" => "Usuarios",
+				"enlace" => ["usuarios"]
             ],
             [
-				"texto" => "Modificar plaza ".$plazas->nombre_plaza,
-				"enlace" => ["plazas", "modificar/id=$id",]
+				"texto" => "Modificar usuario ".$usuarios->nick,
+				"enlace" => ["usuarios", "modificar/id=$id",]
 			]
 		];
 
         if ($_POST) {
 			
-            $nombre = $plazas->getNombre();
+            $nombre = $usuarios->getNombre();
 
-			if(isset($_FILES["plazas"]))
-				{
-					$nombre_imagen = $_FILES['plazas']['tmp_name']["icono"];
-					//Guardamos tambien la ruta a donde ira
-					$ruta = RUTA_BASE."/imagenes/terrenos/".$_FILES["plazas"]["name"]["icono"];
-					move_uploaded_file($nombre_imagen, $ruta);
+			if(isset($_FILES["usuarios"])) {
+				$nombre_imagen = $_FILES['usuarios']['tmp_name']["foto"];
+				//Guardamos tambien la ruta a donde ira
+				$ruta = RUTA_BASE."/imagenes/usuarios/".$_FILES["usuarios"]["name"]["foto"];
+				move_uploaded_file($nombre_imagen, $ruta);
 
-					//Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
-					if($_FILES["plazas"]["name"]["icono"]!== "")
-						//Como la imagen no es por post, sino por file, lo añadimos de esta manera
-						$_POST[$nombre]["icono"] = $_FILES["plazas"]["name"]["icono"];
-					else 
-						//Sino seleccionamos la opción que estaba guardada
-						$_POST[$nombre]["icono"] = $plazas->icono;
-				}
+				//Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
+				if($_FILES["usuarios"]["name"]["foto"]!== "")
+					//Como la imagen no es por post, sino por file, lo añadimos de esta manera
+					$_POST[$nombre]["foto"] = $_FILES["usuarios"]["name"]["foto"];
+				else 
+					//Sino seleccionamos la opción por defecto
+					$_POST[$nombre]["foto"] = $usuarios->foto;
+			}
 
-            
-            $plazas->setValores($_POST[$nombre]);
-    
-		 	if ($plazas->validar()) {
+			// TODO: Cómo hacer que no pida nunca contraseña
+			if ($_POST[$nombre]["contrasenia"]=="") {
+				unset($_POST[$nombre]["contrasenia"]);
+				unset($_POST[$nombre]["repite_contrasenia"]);
+			}
+          
+            $usuarios->setValores($_POST[$nombre]);
+			$usuarioACL->setValores($_POST[$nombre]);
 
-				if (!$plazas->guardar()) {
-					$this->dibujaVista("modificar", array("modelo"=>$plazas), "Modificar plaza ".$plazas->nombre_plaza);
+			if ($usuarios->validar() && $usuarioACL->validar()) {
+
+				if (!$usuarios->guardar() || !$usuarioACL->guardar()) {
+					$this->dibujaVista("modificar", array("modelo" => $usuarios), 
+								"Modificar usuario ".$usuarios->nick);
 					exit;
 				}
 
-				$id = $plazas->cod_plaza;
-
-				Sistema::app()->irAPagina(array("plazas", "consultar/id=$id")); 
+				Sistema::app()->irAPagina(array("usuarios")); 
 				exit;
 			}
         }
 
-        $this->dibujaVista("modificar", array("modelo" => $plazas), "Modificar plaza ".$plazas->nombre_plaza);
+        $this->dibujaVista("modificar", array("modelo" => $usuarios), "Modificar usuario ".$usuarios->nick);
     }
 
 	public function accionBorrar() {
@@ -451,7 +466,8 @@ class usuariosControlador extends CControlador {
 		}
 				
 		// Si el usuario no tiene permiso de acceso, salta un error
-		if (!Sistema::app()->Acceso()->puedePermiso(6)) {
+		if (!Sistema::app()->Acceso()->puedePermiso(1) 
+			&& !Sistema::app()->Acceso()->puedePermiso(4)) {
 			Sistema::app()->paginaError(400, "Acceso no permitido");
 			return;
 		}

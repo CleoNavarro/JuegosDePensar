@@ -46,7 +46,7 @@ class registrateControlador extends CControlador {
             if ($usuarios->validar()) {
 
                if (!$usuarios->guardar()) {
-                   $this->dibujaVista("index", array("modelo"=>$usuarios), "Regístrate");
+                   $this->dibujaVista("index", array("modelo"=>$usuarios), "Regístrate - JUEGOS DE PENSAR");
                    exit;
                }
 
@@ -54,7 +54,7 @@ class registrateControlador extends CControlador {
 			   $usuarioACL->setValores($_POST[$nombre]);
 			   if ($usuarioACL->validar() ) {
 					if (!$usuarioACL->guardar()) {
-						$this->dibujaVista("index", array("modelo"=>$usuarios), "Regístrate");
+						$this->dibujaVista("index", array("modelo"=>$usuarios), "Regístrate - JUEGOS DE PENSAR");
 						exit;
 					}
 
@@ -76,7 +76,7 @@ class registrateControlador extends CControlador {
            }
         }
 
-        $this->dibujaVista("index", array("modelo" => $usuarios), "Regístrate");
+        $this->dibujaVista("index", array("modelo" => $usuarios), "Regístrate - JUEGOS DE PENSAR");
     }
 
 	/**

@@ -45,9 +45,7 @@ body {
 
 /* Header */
 header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     width: 100%;
     background-color: var(--gris-oscuro);
     border-bottom: 1px solid var(--gris-suave);
@@ -64,7 +62,7 @@ img.icon-menu:hover{
 }
 
 div.logocontainer {
-    width: 34%;
+    margin: 0 auto;
     text-align: center;
 }
 
@@ -82,9 +80,9 @@ div.vacio{
 /* Menú Lateral */
 
 div.container-boton-menu {
-    width: 33%;
-    float: left;
-    margin: 0 50px;
+    position: absolute;
+    top: 35px;
+    left: 40px;
 }
 
 input#boton-menu {
@@ -189,7 +187,7 @@ div.contSelect{
 
 div.selectJuego{
     margin: 20px;
-    padding: 0 10px 40px;
+    padding: 0 10px 50px;
     border-radius: 40px;
     box-shadow: 5px 5px 4px 4px var(--gris-oscuro) ;
     text-align: center;
@@ -257,7 +255,7 @@ input[type=number] {
     background-color: var(--gris-suave);
     font-size: 1.5em;
     border-radius: 5px;
-    margin: 5px;
+    margin: 9px;
     width: 100px;
 }
 
@@ -298,7 +296,6 @@ img.imagenInfo {
 table.tablaPuntuacion {
     width: 50%;
     margin: 3vh 25%;
-	overflow: auto;
 }
 
 table.tablaPuntuacion tr th {
@@ -375,4 +372,71 @@ table.tablaPuntuacion tr td {
 .tab:target ~ .tab:last-of-type>a {
     background-color: var(--gris-fondo); 
     z-index: 0; 
+}
+
+@media screen and (max-width: 950px){
+
+    div.contSelect{
+        display: grid;
+        grid-template-rows: 50% 50%;
+        grid-template-columns: 100%;
+        padding: 10px;
+    }
+
+    div.contenedorForm {
+        margin: 0 15% 20px;
+    }
+
+    div.datosInfo {
+        margin: 3vh 15%;
+    }
+
+    table.tablaPuntuacion {
+        width: 70%;
+        margin: 3vh 15%;
+    }
+}
+
+
+@media screen and (max-width: 650px){
+
+    p {
+        font-size: smaller;
+    }
+
+    img.logo{
+        height: 60px;
+        margin: 10px;
+    }
+
+    img.icon-menu {
+        width: 40px;
+        margin: 5px;
+    }
+
+    div.container-boton-menu {
+        top: 18px;
+    }
+
+    div.contenedorForm {
+        margin: 0 5% 20px;
+    }
+
+    div.datosInfo {
+        margin: 3vh 5%;
+    }
+
+    table.tablaPuntuacion {
+        width: 90%;
+        margin: 3vh 5%;
+    }
+    
+}
+
+@media screen and (max-width: 420px){
+
+
+    div.container-boton-menu {
+        left: 20px;
+    }
 }

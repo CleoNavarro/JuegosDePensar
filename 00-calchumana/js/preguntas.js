@@ -30,7 +30,7 @@ function cargarPreguntas () {
 
     let cod_test= document.getElementById("cod_test").value
 
-    let loc = "http://www.calculadorahumana.com/api/test"
+    let loc = "http://www.juegosdepensar.com/api/test"
 
         let busqueda = new Request(loc, {
             method: "POST",
@@ -90,9 +90,12 @@ function realizarPregunta () {
     inputBoton.setAttribute("value", "Check")
     inputBoton.addEventListener("click", responder);
 
+    let separador = document.createElement("br");
+
 
     artPregunta.appendChild(pPreg)
     artPregunta.appendChild(inputResp)
+    artPregunta.appendChild(separador)
     artPregunta.appendChild(inputBoton)
 
     divPreg.appendChild(artPregunta)
@@ -183,7 +186,7 @@ function terminar () {
 
     let cod_test = document.getElementById("cod_test").value
 
-    let loc = "http://www.calculadorahumana.com/api/calcResultado"
+    let loc = "http://www.juegosdepensar.com/api/calcResultado"
 
         let busqueda = new Request(loc, {
             method: "POST",
@@ -220,17 +223,17 @@ function pantallaFinal (puntuacionTotal) {
     container.innerHTML = "";
 
     let pIntrod = document.createElement("p")
-    pIntrod.setAttribute("style", "font-size:3em");
+    pIntrod.setAttribute("style", "font-size:2em; margin-top:0.5em; margin-bottom:5px");
     let textIntrod = document.createTextNode("Tu puntuación: ")
     pIntrod.appendChild(textIntrod);
 
     let pPuntos = document.createElement("p")
-    pPuntos.setAttribute("style", "font-size:4em; color:rgb(255, 221, 28); margin-top:0.5em; margin-bottom:5px");
+    pPuntos.setAttribute("style", "font-size:3em; color:rgb(255, 221, 28); margin-top:0.5em; margin-bottom:5px");
     let textPuntos = document.createTextNode(puntuacionTotal + " puntos")
     pPuntos.appendChild(textPuntos);
 
     let pMensaje = document.createElement("p")
-    pMensaje.setAttribute("style", "font-size:1em; margin-top:5px; margin-bottom: 70px")
+    pMensaje.setAttribute("style", "font-size:1em; margin-top:5px; margin-bottom: 50px")
     let textMensaje = document.createTextNode(apiResp["mensaje"])
     pMensaje.appendChild(textMensaje);
 

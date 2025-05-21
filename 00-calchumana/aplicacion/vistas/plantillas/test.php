@@ -26,9 +26,6 @@
 				<a href="/"><img class="logo" src="/imagenes/logo.png" /></a>
 				</div>
 			</div>
-			<div class="vacio">
-
-			</div>
 		</header>
 
 		

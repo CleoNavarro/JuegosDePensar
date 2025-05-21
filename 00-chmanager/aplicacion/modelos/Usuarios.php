@@ -18,7 +18,8 @@ class Usuarios extends CActiveRecord {
             "cod_usuario", "nombre", "nick", "contrasenia", 
             "repite_contrasenia" , "mail", "telefono", "foto", 
             "fecha_registrado", "verificado", "borrado", "borrado_fecha", 
-            "borrado_por", "cod_usuario_borrador", "nick_borrador", "cod_acl_role"
+            "borrado_por", "cod_usuario_borrador", "nick_borrador", "cod_acl_role",
+            "nombre_rol"
         );
     }
 
@@ -39,7 +40,8 @@ class Usuarios extends CActiveRecord {
             "borrado_por" => "Borrado por",
             "cod_usuario_borrador" => "Código Usuario Borrador", 
             "nick_borrador" => "Nick borrador", 
-            "cod_acl_role" => "Asignar rol"
+            "cod_acl_role" => "Asignar rol",
+            "nombre_rol" => "Rol"
         );
     }
 
@@ -88,34 +90,8 @@ class Usuarios extends CActiveRecord {
                 ),
                 array(
                     "ATRI" => "foto", "TIPO" => "CADENA", "TAMANIO" => 255
-                ),
-                array( 
-                    "ATRI" => "fecha_registrado", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "verificado", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "borrado", "TIPO" => "ENTERO",
-                    "RANGO" => [0, 1], "DEFECTO" => 0
-                ),
-                array( 
-                    "ATRI" => "borrado_fecha", "TIPO" => "FECHA"
-                ),
-                array(
-                    "ATRI" => "borrado_por", "TIPO" => "ENTERO", "MIN" => 0
-                ),
-                array(
-                    "ATRI" => "cod_acl_role",  "TIPO" => "ENTERO", "MIN" => 0,
-                    "DEFECTO" => 2
-                ),
-                array(
-                    "ATRI" => "cod_acl_role", "TIPO" => "RANGO",
-                    "RANGO" => array_keys(Usuarios::dameRoles()),
-                    "MENSAJE" => "Rol no existente"
-                ),
-
-
+                )
+                
             );
     }
 
@@ -211,8 +187,7 @@ class Usuarios extends CActiveRecord {
     }
 
     /**
-     * Undocumented function
-     *
+     * Función que devuelve los roles disponibles, o el rol que buscamos
      * @param integer|null $cod_rol
      * @return mixed
      */
@@ -241,6 +216,23 @@ class Usuarios extends CActiveRecord {
             else
                 return false;
         }
+    }
+
+     /**
+     * Devuelve los roles disponibles para un drop down
+     * @return mixed Array con los roles disponibles. False su falla
+     */
+    public static function dameRolesDrop() : mixed {
+
+        $arrayRoles = Usuarios::dameRoles();
+
+        $arraDrop = [];
+
+        foreach ($arrayRoles as $fila) {
+            $arraDrop[intval($fila["cod_acl_role"])] = $fila["nombre"];
+        }
+
+        return $arraDrop;
     }
 
     /**
@@ -325,12 +317,10 @@ class Usuarios extends CActiveRecord {
 
     }
     
-
     function fijarSentenciaInsert(): string {
 
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
-        $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
         $foto = CGeneral::addSlashes($this->foto);
@@ -339,12 +329,7 @@ class Usuarios extends CActiveRecord {
             "(nombre, nick, mail, telefono, foto, ".
             "fecha_registrado, verificado, borrado, borrado_fecha, borrado_por)". 
             " VALUES ('$nombre', '$nick', '$mail', '$telefono', '$foto', ".
-            "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ".
-
-            "INSERT INTO acl_usuarios ". 
-            "(nick, nombre, contrasenia, cod_acl_role, borrado, borrado_fecha, borrado_por)".
-            " VALUES ('$nick', '$nombre', sha1('$contrasenia'), ".
-            "2, 0, NULL, 0);";
+            "CURRENT_TIMESTAMP, NULL, 0, NULL, 0); ";
 
         return $sentencia;
     }
@@ -354,12 +339,9 @@ class Usuarios extends CActiveRecord {
         $cod_usuario = intval($this->cod_usuario);
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
-        $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $mail = CGeneral::addSlashes($this->mail);
         $telefono = CGeneral::addSlashes($this->telefono);
         $foto = CGeneral::addSlashes($this->foto);
-        $cod_acl_role = intval($this->cod_acl_role);
-
 
         $sentencia = "UPDATE usuarios ".
             "SET nombre = '$nombre', ".
@@ -367,14 +349,7 @@ class Usuarios extends CActiveRecord {
             "mail = '$mail', ".
             "telefono = '$telefono', ".
             "foto = '$foto', ".
-            "WHERE cod_usuario = $cod_usuario; ".
-
-            "UPDATE acl_usuarios ".
-            "SET nombre = '$nombre', ".
-            "nick = '$nick', ".
-            "contrasenia = sha1('$contrasenia'), ".
-            "cod_acl_role = $cod_acl_role, ".
-            "WHERE cod_acl_usuario = $cod_usuario;";
+            "WHERE cod_usuario = $cod_usuario; ";
      
         return $sentencia;
     }
