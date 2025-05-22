@@ -85,7 +85,7 @@
 		</div>
 		<footer>
 	
-			<button id="modoOscuro">Modo oscuro</button>
+			<!-- <button id="modoOscuro">Modo oscuro</button> -->
 
 			<div>
 			<?php
@@ -105,7 +105,7 @@
 			</div>
 			
 			<div>
-			<p>2024 © - <?php echo Sistema::app()->autor ?> <br> Todos los Derechos Reservados</p>
+			<p> <?php echo date("Y") . " © - " . Sistema::app()->autor ?> <br> Todos los Derechos Reservados</p>
 			</div>
 		</footer><!-- #footer -->
 

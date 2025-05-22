@@ -82,7 +82,7 @@ function cargarRanking () {
     contCalcDia.appendChild(tablaCalcDia);
 
     // Apartado Calculadora Humana Mes
-    let contCalcMes = document.getElementById("calcDia");
+    let contCalcMes = document.getElementById("calcMes");
 
     let tablaCalcMes = document.createElement("table");
         tablaCalcMes.setAttribute("class", "tablaPuntuacion");

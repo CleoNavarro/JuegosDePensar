@@ -103,6 +103,7 @@ function cargarDatos () {
 
     let tablaJuegos = document.createElement("table");
     tablaJuegos.setAttribute("class", "tablaPuntuacion");
+    tablaJuegos.setAttribute("id", "tablaRecientes");
 
     let trhead = document.createElement("tr");
     let th1= document.createElement("th");
@@ -149,7 +150,7 @@ function cargarDatos () {
     contRecientes.appendChild(tablaJuegos);
     
 
-    // TODO: Apartado Ranking
+    // Apartado Ranking
 
     let contRaking = document.getElementById("tab3-content");
 

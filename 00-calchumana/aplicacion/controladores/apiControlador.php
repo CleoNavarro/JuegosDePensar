@@ -12,8 +12,8 @@ class apiControlador extends CControlador {
                
                 $test = new Test();
         
-                // Si no existe el sitio
-                if (!$test->buscarPor([" cod_test = $cod_test "])) {
+                // Si no existe el test
+                if (!$test->buscarPor([" cod_test = $cod_test and borrado_fecha IS NULL "])) {
                     $resultado=[
                         "datos"=>"Test no encontrado",
                         "correcto"=>false
@@ -34,6 +34,8 @@ class apiControlador extends CControlador {
                 $fecha = $_POST["fecha"];
                 $test = new Test();
                 $datosCalc = $test::dameTestPorFecha($fecha);
+                if (!is_null($datosCalc["borrado_fecha"])) $datosCalc = false;
+
                 $datosAdiv = false; // TO DO
 
                 if (!$datosCalc && !$datosAdiv) {

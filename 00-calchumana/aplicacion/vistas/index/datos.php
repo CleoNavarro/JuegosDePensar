@@ -23,7 +23,7 @@ echo CHTML::dibujaEtiqueta("div", ["class" => "tabs"], null, false);
       echo CHTML::dibujaEtiquetaCierre("div");
     echo CHTML::dibujaEtiquetaCierre("div");
     echo CHTML::dibujaEtiqueta("div", ["id" => "tab1", "class" => "tab"], null, false);
-      echo CHTML::link("Estadísticas", "#tab1");
+      echo CHTML::link("Stats", "#tab1");
       echo CHTML::dibujaEtiqueta("div", ["id"=>"tab1-content", "class" => "tab-content"], null, false);
 
       echo CHTML::dibujaEtiquetaCierre("div");

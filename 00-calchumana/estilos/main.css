@@ -310,8 +310,6 @@ table.tablaPuntuacion tr td {
     border-bottom: 1px solid var(--gris-suave);
 }
 
-
-
 /* Estilo para las pestañas */
 
 /* Displays del sistema de pestañas */
@@ -374,6 +372,19 @@ table.tablaPuntuacion tr td {
     z-index: 0; 
 }
 
+/* Contenedor de ranking */
+
+div.contRanking {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 20px;
+}
+
+div.contRanking table.tablaPuntuacion {
+    width: 80%;
+    margin: 3vh 10%;
+}
+
 @media screen and (max-width: 950px){
 
     div.contSelect{
@@ -392,13 +403,24 @@ table.tablaPuntuacion tr td {
     }
 
     table.tablaPuntuacion {
-        width: 70%;
-        margin: 3vh 15%;
+        width: 90%;
+        margin: 3vh 5%;
+    }
+
+    div.contRanking {
+        display: grid;
+        grid-template-rows: 50% 50%;
+        grid-template-columns: 100%;
+        padding: 10px;
     }
 }
 
 
 @media screen and (max-width: 650px){
+
+    :root {
+        --tabs-width: 120px;
+    }
 
     p {
         font-size: smaller;
@@ -423,18 +445,26 @@ table.tablaPuntuacion tr td {
     }
 
     div.datosInfo {
+        flex-direction: column;
         margin: 3vh 5%;
-    }
+    } 
 
-    table.tablaPuntuacion {
-        width: 90%;
-        margin: 3vh 5%;
-    }
-    
+    table#tablaRecientes tr td:nth-child(4),
+	table#tablaRecientes tr th:nth-child(4){
+		display: none;
+	}
+
+}
+
+@media screen and (max-width: 500px){
+
+    table#tablaRecientes tr td:nth-child(2),
+	table#tablaRecientes tr th:nth-child(2){
+		display: none;
+	}
 }
 
 @media screen and (max-width: 420px){
-
 
     div.container-boton-menu {
         left: 20px;

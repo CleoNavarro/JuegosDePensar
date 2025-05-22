@@ -304,8 +304,8 @@ class usuariosControlador extends CControlador {
 
 	public function accionBorrar() {
 
-        if (!isset($_GET["id"])) {
-            Sistema::app()->paginaError("No has indicado la plaza");
+		if (!isset($_GET["id"])) {
+            Sistema::app()->paginaError("No has indicado el usuario");
 			exit;
         }
 
@@ -313,50 +313,69 @@ class usuariosControlador extends CControlador {
 
 		$this->tienePermisos("borrar", $id);
 
-        $plazas = new Plazas();
+        $usuarios = new Usuarios();
 
-        if (!$plazas->buscarPorId($id)) {
-			Sistema::app()->paginaError("No se encuentra la plaza");
+        if (!$usuarios->buscarPorId($id)) {
+			Sistema::app()->paginaError("No se encuentra el usuario");
 			exit;
 		}
 
-        $this->menuIzquierda();
+		if ($id == Sistema::app()->Acceso()->getCodUsuario()) {
+			Sistema::app()->paginaError("No puedes borrarte a tí mismo");
+			exit;
+		}
+
+        $this->menu();
 
 		$this->barra_ubi = [
 			[
-				"texto" => "INICIAL",
-				"enlace" => ["inicial"]
+				"texto" => "MANAGER",
+				"enlace" => ["index"]
 			],
 			[
-				"texto" => "Gestión de plazas",
-				"enlace" => ["plazas"]
+				"texto" => "USUARIOS",
+				"enlace" => ["usuarios"]
             ],
             [
-				"texto" => "Anular plaza ".$plazas->nombre_plaza,
-				"enlace" => ["plazas", "borrar/id=$id",]
+				"texto" => "Borrar datos de ".$usuarios->nick,
+				"enlace" => ["usuarios", "borrar/id=$id"]
 			]
 		];
 
 		if ($_POST) {
-            $nombre = $plazas->getNombre();
-            $plazas->setValores($_POST[$nombre]);
-    
-		 	if ($plazas->validar()) {
 
-				if (!$plazas->guardar()) {
-					$this->dibujaVista("borrar", ["plazas" => $plazas], "Anular plaza ".$plazas->nombre_plaza);
+			if (isset($_POST["borrar"]) && $_POST["borrar"]=="si") {
+				
+				$borrado = Usuarios::borrarUsuario($id, Sistema::app()->Acceso()->getCodUsuario());
+
+				if (!$borrado) {
+					Sistema::app()->paginaError("Error al borrar los datos");
+					exit;
 				}
 
-				Sistema::app()->irAPagina(array("plazas")); 
+				Sistema::app()->irAPagina(array("usuarios")); 
 				exit;
 			}
 
+			if (isset($_POST["recuperar"]) && $_POST["recuperar"]=="si") {
+				
+				$recuperado = Usuarios::recuperarUsuario($id);
+
+				if (!$recuperado) {
+					Sistema::app()->paginaError("Error al recuperar los datos");
+					exit;
+				}
+
+				Sistema::app()->irAPagina(array("usuarios")); 
+				exit;
+			}
 		}
 
-		$corr = "SI";
-		if ($plazas->corriente_electrica==0) $corr = "NO";
+		$verificado = "NO";
+		if (!is_null($usuarios->verificado)) $verificado = $usuarios->verificado;
 
-		$this->dibujaVista("borrar", ["plaza" => $plazas, "corr" => $corr], "Anular plaza ".$plazas->nombre_plaza);
+		$this->dibujaVista("borrar", ["usuario" => $usuarios, "verificado" => $verificado], 
+			"Borrar datos de ".$usuarios->nick);
 
     }
 

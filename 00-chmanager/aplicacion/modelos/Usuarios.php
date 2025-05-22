@@ -273,7 +273,7 @@ class Usuarios extends CActiveRecord {
 
         $sentencia = "UPDATE acl_usuarios ".
             "SET borrado = 0, ".
-            "fecha_borrado = NULL, ".
+            "borrado_fecha = NULL, ".
             "borrado_por = 0 ".
             "WHERE cod_acl_usuario = $cod_usuario;";
 
@@ -284,7 +284,7 @@ class Usuarios extends CActiveRecord {
 
         $sentencia = "UPDATE usuarios ".
             "SET borrado = 0, ".
-            "fecha_borrado = NULL, ".
+            "borrado_fecha = NULL, ".
             "borrado_por = 0 ".
             "WHERE cod_usuario = $cod_usuario;";
 

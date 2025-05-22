@@ -29,7 +29,10 @@ echo CHTML::dibujaEtiqueta("h2", [], "Datos del usuario:");
             Sistema::app()->generaURL(["usuarios","modificar"],
             ["id" => $usuario->cod_usuario]));
 
-        $boton2 = CHTML::boton("Borrar Usuario");
+        if ($usuario->borrado==1)
+            $boton2 = CHTML::boton("Recuperar Usuario");
+        else
+            $boton2 = CHTML::boton("Borrar Usuario");
         echo CHTML::link($boton2, 
             Sistema::app()->generaURL(["usuarios","borrar"],
             ["id" => $usuario->cod_usuario]));
