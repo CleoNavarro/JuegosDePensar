@@ -1,3 +1,5 @@
+Sigue estas instrucciones para poder usar y desarrollar tu propia versión de Juegos de Pensar en tu equipo local.
+
 ## Descarga e instala la última versión de XAMMP para Windows
 https://www.apachefriends.org/es/index.html
 - En Select Components, selecciona todos.
@@ -33,8 +35,8 @@ Permite depurar código en PHP. Para configurarlo:
 
 ## Configurar los sitios virtuales
 - Ve al archivo C:\Windows\System32\drivers\etc\hosts y añade las siguientes lineas
-127.0.0.1 www.safeplace.com
-127.0.0.1 www.spmanager.com
+127.0.0.1 www.juegosdepensar.com
+127.0.0.1 www.chmanager.com
 
 - Ve al archivo Archivo C:\web\xampp\apache\conf\extra\httpd-vhosts.conf y escribe el siguiente código:
 
@@ -44,9 +46,9 @@ Permite depurar código en PHP. Para configurarlo:
 </VirtualHost>
 
 <VirtualHost *:80>
-	 DocumentRoot "C:\web\sitios\00-safeplace"
-	 ServerName www.safeplace.com
-	 <Directory "C:\web\sitios\00-safeplace">
+	 DocumentRoot "C:\web\sitios\00-calculadora"
+	 ServerName www.juegosdepensar.com
+	 <Directory "C:\web\sitios\00-calculadora">
 		 Options FollowSymLinks
 		 AllowOverride All
 		 Order allow,deny
@@ -56,9 +58,9 @@ Permite depurar código en PHP. Para configurarlo:
 </VirtualHost>
 
 <VirtualHost *:80>
-	 DocumentRoot "C:\web\sitios\00-spmanager"
-	 ServerName www.spmanager.com
-	 <Directory "C:\web\sitios\00-spmanager">
+	 DocumentRoot "C:\web\sitios\00-chmanager"
+	 ServerName www.chmanager.com
+	 <Directory "C:\web\sitios\00-chmanager">
 		 Options FollowSymLinks
 		 AllowOverride All
 		 Order allow,deny
@@ -69,7 +71,7 @@ Permite depurar código en PHP. Para configurarlo:
 
 
 ## Configurar y cargar la base de datos
-Hay un script llamado safeplace.sql. En él viene todas las instrucciones para crear la base de datos.
+Hay un script llamado calculadora.sql. En él viene todas las instrucciones para crear la base de datos.
 - Entra en phpMyAdmin, y en el index, selecciona Importar. Puedes dejar el archivo SQL tal cual.
 
 También debes crear la siguiente cuenta de usuario, que la aplicación usará para acceder a la base de datos:
@@ -84,8 +86,8 @@ Contraseña: 2daw
 
 ## SI LO HAS HECHO TODO BIEN
 Reinicia o enciende XAMMP (los servicios MySql y Apache). Debes poder entrar en los siguientes links:
-- www.safeplace.com : El mapa que ve el usuario
-- www.spmanager.com : La interfaz de administrador
+- http://www.juegosdepensar.com : La web que ve y maneja el usuario
+- http://www.chmanager.com : La interfaz de administrador
 
 
 

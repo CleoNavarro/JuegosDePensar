@@ -34,9 +34,10 @@ class apiControlador extends CControlador {
                 $fecha = $_POST["fecha"];
                 $test = new Test();
                 $datosCalc = $test::dameTestPorFecha($fecha);
-                if (!is_null($datosCalc["borrado_fecha"])) $datosCalc = false;
+                if ($datosCalc && !is_null($datosCalc["borrado_fecha"])) $datosCalc = false;
 
                 $datosAdiv = false; // TO DO
+                if ($datosAdiv && !is_null($datosAdiv["borrado_fecha"])) $datosAdiv = false;
 
                 if (!$datosCalc && !$datosAdiv) {
                     $resultado=[
