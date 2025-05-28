@@ -410,8 +410,13 @@ class usuariosControlador extends CControlador {
 		if (!$filas) return false;
 
         foreach ($filas as $clave=>$fila) {
+
+			$iconoBorrar = "borrar";
             if ($fila["borrado"]==0) $fila["borrado"] = "NO";
-            else $fila["borrado"] = "SI";
+            else {
+				$fila["borrado"] = "SI";
+				$iconoBorrar = "recuperar";
+			}
 
 			if (is_null($fila["verificado"])) $fila["verificado"] = "NO";
             else $fila["verificado"] = "SI";
@@ -420,13 +425,13 @@ class usuariosControlador extends CControlador {
                                             "Foto ".$fila["nombre"],
                                         ["style" => "width: 50px; height: 50px;"]);
 
-			$fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-menu"]),
+			$fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-tabla"]),
 				                        Sistema::app()->generaURL(["usuarios","consultar"],
-										["id" => $fila["cod_usuario"], "class" => "icon-menu"]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-menu"]),
+										["id" => $fila["cod_usuario"]]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-tabla"]),
 				                        Sistema::app()->generaURL(["usuarios","modificar"],
-										["id" => $fila["cod_usuario"], "class" => "icon-menu"]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png", "", ["class" => "icon-menu"]),
+										["id" => $fila["cod_usuario"]]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/$iconoBorrar.png", "", ["class" => "icon-tabla"]),
 				                        Sistema::app()->generaURL(["usuarios","borrar"],
 										["id" => $fila["cod_usuario"]]));
 			$filas[$clave] = $fila;

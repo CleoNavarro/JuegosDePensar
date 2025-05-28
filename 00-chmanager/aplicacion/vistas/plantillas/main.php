@@ -27,7 +27,10 @@
 				<div class="titulo">
 				</div>
 			</div>
-			
+
+			<div class="container-boton-menu">
+				<label for="boton-menu"><img class="icon-menu" src="/imagenes/icon-menu.png" /></label>
+			</div>
 			
 			<nav class="barraNav">
 				<ul>
@@ -52,11 +55,30 @@
 
 					?>
 				</ul>
-				</nav>
-
-			
+			</nav>
+		
 
 		</header><!-- #header -->
+
+		<input type="checkbox" id="boton-menu">
+
+		<div class="container-menu">
+			<div class="cont-menu">
+				<nav class="barraLat">
+					<?php
+						if (isset($this->menu)) {
+							foreach ($this->menu as $opcion) {
+								echo CHTML::link(
+									$opcion["texto"],
+									$opcion["enlace"]
+								);
+							}
+						}
+						?>
+				</nav>
+				<label for="boton-menu" class="icon-x">X</label>
+			</div>
+		</div>
 
 		<div class="contenido">
 			

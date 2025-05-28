@@ -1,7 +1,11 @@
 <?php
 
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
-echo CHTML::dibujaEtiqueta("h2", [], "Borrar Usuario:");
+
+if ($usuario->borrado==1) 
+    echo CHTML::dibujaEtiqueta("h2", [], "Recuperar Usuario:");
+else
+    echo CHTML::dibujaEtiqueta("h2", [], "Borrar Usuario:");
 
 echo CHTML::iniciarForm();
     if ($usuario->borrado==1) {

@@ -5,7 +5,7 @@ $this->textoHead= "<script src='/js/nuevaCalculadora.js' defer></script>";
 $num_preg = count($preguntas);
 
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
-echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Nuevo Juego de Calculadora");
+echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Modificar Juego de Calculadora");
 
 echo CHTML::iniciarForm("", "post", ["enctype"=>"multipart/form-data", "id" => "formulario"]);
 

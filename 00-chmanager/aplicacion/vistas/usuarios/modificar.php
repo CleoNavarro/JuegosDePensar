@@ -2,7 +2,7 @@
 
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
 echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align:center;"] , 
-    "Nuevo Usuario");
+    "Modificar datos del Usuario");
 echo "<br>".PHP_EOL;
 
 echo CHTML::iniciarForm("", "post", ["enctype"=>"multipart/form-data"]);

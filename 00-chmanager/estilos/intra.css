@@ -29,6 +29,19 @@
 	box-sizing: border-box;
 }
 
+/* Variables para color */
+:root {
+    --texto-defecto: white;
+    --amarillo-destacado: rgb(255, 221, 28);
+    --naranja-principal: rgb(255, 102, 0);
+    --naranja-suave: rgb(248, 163, 105);
+    --gris-oscuro: rgb(41, 41, 49);
+    --gris-fondo: rgb(58, 58, 71);
+    --gris-fondo2: rgb(73, 73, 83);
+    --gris-suave:rgb(137, 137, 168);
+    --gris-azulado: rgb(49, 82, 116);
+}
+
 /* El estilo está orientado a ordenadores de escritorio (Desktop first).
 	Este es el diseño común. Más adelante, se realizan ajustes para que sea
 	responsive.
@@ -42,7 +55,7 @@
 	body {
 		margin:0;
 		padding:0;
-		background-color: rgb(58, 58, 71);
+		background-color: var(--gris-fondo);
 		min-height: 100vh;
 	}
 
@@ -56,7 +69,7 @@
 	}
 
 	.contenido{
-		background-color:rgb(58, 58, 71);
+		background-color:var(--gris-fondo);
 		color: white;
 		padding: 0 0;
 	}
@@ -73,10 +86,10 @@
 
 	/* Header, título y logo  */
 	header {
-		background-color: rgb(35, 35, 46);
+		background-color: var(--gris-oscuro);
 		min-height:50px;
 		padding: 5px 10% 5px;
-		border-top:20px solid  #F60;
+		border-top:20px solid var(--naranja-principal);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -129,13 +142,98 @@
 	
 	nav.barraNav li a:hover {
 		text-decoration: none;
-	    color: rgb(255, 221, 28);;
+	    color: var(--amarillo-destacado);
 	}
 	
 	nav.barraNav li a:active, nav.barraNav li a:focus, nav.barraNav li a:visited {
 		text-decoration:none;
 	}
+
+	/* Menú desplegable */
 	
+	img.icon-menu {
+		display:none;
+		width: 40px;
+		margin: 10px;
+		cursor: pointer;
+	}
+	
+	img.icon-menu:hover{
+		filter:drop-shadow(0 0 2px rgb(255, 255, 255));
+	}
+
+	input#boton-menu {
+		display: none;
+	}
+	
+	input#boton-menu:checked ~ div.container-menu {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	nav.barraLat {
+		transform: translateY(15%);
+		z-index: 3;
+	}
+	
+	nav.barraLat a {
+		display: block;
+		color: var(--texto-defecto);
+		text-decoration: none;
+		align-content: center;
+		padding: 20px;
+		z-index: 3;
+	}
+	
+	nav.barraLat a:hover {
+		font-weight: bold;
+		color:var(--amarillo-destacado);
+		border-left: 3px solid var(--naranja-principal);
+		background-color: var(--gris-suave);
+	}
+	
+	
+	div.container-menu {
+		position: absolute;
+		width: 100%;
+		height: 100vh;
+		top: 0;
+		left: 0;
+		transition: all .5s ease;
+		opacity: 0;
+		visibility: hidden;
+		z-index: 3;
+	}
+	
+	div.cont-menu {
+		position: relative;
+		width: 100%;
+		max-width: 300px;
+		height: 100vh;
+		background-color: var(--gris-fondo2);
+		border-right: 1px solid var(--gris-suave);
+		transition: all .2s ease;
+		transform: translateX(-100%);
+		z-index: 3;
+	}
+	
+	input#boton-menu:checked ~ div.container-menu div.cont-menu {
+		transform: translateX(0%);
+	}
+
+	label.icon-x {
+		color: var(--texto-defecto);
+		position: absolute;
+		right: 10px;
+		top:10px;
+		cursor: pointer;
+		font-weight: bold;
+		z-index: 3;
+	}
+	
+	label.icon-x:hover {
+		filter:drop-shadow(0 0 2px var(--gris-suave));
+	}
 
 	/* Pié de página*/
 
@@ -144,7 +242,7 @@
   		bottom: 0;
 		width: 100%;
 		max-height: 76px; 
-		background-color:#f8ce9d;
+		background-color:var(--naranja-suave);
 		padding: 15px 5px;
 		text-align: center;
 		font-size: smaller;
@@ -179,19 +277,16 @@
 		border: none;
 	}
 
-	/* Definición del estilo de las opciones de INICIAL */
+	/* Definición del estilo de las opciones de Index */
 
 	div.contenedorOpciones {
 		text-align: center;
-		border: 1px solid rgb(145, 145, 145);
+		border: 1px solid var(--gris-suave);
 		border-radius: 10%;
 		margin: 0 35%;
 		padding: 10px;
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-		border: 1px solid rgb(145, 145, 145);
-		border-radius: 10%;
 		background-color: #c2ffd3;
 		box-shadow: inset 15px 15px 20px -14px rgba(255,255,255,1), inset -15px -15px 20px -22px rgba(0,0,0,1);;
 
@@ -199,7 +294,7 @@
 
 	div.opciones {
 		width: 100%;
-		border: 1px solid rgb(145, 145, 145);
+		border: 1px solid var(--gris-suave);
 		border-radius: 10%;
 		margin: 0 auto;
 		padding: 10px;
@@ -240,7 +335,7 @@
 		justify-content: center;
 		align-items: center;
 		border-radius: 8px;
-		background-color: #f78215;
+		background-color: #f88e2a;
 		box-shadow: inset 5px 5px 5px -5px rgba(255,255,255,1), inset -5px -5px 5px -5px rgba(0,0,0,1);
 		margin: 3vh 25%;
 		padding: 10px;
@@ -257,8 +352,8 @@
 		align-items: center;
 		justify-content: space-around;
 		padding: 10px 20px;
-		background-color: rgb(100, 100, 100);
-		border: 1px solid rgb(145, 145, 145);
+		background-color: var(--gris-fondo2);
+		border: 1px solid var(--gris-suave);
 		border-radius: 8px;
 	}
 
@@ -267,8 +362,8 @@
 		flex-direction: column;
 		justify-content: space-around;
 		padding: 10px 20px;
-		background-color: rgb(100, 100, 100);
-		border: 1px solid rgb(145, 145, 145);
+		background-color: var(--gris-fondo2);
+		border: 1px solid var(--gris-suave);
 		border-radius: 8px;
 	}
 
@@ -327,13 +422,13 @@
 		padding: 10px;
 		border: none;
 		border-radius: 5px;		
-		background-color: #F60;
-		color: white;
+		background-color: var(--naranja-principal);
+		color: var(--texto-defecto);
 		font-weight: bold;
 	}
 
 	button:hover, input[type=button]:hover, input[type=submit]:hover  {
-		background-color: rgb(241, 168, 118);;
+		background-color: var(--naranja-suave);
 	}
 
 	button:disabled ,input[type=button]:disabled, input[type=submit]:disabled{	
@@ -350,7 +445,7 @@
 	/* Definiciones para el objeto CPager*/
 
 	.pager{
-		background-color: rgb(241, 168, 118);
+		background-color: var(--naranja-suave);
 		color:black;
 		padding: 5px;
 		margin: 0 5%;
@@ -373,7 +468,7 @@
 	
 	.pager .der a{
 		text-decoration: none;
-		color:white;
+		color:var(--texto-defecto);
 		padding-left: 10px;
 	}
 	.pager .der a:hover{
@@ -415,7 +510,7 @@
 		padding: 2px;
 	}
 
-	img.icon-menu{
+	img.icon-tabla{
 		width: 24px;
 		height: 24px;
 	}
@@ -431,13 +526,13 @@
 	}
 	
 	table.tabla1 th{
-		background-color: #F60;
-		color:white;
+		background-color: var(--naranja-principal);
+		color: var(--texto-defecto);
 		padding: 10px;
 	}
 	
 	table.tabla1 tr.par{
-		background-color: #f8f1c8;
+		background-color: #fdfdfd;
 		color:black;
 	}
 	table.tabla1 tr.impar{
@@ -459,7 +554,7 @@
 	 */
 
 	.caja{
-		background-color: rgb(241, 168, 118);
+		background-color: var(--naranja-suave);
 		border-radius: 5px;
 		margin: 20px auto 0;
 	}
@@ -522,7 +617,7 @@
 
 	hr.separador {
 		width: 100%;
-		border: 4px solid #F60;
+		border: 4px solid var(--naranja-principal);
 		margin: 13px 0;
 	}
 
@@ -595,6 +690,14 @@ se adaptan y se reducen datos que se muestran de las tablas*/
 }
 /* Con menos de 750px de ancho, se reducen datos que se muestran de las tablas*/
 @media screen and (max-width: 750px){
+
+	nav.barraNav {
+		display: none;
+	}
+	
+	img.icon-menu {
+		display:block;
+	}
 
 	table.tabla1 tr td:nth-child(4),
 	table.tabla1 tr th:nth-child(4){

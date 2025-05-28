@@ -231,7 +231,7 @@ class Test extends CActiveRecord {
     public static function borrarTest(int $cod_test, int $cod_borrador) : bool {
 
         $sentencia = "UPDATE test ".
-            "SET fecha_borrado = CURRENT_DATETIME, ".
+            "SET borrado_fecha = CURRENT_TIMESTAMP, ".
             "borrado_por = $cod_borrador ".
             "WHERE cod_test = $cod_test;";
 
@@ -249,7 +249,7 @@ class Test extends CActiveRecord {
     public static function recuperarTest(int $cod_test) : bool {
 
         $sentencia = "UPDATE test ".
-            "SET fecha_borrado = NULL, ".
+            "SET borrado_fecha = NULL, ".
             "borrado_por = 0 ".
             "WHERE cod_test = $cod_test;";
 

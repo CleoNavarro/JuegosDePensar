@@ -28,10 +28,6 @@
 			</div>
 		</header>
 
-		
-
-		
-
 		<?php echo $contenido; ?><!-- #content -->
 		
 	<input type="checkbox" id="boton-menu">
@@ -46,7 +42,6 @@
 								$opcion["texto"],
 								$opcion["enlace"]
 							);
-							//echo CHTML::dibujaEtiqueta("br") . "\r\n";
 						}
 					}
 					?>

@@ -114,7 +114,7 @@ class calculadoraControlador extends CControlador {
                 "enlace" => ["index"]
             ],
             [
-                "texto" => "Gestión de Calculadota",
+                "texto" => "Calculadora",
                 "enlace" => ["calculadora"]
             ],
             [
@@ -322,60 +322,75 @@ class calculadoraControlador extends CControlador {
 
    public function accionBorrar() {
 
-       if (!isset($_GET["id"])) {
+        if (!isset($_GET["id"])) {
             Sistema::app()->paginaError(404, "Página no encontrada");
-           exit;
-       }
+            exit;
+        }
 
-       $id = intval($_GET["id"]);
+        $id = intval($_GET["id"]);
 
-       $this->tienePermisos("borrar", $id);
+        $this->tienePermisos("borrar", $id);
 
-       $sitios = new Sitios();
+        $test = new Test();
 
-       if (!$sitios->buscarPorId($id)) {
+        if (!$test->buscarPorId($id)) {
             Sistema::app()->paginaError(404, "Página no encontrada");
-           exit;
-       }
+            exit;
+        }
 
-       $this->menu();
+        $this->menu();
 
-       $this->barra_ubi = [
-           [
-               "texto" => "MANAGER",
-               "enlace" => ["index"]
-           ],
-           [
-               "texto" => "Gestión de sitios",
-               "enlace" => ["sitios"]
-           ],
-           [
-               "texto" => "Anular sitio ".$sitios->nombre_sitio,
-               "enlace" => ["sitios", "borrar/id=$id",]
-           ]
-       ];
+        $this->barra_ubi = [
+            [
+                "texto" => "Manager",
+                "enlace" => ["index"]
+            ],
+            [
+                "texto" => "Calculadora",
+                "enlace" => ["calculadora"]
+            ],
+            [
+                "texto" => "Borrar Test del día ".$test->fecha,
+                "enlace" => ["calculadora", "borrar/id=$id",]
+            ]
+        ];
 
-       if ($_POST) {
-           $nombre = $sitios->getNombre();
-           $sitios->setValores($_POST[$nombre]);
-   
-            if ($sitios->validar()) {
+        if ($_POST) {
 
-               if (!$sitios->guardar()) {
-                   $this->dibujaVista("borrar", ["sitio" => $sitios], "Anular sitio ".$sitios->nombre_sitio);
-               }
+            if (isset($_POST["borrar"]) && $_POST["borrar"]=="si") {
+                
+                $borrado = Test::borrarTest($id, Sistema::app()->Acceso()->getCodUsuario());
 
-               Sistema::app()->irAPagina(array("sitios")); 
-               exit;
-           }
+                if (!$borrado) {
+                    Sistema::app()->paginaError("Error al borrar los datos");
+                    exit;
+                }
 
-       }
+                Sistema::app()->irAPagina(array("calculadora")); 
+                exit;
+            }
 
-       $categorias = Categorias::dameCategoriasDelSitio($id);
-       $caracteristicas= Caracteristicas::dameCaracteristicasDelSitio($id);
-       $comunidades = Comunidades::dameComunidadesDelSitio($id);
+            if (isset($_POST["recuperar"]) && $_POST["recuperar"]=="si") {
+                
+                $recuperado = Test::recuperarTest($id);
 
-       $this->dibujaVista("borrar", ["sitio" => $sitios, "cat" => $categorias, "caract" => $caracteristicas, "comu"=> $comunidades], "Anular sitio ".$sitios->nombre_sitio);
+                if (!$recuperado) {
+                    Sistema::app()->paginaError("Error al recuperar los datos");
+                    exit;
+                }
+
+                Sistema::app()->irAPagina(array("calculadora")); 
+                exit;
+            }
+        }
+
+        $borr = 0;
+        if (!is_null($test->borrado_fecha)) $borr = 1;
+    
+        $preguntas = Test::damePreguntas($id);
+
+
+        $this->dibujaVista("borrar", ["test" => $test, "preguntas" => $preguntas, "borr" => $borr], "Borrar test ".$test->fecha);
 
    }
 
@@ -417,21 +432,23 @@ class calculadoraControlador extends CControlador {
 
        foreach ($filas as $clave=>$fila) {
 
+            $iconoBorrar = "borrar";
             $fila["fecha"] = CGeneral::fechaMysqlANormal($fila["fecha"]);
             $fila["creado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["creado_fecha"]);
             if (!is_null($fila["borrado_fecha"])) {
                 $fila["borrado"] = "SI";
                 $fila["borrado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["borrado_fecha"]);
+                $iconoBorrar = "recuperar";
             } 
             else $fila["borrado"] = "NO";
 
-            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-menu"]),
+            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-tabla"]),
                                        Sistema::app()->generaURL(["calculadora","consultar"],
                                        ["id" => $fila["cod_test"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-menu"]),
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-tabla"]),
                                        Sistema::app()->generaURL(["calculadora","modificar"],
                                        ["id" => $fila["cod_test"]]))." ".
-                            CHTML::link(CHTML::imagen("/imagenes/24x24/borrar.png", "", ["class" => "icon-menu"]),
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/$iconoBorrar.png", "", ["class" => "icon-tabla"]),
                                        Sistema::app()->generaURL(["calculadora","borrar"],
                                        ["id" => $fila["cod_test"]]));
            $filas[$clave] = $fila;
