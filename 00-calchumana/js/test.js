@@ -26,7 +26,7 @@ function desafioDiario () {
                         else noHaytest()
 
                         if (datos["adivina"]) 
-                            adivinaDiario(adivinaDiario) 
+                            adivinaDiario(datos["adivina"]) 
                         else noHayAdivina ()
                      
                     } else {

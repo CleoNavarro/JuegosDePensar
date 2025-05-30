@@ -1,37 +1,37 @@
 <?php
-class PuntuacionTest extends CActiveRecord {
+class PuntuacionAdivina extends CActiveRecord {
 
     protected function fijarNombre(): string {
-        return 'puntuacion_test';
+        return 'puntuacion_adivina';
     }
 
     protected function fijarTabla():string {
-        return "vista_puntuacion_test";
+        return "vista_puntuacion_adivina";
     }
     
     protected function fijarId():string {
-        return "cod_punt_test";
+        return "cod_punt_adivina";
     }
 
     protected function fijarAtributos(): array {
         return array(
-            "cod_punt_test", "cod_usuario", "cod_test", "puntos", 
+            "cod_punt_adivina", "cod_usuario", "cod_adivina", "puntos", 
             "fecha_realizado", "nombre",  "nick", "foto", "fecha", "titulo"
         );
     }
 
     protected function fijarDescripciones(): array {
         return array(
-            "cod_punt_test" => "Código Puntuación Test", 
+            "cod_punt_adivina" => "Código Puntuación Adivina", 
             "cod_usuario" => "Código Usuario", 
-            "cod_test" => "Código Test", 
+            "cod_adivina" => "Código Adivina", 
             "puntos" => "Puntuación", 
-            "fecha_realizado" => "Fecha en la que se realizó el test", 
+            "fecha_realizado" => "Fecha en la que se realizó la partida", 
             "nombre" => "Realizado por",  
             "nick" => "Realizado por", 
             "foto" => "Foto", 
-            "fecha" => "Fecha del test", 
-            "titulo" => "Título del test"
+            "fecha" => "Fecha del adivina", 
+            "titulo" => "Título del adivina"
         );
     }
 
@@ -39,17 +39,17 @@ class PuntuacionTest extends CActiveRecord {
         return
             array(
                 array(
-                    "ATRI" => "cod_usuario,cod_test,puntos",
+                    "ATRI" => "cod_usuario,cod_adivina,puntos",
                     "TIPO" => "REQUERIDO"
                 ),
                 array(
-                    "ATRI" => "cod_punt_test", "TIPO" => "ENTERO", "MIN" => 0
+                    "ATRI" => "cod_punt_adivina", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
                     "ATRI" => "cod_usuario", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
-                    "ATRI" => "cod_test", "TIPO" => "ENTERO", "MIN" => 0
+                    "ATRI" => "cod_adivina", "TIPO" => "ENTERO", "MIN" => 0
                 ),
                 array(
                     "ATRI" => "puntos", "TIPO" => "ENTERO", "MIN" => 10
@@ -58,15 +58,15 @@ class PuntuacionTest extends CActiveRecord {
     }
 
     /**
-     * Función que devuelve la puntuación de un test hecho por un usuario
-     * @param integer $cod_test Código test
+     * Función que devuelve la puntuación de un adivina hecho por un usuario
+     * @param integer $cod_adiv Código adivina
      * @param integer $cod_usuario Código usuario
-     * @return mixed Devuelve la puntuación del test. False si no existe
+     * @return mixed Devuelve la puntuación del adivina. False si no existe
      */
-    public static function damePuntuacion (int $cod_test, int $cod_usuario) : mixed {
+    public static function damePuntuacion (int $cod_adiv, int $cod_usuario) : mixed {
 
-        $sentencia = "SELECT * from vista_puntuacion_test ".
-        "where cod_test = $cod_test and cod_usuario = $cod_usuario";
+        $sentencia = "SELECT * from vista_puntuacion_adivina ".
+        "where cod_adivina = $cod_adiv and cod_usuario = $cod_usuario";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
 
@@ -83,14 +83,14 @@ class PuntuacionTest extends CActiveRecord {
 
 
     /**
-     * Función que devuelve todas las puntuaciónes de los test hecho por un usuario
+     * Función que devuelve todas las puntuaciónes de los adivina hecho por un usuario
      * @param integer $cod_usuario Código usuario
      * @param bool $limit Opcional. Pon true si quieres que solo devuelva las 10 primeras instancias
-     * @return mixed Devuelve los test hechos. False si no hay ninguno
+     * @return mixed Devuelve los adivina hechos. False si no hay ninguno
      */
     public static function damePuntuaciones (int $cod_usuario, bool $limit = false) : mixed {
 
-        $sentencia = "SELECT * from vista_puntuacion_test ".
+        $sentencia = "SELECT * from vista_puntuacion_adivina ".
             "where cod_usuario = $cod_usuario ".
             "order by fecha_realizado desc";
 
@@ -125,17 +125,17 @@ class PuntuacionTest extends CActiveRecord {
      */
     public static function rankingDiario (string $fecha, ?int $cod_usuario = null) : mixed {
 
-        $test = Test::dameTestPorFecha($fecha);
+        $test = Adivina::dameAdivinaPorFecha($fecha);
 
         if (!$test) return false;
 
-        $cod_test = $test["cod_test"];
+        $cod_adivina = $test["cod_adivina"];
 
-        $sentencia = "SELECT ROW_NUMBER() OVER(ORDER BY pt.puntos DESC) AS posicion,
-            pt.cod_usuario, pt.nick, pt.puntos
-            from vista_puntuacion_test pt
-            WHERE pt.cod_test = $cod_test
-            ORDER BY pt.puntos DESC;";
+        $sentencia = "SELECT ROW_NUMBER() OVER(ORDER BY pt.puntos DESC) AS posicion, ".
+            "pt.cod_usuario, pt.nick, pt.puntos ".
+            "from vista_puntuacion_adivina pt ".
+            "WHERE pt.cod_adivina = $cod_adivina ".
+            "ORDER BY pt.puntos DESC;";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
 
@@ -175,7 +175,7 @@ class PuntuacionTest extends CActiveRecord {
 
         $sentencia = "With m as (
                             SELECT pt.cod_usuario, pt.nick, COALESCE(SUM(pt.puntos),0) as puntos
-                            From vista_puntuacion_test pt
+                            From vista_puntuacion_adivina pt
                             WHERE MONTH(pt.fecha) = $mes and YEAR(pt.fecha) = $anio
                             group by pt.cod_usuario
                         )
@@ -215,7 +215,7 @@ class PuntuacionTest extends CActiveRecord {
      * @return mixed Stats con las estadísticas del usuario. False si no existe
      */
     public static function estadisticas (int $cod_usuario) : mixed {
-        $sentencia = "SELECT * from vista_estadísticas where cod_usuario = $cod_usuario";
+        $sentencia = "SELECT * from vista_estadisticas_adivina where cod_usuario = $cod_usuario";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     
@@ -246,27 +246,27 @@ class PuntuacionTest extends CActiveRecord {
     function fijarSentenciaInsert(): string {
 
         $cod_usuario = intval($this->cod_usuario);
-        $cod_test = intval($this->cod_test);
+        $cod_adivina = intval($this->cod_adivina);
         $puntos = intval($this->puntos);
         
-        $sentencia = "INSERT INTO puntuacion_test ". 
-            "(cod_usuario, cod_test, puntos, fecha_realizado)". 
-            " VALUES ($cod_usuario, $cod_test, $puntos, CURRENT_TIMESTAMP); ";
+        $sentencia = "INSERT INTO puntuacion_adivina ". 
+            "(cod_usuario, cod_adivina, puntos, fecha_realizado)". 
+            " VALUES ($cod_usuario, $cod_adivina, $puntos, CURRENT_TIMESTAMP); ";
 
         return $sentencia;
     }
 
     function fijarSentenciaUpdate(): string {
 
-        $cod_punt_test = intval($this->cod_punt_test);
+        $cod_punt_adivina = intval($this->cod_punt_adivina);
         $cod_usuario = intval($this->cod_usuario);
-        $cod_test = intval($this->cod_test);
+        $cod_adivina = intval($this->cod_adivina);
         $puntos = intval($this->puntos);
 
-        $sentencia = "UPDATE puntuacion_test ".
-            "SET cod_usuario = $cod_usuario, cod_test = $cod_test, ".
+        $sentencia = "UPDATE puntuacion_adivina ".
+            "SET cod_usuario = $cod_usuario, cod_adivina = $cod_adivina, ".
             "puntos = $puntos, fecha_realizado = CURRENT_TIMESTAMP ".
-            "WHERE cod_punt_test = $cod_punt_test;";
+            "WHERE cod_punt_adivina = $cod_punt_adivina;";
      
         return $sentencia;
     }

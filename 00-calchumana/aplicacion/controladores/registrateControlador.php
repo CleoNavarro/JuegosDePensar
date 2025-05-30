@@ -27,7 +27,7 @@ class registrateControlador extends CControlador {
             if(isset($_FILES["usuarios"])) {
 				$nombre_imagen = $_FILES['usuarios']['tmp_name']["foto"];
 				//Guardamos tambien la ruta a donde ira
-				$ruta = RUTA_BASE."/web/usuarios/".$_FILES["usuarios"]["name"]["foto"];
+				$ruta = RUTA_IMAGEN.$_FILES["usuarios"]["name"]["foto"];
 				move_uploaded_file($nombre_imagen, $ruta);
 
 				//Si existe el nombre nuevo, es decir, se ha elegido una nueva fot la cambiamos
@@ -99,7 +99,7 @@ class registrateControlador extends CControlador {
 		if (Sistema::app()->Acceso()->hayUsuario()) {
 			array_unshift($arrayMenu,
 				[
-					"texto" => CHTML::imagen("imagenes/web/usuarios/".
+					"texto" => CHTML::imagen(RUTA_IMAGEN.
 						Usuarios::dameFoto(Sistema::app()->Acceso()->getCodUsuario()), "", 
 						["class" => "fotouser"])." <br/> ".
 						Sistema::app()->Acceso()->getNick(), 

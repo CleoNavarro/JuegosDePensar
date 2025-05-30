@@ -1,5 +1,6 @@
 <?php
     defined("RUTA_BASE") or define("RUTA_BASE",dirname(__FILE__));
+	defined("RUTA_IMAGEN") or define("RUTA_IMAGEN","http://www.chmanager.com/imagenes/usuarios/");
     
 	//ruta al fichero de Sistema base
 	$pedrosa=RUTA_BASE.'/framework/Sistema.php';

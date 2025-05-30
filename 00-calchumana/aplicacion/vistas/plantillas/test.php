@@ -47,6 +47,7 @@
 					?>
 			</nav>
 			<label for="boton-menu" class="icon-x">X</label>
+			<a href="http://www.chmanager.com" id="enlaceMNG">Acceso a personal</a>
 		</div>
 	</div>
 	

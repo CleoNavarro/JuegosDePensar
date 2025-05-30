@@ -33,10 +33,10 @@ class apiControlador extends CControlador {
 
                 $fecha = $_POST["fecha"];
                 $test = new Test();
-                $datosCalc = $test::dameTestPorFecha($fecha);
+                $datosCalc = Test::dameTestPorFecha($fecha);
                 if ($datosCalc && !is_null($datosCalc["borrado_fecha"])) $datosCalc = false;
 
-                $datosAdiv = false; // TO DO
+                $datosAdiv = Adivina::dameAdivinaPorFecha($fecha);
                 if ($datosAdiv && !is_null($datosAdiv["borrado_fecha"])) $datosAdiv = false;
 
                 if (!$datosCalc && !$datosAdiv) {
@@ -72,6 +72,47 @@ class apiControlador extends CControlador {
         echo $res;
         exit;
         
+    }
+
+    public function accionAdivina () {
+
+        $resultado=[
+            "datos"=>"Juego no encontrado",
+            "correcto"=>false
+        ]; //error,
+
+        if ($_SERVER["REQUEST_METHOD"]=="POST") {
+
+            if (isset($_POST["cod_adivina"])) {
+                //se ha indicado un elemento se consulta
+                $cod_adivina = $_POST["cod_adivina"];
+               
+                $adivina = new Adivina();
+        
+                // Si no existe el test
+                if (!$adivina->buscarPor([" cod_adivina = $cod_adivina and borrado_fecha IS NULL "])) {
+                    $resultado=[
+                        "datos"=>"Juego no encontrado",
+                        "correcto"=>false
+                    ]; //error,
+                    
+                    $res=json_encode($resultado, JSON_PRETTY_PRINT);
+                    echo $res;
+                    exit;
+                }
+        
+                // si existe
+                $resultado=[
+                    "datos"=> Adivina::damePalabras($cod_adivina),
+                    "correcto"=>true
+                ]; 
+            } 
+        }
+
+        $res=json_encode($resultado, JSON_PRETTY_PRINT);
+        echo $res;
+        exit;
+
     }
 
 
@@ -180,6 +221,112 @@ class apiControlador extends CControlador {
         exit;
     }
 
+    public function accionAdivResultado() {
+
+        $resultado = null;
+        $funciona = true;
+        $error = "Fallo en algún proceso. ¡Hora de depurar!";
+
+        if (Sistema::app()->Acceso()->hayUsuario()) {
+
+            $cod_usuario = Sistema::app()->Acceso()->getCodUsuario();
+
+            if (!$cod_usuario) {
+                $funciona = false;
+                $error = "Fallo al extraer el código de usuario";
+            }
+            $cod_adivina = intval($_POST["cod_adivina"]);
+            $puntos = intval($_POST["puntos"]);
+
+            $arrPuntAdiv = [
+                "cod_usuario" => $cod_usuario,
+                "cod_adivina" => $cod_adivina,
+                "puntos" => $puntos
+            ];
+           
+            $hayAdiv = PuntuacionAdivina::damePuntuacion($cod_adivina, $cod_usuario);
+    
+            if ($hayAdiv) {
+                
+                $puntosAnterior = $hayAdiv["puntos"];
+                $codPuntAdiv = $hayAdiv["cod_punt_adivina"];
+
+                if ($puntos > $puntosAnterior) { // Hiciste el test antes y mejoraste la puntuación
+                    
+                    $adivina = new PuntuacionAdivina();
+                    $adivina->buscarPorId($codPuntAdiv);
+                    $adivina->setValores($arrPuntAdiv);
+
+                    if (!$adivina->guardar()) {
+                        $funciona = false;
+                        $error = "Fallo al actualizar las puntuaciones";
+                    }
+                    $resultado=[
+                        "datos"=>[
+                            "codigo" => 2,
+                            "mensaje" => "Has mejorado tu anterior puntuación.".
+                                "¡Se ha registrado tu puntuación!"
+                        ],
+                        "correcto"=>true
+                    ]; 
+
+                } else { // Hiciste el test antes pero tu puntuación actual es menor
+                    $resultado=[
+                        "datos"=>[
+                            "codigo" => 3,
+                            "mensaje" => "Tu puntuación en este juego ha sido menor que la anterior vez. ".
+                                "¡Inténtalo de nuevo!"
+                        ],
+                        "correcto"=>true
+                    ]; 
+                }
+                
+            } else  { // Es tu primera vez haciendo el test
+
+                $adivina = new PuntuacionAdivina();
+                $adivina->setValores($arrPuntAdiv);
+                
+                if (!$adivina->guardar()) {
+                    $funciona = false;
+                    $error = "Fallo al registrar nuevas puntuaciones";
+                }
+
+                $resultado=[
+                    "datos"=>[
+                        "codigo" => 1,
+                        "mensaje" => "¡Se ha registrado tu puntuación!"
+                    ],
+                    "correcto"=>true
+                ]; 
+            }
+    
+        } else { // No hay usuario registrado
+            $resultado=[
+                "datos"=>[
+                    "codigo" => 0,
+                    "mensaje" => "¡Regístrate para poder guardar tus puntuaciones!"
+                ],
+                "correcto"=>true
+            ]; 
+        }
+
+        if (is_null($resultado) || !$funciona) {
+            $resultado=[
+                "datos"=>[
+                    "codigo" => -1,
+                    "mensaje" => $error
+                ],
+                "correcto"=>false
+            ]; 
+        }
+
+
+        $res=json_encode($resultado, JSON_PRETTY_PRINT);
+        echo $res;
+        exit;
+    }
+
+
 
     public function accionDatos() {
 
@@ -208,23 +355,36 @@ class apiControlador extends CControlador {
                 } else {
 
                     $datosUsuario = Usuarios::dameUsuarios($cod_usuario);
-                    $estadisticas = Usuarios::estadisticas($cod_usuario);
-                    $recientes = PuntuacionTest::damePuntuaciones($cod_usuario, true);
-                    $rdiario = PuntuacionTest::rankingDiario(date("d/m/Y"), $cod_usuario);
-                    $rmensual = PuntuacionTest::rankingMensual(date("m"), date("Y"), $cod_usuario);
-                    $ranking = [
-                        "puntos_hoy" => !$rdiario ? "0" : $rdiario["puntos"],
-                        "posicion_hoy" => !$rdiario ?  "-" : $rdiario["posicion"],
-                        "puntos_mes" => !$rmensual ?  "0" : $rmensual["puntos"],
-                        "posicion_mes" => !$rmensual ?  "-" : $rmensual["posicion"],
+                    $datosUsuario["foto"] = RUTA_IMAGEN.$datosUsuario["foto"];
+
+                    $recientes = Usuarios::dameJuegosRecientes($cod_usuario);
+                    $estadisticasCalc = PuntuacionTest::estadisticas($cod_usuario);
+                    $rdiarioCalc = PuntuacionTest::rankingDiario(date("d/m/Y"), $cod_usuario);
+                    $rmensualCalc = PuntuacionTest::rankingMensual(date("m"), date("Y"), $cod_usuario);
+                    $rankingCalc = [
+                        "puntos_hoy" => !$rdiarioCalc ? "0" : $rdiarioCalc["puntos"],
+                        "posicion_hoy" => !$rdiarioCalc ?  "-" : $rdiarioCalc["posicion"],
+                        "puntos_mes" => !$rmensualCalc ?  "0" : $rmensualCalc["puntos"],
+                        "posicion_mes" => !$rmensualCalc ?  "-" : $rmensualCalc["posicion"],
+                    ]; 
+                    $estadisticasAdiv = PuntuacionAdivina::estadisticas($cod_usuario);
+                    $rdiarioAdiv = PuntuacionAdivina::rankingDiario(date("d/m/Y"), $cod_usuario);
+                    $rmensualAdiv = PuntuacionAdivina::rankingMensual(date("m"), date("Y"), $cod_usuario);
+                    $rankingAdiv = [
+                        "puntos_hoy" => !$rdiarioAdiv ? "0" : $rdiarioAdiv["puntos"],
+                        "posicion_hoy" => !$rdiarioAdiv ?  "-" : $rdiarioAdiv["posicion"],
+                        "puntos_mes" => !$rmensualAdiv ?  "0" : $rmensualAdiv["puntos"],
+                        "posicion_mes" => !$rmensualAdiv ?  "-" : $rmensualAdiv["posicion"],
                     ]; 
 
                     $resultado=[
                         "datos"=> [
                             "datos" => $datosUsuario,
-                            "estadisticas" => $estadisticas, 
                             "recientes" => $recientes,
-                            "ranking" => $ranking
+                            "calc_estadisticas" => $estadisticasCalc, 
+                            "calc_ranking" => $rankingCalc,
+                            "adiv_estadisticas" => $estadisticasAdiv, 
+                            "adiv_ranking" => $rankingAdiv 
                         ],
                         "correcto"=>true
                     ]; 
@@ -260,8 +420,8 @@ class apiControlador extends CControlador {
 
             $rdiarioCalc = PuntuacionTest::rankingDiario(date("d/m/Y"));
             $rmensualCalc = PuntuacionTest::rankingMensual(date("m"), date("Y"));
-            $rdiarioAdiv = false;
-            $rmensualAdiv = false;
+            $rdiarioAdiv = PuntuacionAdivina::rankingDiario(date("d/m/Y"));
+            $rmensualAdiv = PuntuacionAdivina::rankingMensual(date("m"), date("Y"));
                 
             $resultado=[
                 "datos"=> [
@@ -274,8 +434,6 @@ class apiControlador extends CControlador {
             ]; 
         }
             
-        
-
         $res=json_encode($resultado, JSON_PRETTY_PRINT);
         echo $res;
         exit;

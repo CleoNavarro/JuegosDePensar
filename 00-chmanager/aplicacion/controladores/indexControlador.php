@@ -210,7 +210,7 @@ class indexControlador extends CControlador {
 			if (is_null($fila["verificado"])) $fila["verificado"] = "NO";
             else $fila["verificado"] = "SI";
 
-            $fila["foto"] = CHTML::imagen("/imagenes/usuarios/".$fila["foto"],
+            $fila["foto"] = CHTML::imagen(RUTA_IMAGEN.$fila["foto"],
                                             "Foto ".$fila["nombre"],
                                         ["style" => "width: 50px; height: 50px;"]);
 

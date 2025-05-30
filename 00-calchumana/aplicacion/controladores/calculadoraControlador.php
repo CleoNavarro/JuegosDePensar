@@ -69,7 +69,7 @@ class calculadoraControlador extends CControlador {
 		if (Sistema::app()->Acceso()->hayUsuario()) {
 			array_unshift($arrayMenu,
 				[
-					"texto" => CHTML::imagen("imagenes/web/usuarios/".
+					"texto" => CHTML::imagen(RUTA_IMAGEN.
 						Usuarios::dameFoto(Sistema::app()->Acceso()->getCodUsuario()), "", 
 						["class" => "fotouser"])." <br/> ".
 						Sistema::app()->Acceso()->getNick(), 

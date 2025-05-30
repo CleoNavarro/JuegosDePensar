@@ -2,7 +2,7 @@
  echo "<br>";
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
 
-echo CHTML::dibujaEtiqueta("h1", ["style" => "text-align:center; margin:0;"] , "SAFEPLACE MANAGER");
+echo CHTML::dibujaEtiqueta("h1", ["style" => "text-align:center; margin:0;"] , "CH MANAGER - JUEGOS DE PENSAR");
 
 echo "<br>".PHP_EOL;
 echo CHTML::dibujaEtiqueta("p", ["style" => "text-align:center;"] , 

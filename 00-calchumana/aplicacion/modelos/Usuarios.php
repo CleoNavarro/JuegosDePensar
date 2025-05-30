@@ -147,6 +147,11 @@ class Usuarios extends CActiveRecord {
         }
     }
 
+    /**
+     * Devuelve la foto que usuario indicado
+     * @param integer $cod_usu Código Usuario
+     * @return mixed Foto del usuario. False en caso de que no haya o no exista
+     */
     public static function dameFoto(int $cod_usu) : mixed {
 
         $usuario = Usuarios::dameUsuarios($cod_usu);
@@ -157,54 +162,43 @@ class Usuarios extends CActiveRecord {
     }
 
 
-
     /**
-     * Undocumented function
-     *
-     * @return boolean
+     * Confirma si ya existe un usuario con ese nick
      */
-    public function nickNoExiste () : bool {
+    public function nickNoExiste () : void {
 
         $arrayUsuarios = Usuarios::dameUsuarios();
-
-        foreach ($arrayUsuarios as $clave=>$valor) {
-            if ($clave!=$this->cod_cliente && $valor["nick"] == $this->nick)
-                return false;
+        
+        if ($arrayUsuarios) {
+            foreach ($arrayUsuarios as $clave=>$valor) {
+                if ($clave!=$this->cod_usuario && $valor["nick"] == $this->nick)
+                    $this->setError("nick", "Este nick ya existe. Escoge otro");
+            }
         }
-
-        return true;
-        
-        
     }
 
     /**
-     * Undocumented function
-     *
-     * @return boolean
+     * Confirma si los dos campos de contraseña son iguales 
      */
-    public function validarContrasenia () :bool {
+    public function validarContrasenia () :void {
         if ($this->contrasenia == $this->repetir_contrasenia)
-            return true;
-
-        return false;
+            $this->setError("repetir_contrasenia", "Las contraseñas deben ser iguales");
     }
 
 
     /**
-     * Undocumented function
-     *
-     * @return bool
+     * Confirma si el mail es válido
      */
-    public function validarMail () : bool {
+    public function validarMail () : void {
         $mail = $this->mail;
-        return CValidaciones::validaEMail($mail);
+        if (CValidaciones::validaEMail($mail))
+            $this->setError("mail", "Este no parece ser un mail privado");
     }
 
     /**
-     * Undocumented function
-     *
-     * @param integer|null $cod_rol
-     * @return mixed
+     * Devuelve la lista de roles existentes, o el rol cuyo código se inserta
+     * @param integer|null $cod_rol Código Rol
+     * @return mixed Los datos de los roles o el rol seleccionado. False si no existe
      */
     public static function dameRoles(?int $cod_rol = null) : mixed {
 
@@ -231,28 +225,6 @@ class Usuarios extends CActiveRecord {
             else
                 return false;
         }
-    }
-
-    /**
-     * Función que devuelve las estadísticas de un usuario
-     * @param integer $cod_usuario - Código usuario
-     * @return mixed Stats con las estadísticas del usuario. False si no existe
-     */
-    public static function estadisticas (int $cod_usuario) : mixed {
-        $sentencia = "SELECT * from vista_estadísticas where cod_usuario = $cod_usuario";
-
-        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
-    
-        $filas=$consulta->filas();
-
-        if (is_null($filas) || count($filas)==0) return false;
-
-        $stats = [];
-
-        foreach ($filas as $fila) {$stats = $fila;}
-
-        return $stats;
-
     }
 
     /**
@@ -314,6 +286,36 @@ class Usuarios extends CActiveRecord {
             return false;
 
         return true;
+    }
+
+    public static function dameJuegosRecientes (int $cod_usuario) {
+
+        $sentencia = "WITH p as ( ".
+            "SELECT 'Calculadora Humana' juego, fecha_realizado, titulo, dificultad, puntos ".
+            "from vista_puntuacion_test ".
+            "where cod_usuario = $cod_usuario ".
+            "UNION ".
+            "SELECT 'Adivina la Palabra' juego, fecha_realizado, titulo, dificultad, puntos ".
+            "from vista_puntuacion_adivina ".
+            "where cod_usuario = $cod_usuario ".
+            ") SELECT p.* from p ORDER BY p.fecha_realizado DESC LIMIT 10; ";
+        
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        $filas=$consulta->filas();
+    
+        if (is_null($filas) || count($filas)==0) return false;
+    
+        $puntuaciones = [];
+        $indexFila = 0;
+    
+        foreach ($filas as $fila) {
+            $fila["fecha_realizado"] = CGeneral::fechahoraMysqlANormal($fila["fecha_realizado"]);
+            $puntuaciones[$indexFila] = $fila;
+            $indexFila++;
+        }
+    
+        return $puntuaciones;
     }
 
     

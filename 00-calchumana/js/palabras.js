@@ -24,19 +24,19 @@ var intervalo = setInterval(function() {
 }, 1000);
 
 
-cargarPreguntas()
+cargarPalabras()
 
-// Función que busca las preguntas del test y las carga
-function cargarPreguntas () {
+// Función que busca las palabras del juego y las carga
+function cargarPalabras () {
 
-    let cod_test= document.getElementById("cod_test").value
+    let cod_adivina = document.getElementById("cod_adivina").value
 
-    let loc = "http://www.juegosdepensar.com/api/test"
+    let loc = "http://www.juegosdepensar.com/api/adivina"
 
         let busqueda = new Request(loc, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "cod_test=" + cod_test
+            body: "cod_adivina=" + cod_adivina
         })
     
         fetch(busqueda).then(function (resp) {
@@ -73,12 +73,14 @@ function realizarPregunta () {
     artPregunta.setAttribute("class", "pregunta")
     artPregunta.setAttribute("id", "preg" + test[ordenPreg]["orden"])
 
+    document.getElementById("letras").innerHTML = test[ordenPreg]["siglas"]
+
     let pPreg = document.createElement("p")
     let textPreg = document.createTextNode(test[ordenPreg]["orden"] + ". " + test[ordenPreg]["enunciado"])
     pPreg.appendChild(textPreg);
 
     let inputResp = document.createElement("input")
-    inputResp.setAttribute("type", "number")
+    inputResp.setAttribute("type", "text")
     inputResp.setAttribute("id", "respuesta" + test[ordenPreg]["orden"])
     inputResp.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {responder()}
@@ -104,7 +106,7 @@ function realizarPregunta () {
 
 }
 
-// Si no hay un test con ese código, sale pantalla de error
+// Si no hay un juego con ese código, sale pantalla de error
 function noHaytest () {
 
     clearInterval(intervalo);
@@ -112,7 +114,7 @@ function noHaytest () {
 
     let pIntrod = document.createElement("p")
     pIntrod.setAttribute("style", "font-size:2.5em");
-    let textIntrod = document.createTextNode("Hoy no hay un test programado.")
+    let textIntrod = document.createTextNode("Hoy no hay un juego programado.")
     pIntrod.appendChild(textIntrod);
 
     let pTitulo = document.createElement("p")
@@ -140,8 +142,10 @@ function noHaytest () {
  */
 function responder () {
 
-    let respuesta = parseInt(document.getElementById("respuesta" + test[ordenPreg]["orden"]).value)
-    let correcta = parseInt(test[ordenPreg]["cantidad"])
+    let respuesta = document.getElementById("respuesta" + test[ordenPreg]["orden"]).value
+    respuesta = respuesta.trim().toUpperCase()
+    let correcta = test[ordenPreg]["respuesta"]
+    correcta = correcta.toUpperCase()
 
     if (respuesta === correcta) {
         ordenPreg += 1
@@ -150,7 +154,6 @@ function responder () {
             terminar()
         } else {
             document.getElementById("preguntas").innerHTML = ""
-            document.getElementById("sumatorio").innerHTML = correcta
             realizarPregunta()
         }
     
@@ -185,14 +188,14 @@ function terminar () {
 
     document.getElementById("preguntas").innerHTML = ""
 
-    let cod_test = document.getElementById("cod_test").value
+    let cod_adivina = document.getElementById("cod_adivina").value
 
-    let loc = "http://www.juegosdepensar.com/api/calcResultado"
+    let loc = "http://www.juegosdepensar.com/api/adivResultado"
 
         let busqueda = new Request(loc, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "cod_test=" + cod_test + "&puntos=" + puntuacionTotal
+            body: "cod_adivina=" + cod_adivina + "&puntos=" + puntuacionTotal
         })
         
         fetch(busqueda).then(function (resp) {

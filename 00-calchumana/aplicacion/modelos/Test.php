@@ -92,7 +92,7 @@ class Test extends CActiveRecord {
      /**
      * Devuelve el test que hay según qué fecha
      *
-     * @param string|null $cod_test Fecha. Por defecto, la fecha de hoy
+     * @param string|null $fecha Fecha. Por defecto, la fecha de hoy
      * @return mixed Array con test y sus datos. False si no existe ese test
      */
     public static function dameTestPorFecha(?string $fecha = null) : mixed {
@@ -100,7 +100,8 @@ class Test extends CActiveRecord {
         if (is_null($fecha)) $fecha = date("d/M/Y");
 
         $sentencia = "SELECT * from vista_test where fecha = '".
-        CGeneral::fechaNormalAMysql($fecha)."' ORDER BY creado_fecha ASC;";
+        CGeneral::fechaNormalAMysql($fecha)."' AND borrado_fecha is NULL ".
+        "ORDER BY creado_fecha ASC;";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     

@@ -49,6 +49,10 @@ class Login extends CActiveRecord {
         $this->contrasenia = "";
     }
 
+    /**
+     * Comprueba si el nick introducido es un mail
+     * @return bool True si es un mail
+     */
     public function compruebaMail () : bool {
 
         $nick = CGeneral::addSlashes($this->nick);
@@ -59,10 +63,15 @@ class Login extends CActiveRecord {
         return false;
     }
 
-    public function verificarContrasenia () : bool {
+    /**
+     * Verifica si los los datos de usuario existen y se puede hacer login
+     */
+    public function verificarContrasenia () : void {
 
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $nick = CGeneral::addSlashes($this->nick);
+        $valido = true;
+        $error = false;
 
         if ($this->compruebaMail()) {
             $sentencia = "SELECT * from usuarios ".
@@ -70,13 +79,16 @@ class Login extends CActiveRecord {
 
             $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     
-            $fila=$consulta->fila();
+            $filas=$consulta->filas();
 
-            if (is_null($fila)|| count($fila)==0)
-                return false;
+            if (is_null($filas)|| count($filas)==0) $valido = false;
+
+            if (count($filas)>1) $error = true;
             
-            $nick = $fila["nick"];
-           
+            foreach ($filas as $fila) {
+                $nick = $fila["nick"];
+                $this->nick = $nick;
+            }
         }
         
         $sentencia = "SELECT * from acl_usuarios ".
@@ -88,10 +100,13 @@ class Login extends CActiveRecord {
         $filas=$consulta->filas();
 
         if (is_null($filas) || count($filas)==0)
-            return false;
+            $valido = false;
 
-        return true;
+        if (!$valido) 
+            $this->setError("nick", "Usuario o contraseña incorrectos");
 
+        if ($error) 
+            $this->setError("nick", "Usuario o contraseña incorrectos");    
 
     }
 

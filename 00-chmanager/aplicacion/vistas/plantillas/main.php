@@ -115,13 +115,13 @@
 				if (Sistema::app()->Acceso()->hayUsuario()) {
 					echo CHTML::dibujaEtiqueta("span", ["class" => "nombre"], 
 							"Conectado como ".Sistema::app()->Acceso()->getNombre()." | ");
-					echo CHTML::link("Ir a Panel de Control", ["index"]);
-					echo " / ";
 					echo CHTML::link("Cerrar Sesión", ["index", "cerrarSesion"]);
 				} else {
 					echo CHTML::link("Acceso a personal", ["index", "login"]);
 				}
-				
+				echo " / ";
+				echo CHTML::link("Ir a Juegos de Pensar", "http://www.juegosdepensar.com");
+					
 				?>
 
 			</div>

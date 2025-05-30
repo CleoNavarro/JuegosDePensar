@@ -155,6 +155,19 @@ label.icon-x:hover {
     filter:drop-shadow(0 0 2px rgb(126, 126, 126));
 }
 
+a#enlaceMNG {
+    position: absolute;
+    right: 20px;
+    bottom:30px;
+    z-index: 3;
+}
+
+a#enlaceMNG:hover {
+    font-weight: bold;
+    color: var(--amarillo-destacado);
+}
+
+
 /* Diseño Registrarte / Iniciar sesión */
 div.contenedorForm {
     margin: 0 25% 20px;
@@ -250,7 +263,16 @@ div#sumatorio{
     margin: 30px;
 }
 
-input[type=number] {
+div#letras{
+    font-size: 5em;
+    margin: 30px;
+    background-color: var(--naranja-principal);
+    border: 4px solid white;
+    padding: 5px 30px;
+    border-radius: 20px;
+}
+
+input[type=number]{
     color: var(--texto-defecto);
     background-color: var(--gris-suave);
     font-size: 1.5em;
@@ -262,6 +284,16 @@ input[type=number] {
 input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
+input[type=text]{
+    color: var(--texto-defecto);
+    background-color: var(--gris-suave);
+    font-size: 1.5em;
+    border-radius: 5px;
+    margin: 9px;
+    width: 250px;
+}
+
 
 /* Página de datos */
 

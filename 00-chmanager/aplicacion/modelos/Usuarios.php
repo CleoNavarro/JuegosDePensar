@@ -125,7 +125,7 @@ class Usuarios extends CActiveRecord {
     
         $filas=$consulta->filas();
 
-        if (is_null($filas))
+        if (is_null($filas) || count($filas)==0)
             return false;
 
         $usuarios = [];
@@ -145,51 +145,42 @@ class Usuarios extends CActiveRecord {
     }
 
     /**
-     * Undocumented function
-     *
-     * @return boolean
+     * Confirma si ya existe un usuario con ese nick
      */
-    public function nickNoExiste () : bool {
+    public function nickNoExiste () : void {
 
         $arrayUsuarios = Usuarios::dameUsuarios();
-
-        foreach ($arrayUsuarios as $clave=>$valor) {
-            if ($clave!=$this->cod_cliente && $valor["nick"] == $this->nick)
-                return false;
+        
+        if ($arrayUsuarios) {
+            foreach ($arrayUsuarios as $clave=>$valor) {
+                if ($clave!=$this->cod_usuario && $valor["nick"] == $this->nick)
+                    $this->setError("nick", "Este nick ya existe. Escoge otro");
+            }
         }
-
-        return true;
-        
-        
     }
 
     /**
-     * Undocumented function
-     *
-     * @return boolean
+     * Confirma si los dos campos de contraseña son iguales 
      */
-    public function validarContrasenia () :bool {
+    public function validarContrasenia () :void {
         if ($this->contrasenia == $this->repetir_contrasenia)
-            return true;
-
-        return false;
+            $this->setError("repetir_contrasenia", "Las contraseñas deben ser iguales");
     }
 
 
     /**
-     * Undocumented function
-     *
-     * @return bool
+     * Confirma si el mail es válido
      */
-    public function validarMail () : bool {
+    public function validarMail () : void {
         $mail = $this->mail;
-        return CValidaciones::validaEMail($mail);
+        if (CValidaciones::validaEMail($mail))
+            $this->setError("mail", "Este no parece ser un mail privado");
     }
 
     /**
-     * Función que devuelve los roles disponibles, o el rol que buscamos
-     * @param integer|null $cod_rol
-     * @return mixed
+     * Devuelve la lista de roles existentes, o el rol cuyo código se inserta
+     * @param integer|null $cod_rol Código Rol
+     * @return mixed Los datos de los roles o el rol seleccionado. False si no existe
      */
     public static function dameRoles(?int $cod_rol = null) : mixed {
 

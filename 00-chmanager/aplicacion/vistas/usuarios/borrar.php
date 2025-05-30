@@ -40,7 +40,7 @@ echo CHTML::dibujaEtiqueta("h2", [], "Datos del usuario:");
 
     echo CHTML::dibujaEtiqueta("div", ["class" => "datosInfo"], null, false);
 
-        echo CHTML::imagen("/imagenes/usuarios/".$usuario->foto, "Foto ".$usuario->nick, 
+        echo CHTML::imagen(RUTA_IMAGEN.$usuario->foto, "Foto ".$usuario->nick, 
                             ["class" => "imagenInfo"] );
 
         echo CHTML::dibujaEtiqueta("ul", [], null, false);
