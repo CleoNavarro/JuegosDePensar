@@ -26,7 +26,7 @@ function preguntaMas () {
     let textenunciado = document.createElement("input");
     textenunciado.setAttribute("type", "text");
     textenunciado.setAttribute("name", "preguntas["+valor+"][enunciado]");
-    labelenunciado.setAttribute("id", "textenunciado"+valor);
+    textenunciado.setAttribute("id", "textenunciado"+valor);
 
     let labeltipo = document.createElement("label");
     labeltipo.setAttribute("for", "preguntas["+valor+"][cod_tipo]");

@@ -451,7 +451,21 @@ div.acercaJuegos div {
 div.acercaJuegos div img {
     height: 80px;
 }
-    
+
+/* Pantalla Error */
+
+article.pantallaError {
+    text-align: center;
+}
+
+article.pantallaError h1 {
+    color: var(--amarillo-destacado);
+}
+
+img#logo_pag_error {
+    width: 260px;
+}
+
 
 @media screen and (max-width: 950px){
 
@@ -532,6 +546,10 @@ div.acercaJuegos div img {
     div.contAcerca {
         width: 90%;
         margin: 3vh 5%;
+    }
+
+    img#logo_pag_error {
+        width: 180px;
     }
 
 }

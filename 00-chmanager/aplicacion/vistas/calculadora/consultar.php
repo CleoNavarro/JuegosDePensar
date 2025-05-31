@@ -23,12 +23,12 @@ echo CHTML::dibujaEtiqueta("h2", [], "Datos del test:");
 
         $boton1 = CHTML::boton("Modificar test");
         echo CHTML::link($boton1, 
-            Sistema::app()->generaURL(["usuarios","modificar"],
+            Sistema::app()->generaURL(["calculadora","modificar"],
             ["id" => $test->cod_test]));
 
         $boton2 = CHTML::boton("Borrar test");
         echo CHTML::link($boton2, 
-            Sistema::app()->generaURL(["usuarios","borrar"],
+            Sistema::app()->generaURL(["calculadora","borrar"],
             ["id" => $test->cod_test]));
 
     echo CHTML::dibujaEtiquetaCierre("div");

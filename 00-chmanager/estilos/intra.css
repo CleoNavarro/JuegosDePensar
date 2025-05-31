@@ -441,6 +441,10 @@
 		background-color: #929292;
 	}
 
+	input#num_palabras, input#num_preguntas {
+		color: white;
+	}
+
 
 	/* Definiciones para el objeto CPager*/
 
@@ -612,8 +616,7 @@
 		padding:5px 5%;
 	}
 
-	/* Definición del separador
-	*/
+	/* Definición del separador */
 
 	hr.separador {
 		width: 100%;
@@ -621,13 +624,22 @@
 		margin: 13px 0;
 	}
 
+	/* Pantalla Error */
+
+	article.pantallaError h1 {
+		color: var(--amarillo-destacado);
+	}
+	
+	img#logo_pag_error {
+		width: 260px;
+		height: 260px;
+	}
 
 }
 
 /* Ajustes de tamaño añadidos al estilo anterior */
-/* Con menos de 1200px de ancho, las plazas en reservas se muestran 
-de tres en tres, se reduce el margen de contenedorInfo y se reducen datos que
-se muestran de las tablas*/
+/* Con menos de 1200px de ancho, se reduce el margen de contenedorInfo 
+y se reducen datos que se muestran de las tablas*/
 @media screen and (max-width: 1200px) {
 
 
@@ -648,9 +660,8 @@ se muestran de las tablas*/
 
 }
 
-/* Con menos de 1000px de ancho, el header y el footer cambia su distribución, el diseño de
-home, turismo, la barra de búsqueda y los contenedores de info y formularios
-se adaptan y se reducen datos que se muestran de las tablas*/
+/* Con menos de 1000px de ancho, el header y el footer cambia su distribución, los contenedores 
+de info y formularios se adaptan y se reducen datos que se muestran de las tablas*/
 @media screen and (max-width: 1000px) {
 
 	body {
@@ -688,6 +699,7 @@ se adaptan y se reducen datos que se muestran de las tablas*/
 
 	
 }
+
 /* Con menos de 750px de ancho, se reducen datos que se muestran de las tablas*/
 @media screen and (max-width: 750px){
 
@@ -711,8 +723,7 @@ se adaptan y se reducen datos que se muestran de las tablas*/
 
 }
 
-/* Con menos de 1000px de ancho, el diseño de turismo, la barra de búsqueda 
-y los contenedores de info y formularios se adaptan*/
+/* Con menos de 1000px de ancho, los contenedores de info y formularios se adaptan*/
 @media screen and (max-width: 650px){
 
 	div.contenedorInfo {
@@ -722,6 +733,11 @@ y los contenedores de info y formularios se adaptan*/
 	div.contenedorForm {
 		margin: 0 20% 20px;
 	}
+
+	img#logo_pag_error {
+        width: 180px;
+		height: 180px;
+    }
 
 
 }

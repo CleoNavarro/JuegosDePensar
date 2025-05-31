@@ -1,6 +1,6 @@
 <?php
 
-class calculadoraControlador extends CControlador {
+class adivinaControlador extends CControlador {
    
    public function accionIndex() {
 
@@ -13,12 +13,12 @@ class calculadoraControlador extends CControlador {
                "enlace" => ["index"]
            ],
            [
-               "texto" => "Juego Calculadora",
-               "enlace" => ["calculadora"]
+               "texto" => "Juego Adivina",
+               "enlace" => ["adivina"]
            ]
        ]; 
  
-       $test = new Test();
+       $adivina = new Adivina();
 
        $condiciones = ["select" => "*"];
 
@@ -32,18 +32,18 @@ class calculadoraControlador extends CControlador {
 
        if ($_POST) {
 
-            if (isset($_POST["calculadora"]["fecha"])) {
-                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST["calculadora"]["fecha"]));
+            if (isset($_POST["adivina"]["fecha"])) {
+                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST["adivina"]["fecha"]));
                 $where .= " and fecha = '".$postmen["fecha"]."' ";
             }
 
-            if (isset($_POST["calculadora"]["titulo"])) {
-                $postmen["titulo"] = CGeneral::addSlashes($_POST["calculadora"]["titulo"]);
+            if (isset($_POST["adivina"]["titulo"])) {
+                $postmen["titulo"] = CGeneral::addSlashes($_POST["adivina"]["titulo"]);
                 $where .= " and titulo like '%".$postmen["titulo"]."%' ";
             }
 
-            if (isset($_POST["calculadora"]["cod_dificultad"])) {
-                $postmen["cod_dificultad"] = intval($_POST["calculadora"]["cod_dificultad"]);
+            if (isset($_POST["adivina"]["cod_dificultad"])) {
+                $postmen["cod_dificultad"] = intval($_POST["adivina"]["cod_dificultad"]);
                 $where .= " and cod_dificultad = ".$postmen["cod_dificultad"]." ";
             }
 
@@ -56,7 +56,7 @@ class calculadoraControlador extends CControlador {
        if (isset($_GET["reg_pag"]))
            $tamPagina = intval($_GET["reg_pag"]);
 
-       $registros = intval($test->buscarTodosNRegistros($condiciones));
+       $registros = intval($adivina->buscarTodosNRegistros($condiciones));
        $numPaginas = ceil($registros / $tamPagina);
        $pag = 1;
 
@@ -70,7 +70,7 @@ class calculadoraControlador extends CControlador {
        $inicio = $tamPagina * ($pag - 1);
        $condiciones["limit"]="$inicio,$tamPagina";
 
-       $filas = $this->filasTodas($test, $condiciones);
+       $filas = $this->filasTodas($adivina, $condiciones);
 
        if ($filas===false) {
            Sistema::app()->paginaError(402, "Error con el acceso a base de datos");
@@ -82,9 +82,9 @@ class calculadoraControlador extends CControlador {
        $opcPaginador = $this->paginador($registros, $pag, $tamPagina);
 
        $this->dibujaVista("index", 
-           ["modelo" => $test ,"cab" => $cabecera, "fil" => $filas, 
+           ["modelo" => $adivina ,"cab" => $cabecera, "fil" => $filas, 
            "pag" => $opcPaginador, "filtrado" => $postmen],
-           "Gestión de Juego Calculadora - CH Manager");
+           "Gestión de Juego Adivina - CH Manager");
 
    }
 
@@ -99,9 +99,9 @@ class calculadoraControlador extends CControlador {
 
         $this->tienePermisos("consultar",  $id);
 
-        $test = new Test();
+        $adivina = new Adivina();
 
-        if (!$test->buscarPorId($id)) {
+        if (!$adivina->buscarPorId($id)) {
             Sistema::app()->paginaError(404, "Página no encontrada");
             exit;
         }
@@ -114,23 +114,23 @@ class calculadoraControlador extends CControlador {
                 "enlace" => ["index"]
             ],
             [
-                "texto" => "Calculadora",
-                "enlace" => ["calculadora"]
+                "texto" => "Adivina",
+                "enlace" => ["adivina"]
             ],
             [
-                "texto" => "Test del día ".$test->fecha,
-                "enlace" => ["calculadora", "consultar/id=$id",]
+                "texto" => "Juego Adivina del día ".$adivina->fecha,
+                "enlace" => ["adivina", "consultar/id=$id",]
             ]
         ];
 
         $borr = "NO";
-        if (!is_null($test->borrado_fecha)) $borr = $test->borrado_fecha." por ".$test->nick_borrador ;
+        if (!is_null($adivina->borrado_fecha)) $borr = $adivina->borrado_fecha." por ".$adivina->nick_borrador ;
     
-        $preguntas = Test::damePreguntas($id);
+        $palabras = Adivina::damePalabras($id);
 
         $this->dibujaVista("consultar", 
-            ["test" => $test, "preguntas" => $preguntas, "borr" => $borr],
-            "Consulta Test del día ".$test->fecha);
+            ["adivina" => $adivina, "palabras" => $palabras, "borr" => $borr],
+            "Consulta Juego Adivina del día ".$adivina->fecha);
 
    }
 
@@ -146,77 +146,77 @@ class calculadoraControlador extends CControlador {
                "enlace" => ["index"]
            ],
            [
-               "texto" => "Calculadora",
-               "enlace" => ["calculadora"]
+               "texto" => "Adivina",
+               "enlace" => ["adivina"]
            ],
            [
-               "texto" => "Nuevo Test",
-               "enlace" => ["calculadora", "nuevo"]
+               "texto" => "Nuevo Juego de Adivina",
+               "enlace" => ["adivina", "nuevo"]
            ]
        ];
        
       
-       $test = new Test();
+       $adivina = new Adivina();
 
        if ($_POST) {
 
-           $testNombre = $test->getNombre();
-           $fechaAux =  $_POST[$testNombre]["fecha"] ;
+           $adivinaNombre = $adivina->getNombre();
+           $fechaAux =  $_POST[$adivinaNombre]["fecha"] ;
            $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
-           $_POST[$testNombre]["fecha"] = $fechaAux;
-           $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
-           $_POST[$testNombre]["puntuacion_base"] = 0;
-           $test->setValores($_POST[$testNombre]);
+           $_POST[$adivinaNombre]["fecha"] = $fechaAux;
+           $_POST[$adivinaNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+           $_POST[$adivinaNombre]["puntuacion_base"] = 0;
+           $adivina->setValores($_POST[$adivinaNombre]);
    
-            if ($test->validar()) {
+            if ($adivina->validar()) {
 
-                $pregunta = new Pregunta();
-                $arrPreguntas = $_POST["preguntas"];
+                $palabras = new Palabras();
+                $arrPalabras = $_POST["palabras"];
                 $valido = true;
                 $puntuacion = 0;
 
-                for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$i]["cod_tipo"]));
-                    $puntuacion += intval($arrTipo["puntuacion_base"]);
-                    $arrPreguntas[$i]["cod_test"] = 0;
-                    $arrPreguntas[$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$i]);
-                    if (!$pregunta->validar()) 
+                for ($i = 1; $i <= count($arrPalabras); $i++){
+                    $arrPalabras[$i]["respuesta"] = trim($arrPalabras[$i]["respuesta"]);
+                    $puntuacion += 500 + (100 * strlen($arrPalabras[$i]["respuesta"]));
+                    $arrPalabras[$i]["cod_adivina"] = 0;
+                    $arrPalabras[$i]["orden"] = $i;
+                    $palabras->setValores($arrPalabras[$i]);
+                    if (!$palabras->validar()) 
                             $valido = false;
                 }
 
-                $arrDificultad = Test::dameDificultad(intval($_POST[$testNombre]["cod_dificultad"]));
-                $_POST[$testNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
-                $test->setValores($_POST[$testNombre]);
-                if (!$test->validar()) $valido = false;
+                $arrDificultad = Adivina::dameDificultad(intval($_POST[$adivinaNombre]["cod_dificultad"]));
+                $_POST[$adivinaNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
+                $adivina->setValores($_POST[$adivinaNombre]);
+                if (!$adivina->validar()) $valido = false;
 
-                if (!$valido || !$test->guardar()) {
+                if (!$valido || !$adivina->guardar()) {
 
-                   $this->dibujaVista("nuevo", array("modelo"=>$test), "Nuevo Test de Calculadora");
+                   $this->dibujaVista("nuevo", array("modelo"=>$adivina), "Nuevo Juego de Adivina");
                    exit;
                 }
 
-                $codTest = $test->cod_test;
-                for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $pregunta = new Pregunta();
-                    $arrPreguntas[$i]["cod_test"] = $codTest;
-                    $arrPreguntas[$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$i]);
-                    if (!$pregunta->guardar()) {
-                            $i = count($arrPreguntas) + 2;
+                $cod_adivina = $adivina->cod_adivina;
+                for ($i = 1; $i <= count($arrPalabras); $i++){
+                    $palabras = new Palabras();
+                    $arrPalabras[$i]["cod_adivina"] = $cod_adivina;
+                    $arrPalabras[$i]["orden"] = $i;
+                    $palabras->setValores($arrPalabras[$i]);
+                    if (!$palabras->guardar()) {
+                            $i = count($arrPalabras) + 2;
                             $valido = false;
                     }    
                 }
                 
                 if ($valido) {
-                    Sistema::app()->irAPagina(array("calculadora")); 
+                    Sistema::app()->irAPagina(array("adivina")); 
                     exit;
                 }
            }
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $test), 
-                "Nuevo Test de Calculadora");
+       $this->dibujaVista("nuevo", array("modelo" => $adivina), 
+                "Nuevo Juego de Adivina");
    }
 
    public function accionModificar () {
@@ -230,14 +230,14 @@ class calculadoraControlador extends CControlador {
 
        $this->tienePermisos("modificar", $id);
 
-       $test = new Test();
+       $adivina = new Adivina();
 
-       if (!$test->buscarPorId($id)) {
+       if (!$adivina->buscarPorId($id)) {
            Sistema::app()->paginaError(404, "Página no encontrada");
            exit;
        }
 
-       $arrPreguntas = Test::damePreguntas($id);
+       $arrPalabras = Adivina::damePalabras($id);
 
        $this->menu();
 
@@ -247,12 +247,12 @@ class calculadoraControlador extends CControlador {
                "enlace" => ["index"]
            ],
            [
-               "texto" => "Calculadora",
-               "enlace" => ["calculadora"]
+               "texto" => "Adivina",
+               "enlace" => ["adivina"]
            ],
            [
-                "texto" => "Modificar test del día ".$test->fecha,
-                "enlace" => ["calculadora", "modificar/id=$id",]
+                "texto" => "Modificar juego del día ".$adivina->fecha,
+                "enlace" => ["adivina", "modificar/id=$id",]
             ]
         ];
 
@@ -260,64 +260,64 @@ class calculadoraControlador extends CControlador {
 
             // TODO: REVISAR BIEN Y PROBAR
 
-            $testNombre = $test->getNombre();
-            $fechaAux =  $_POST[$testNombre]["fecha"] ;
+            $adivinaNombre = $adivina->getNombre();
+            $fechaAux =  $_POST[$adivinaNombre]["fecha"] ;
             $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
-            $_POST[$testNombre]["fecha"] = $fechaAux;
-            $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
-            $_POST[$testNombre]["puntuacion_base"] = 0;
-            $test->setValores($_POST[$testNombre]);
+            $_POST[$adivinaNombre]["fecha"] = $fechaAux;
+            $_POST[$adivinaNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+            $_POST[$adivinaNombre]["puntuacion_base"] = 0;
+            $adivina->setValores($_POST[$adivinaNombre]);
 
-            if ($test->validar()) {
+            if ($adivina->validar()) {
 
-                $pregunta = new Pregunta();
-                $arrPreguntas = $_POST["preguntas"];
+                $palabras = new Palabras();
+                $arrPalabras = $_POST["palabras"];
                 $valido = true;
                 $puntuacion = 0;
 
-                for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $arrTipo = Pregunta::dameTipo(intval($arrPreguntas[$i]["cod_tipo"]));
-                    $puntuacion += intval($arrTipo["puntuacion_base"]);
-                    $arrPreguntas[$i]["cod_test"] = $id;
-                    $arrPreguntas[$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$i]);
-                    if (!$pregunta->validar()) 
+                for ($i = 1; $i <= count($arrPalabras); $i++){
+                    $arrPalabras[$i]["respuesta"] = trim($arrPalabras[$i]["respuesta"]);
+                    $puntuacion += 500 + (100 * strlen($arrPalabras[$i]["respuesta"]));
+                    $arrPalabras[$i]["cod_adivina"] = $id;
+                    $arrPalabras[$i]["orden"] = $i;
+                    $palabras->setValores($arrPalabras[$i]);
+                    if (!$palabras->validar()) 
                             $valido = false;
                 }
 
-                $arrDificultad = Test::dameDificultad(intval($_POST[$testNombre]["cod_dificultad"]));
-                $_POST[$testNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
-                $test->setValores($_POST[$testNombre]);
-                if (!$test->validar()) $valido = false;
+                $arrDificultad = Adivina::dameDificultad(intval($_POST[$adivinaNombre]["cod_dificultad"]));
+                $_POST[$adivinaNombre]["puntuacion_base"] = intval($puntuacion * $arrDificultad["bonificador"]);
+                $adivina->setValores($_POST[$adivinaNombre]);
+                if (!$adivina->validar()) $valido = false;
 
-                if (!$valido || !$test->guardar()) {
+                if (!$valido || !$adivina->guardar()) {
 
-                    $this->dibujaVista("modificar", array("modelo"=>$test, "preguntas"=> $arrPreguntas), 
-                            "Modificar test del día ".$test->fecha);
+                    $this->dibujaVista("modificar", array("modelo"=>$adivina, "palabras"=> $arrPalabras), 
+                            "Modificar juego del día ".$adivina->fecha);
                     exit;
                 }
 
-                $codTest = $test->cod_test;
-                for ($i = 1; $i <= count($arrPreguntas); $i++){
-                    $pregunta = new Pregunta();
-                    $arrPreguntas[$i]["cod_test"] = $codTest;
-                    $arrPreguntas[$i]["orden"] = $i;
-                    $pregunta->setValores($arrPreguntas[$i]);
-                    if (!$pregunta->guardar()) {
-                            $i = count($arrPreguntas) + 2;
+                $codAdivina = $adivina->cod_adivina;
+                for ($i = 1; $i <= count($arrPalabras); $i++){
+                    $palabras = new Palabras();
+                    $arrPalabras[$i]["cod_test"] = $codAdivina;
+                    $arrPalabras[$i]["orden"] = $i;
+                    $palabras->setValores($arrPalabras[$i]);
+                    if (!$palabras->guardar()) {
+                            $i = count($arrPalabras) + 2;
                             $valido = false;
                     }    
                 }
                 
                 if ($valido) {
-                    Sistema::app()->irAPagina(array("calculadora")); 
+                    Sistema::app()->irAPagina(array("adivina")); 
                     exit;
                 }
             }
         }
 
-       $this->dibujaVista("modificar", array("modelo" => $test, "preguntas"=> $arrPreguntas), 
-                "Modificar test del día ".$test->fecha);
+       $this->dibujaVista("modificar", array("modelo" => $adivina, "palabras"=> $arrPalabras), 
+                "Modificar juego del día ".$adivina->fecha);
    }
 
    public function accionBorrar() {
@@ -331,9 +331,9 @@ class calculadoraControlador extends CControlador {
 
         $this->tienePermisos("borrar", $id);
 
-        $test = new Test();
+        $adivina = new Adivina();
 
-        if (!$test->buscarPorId($id)) {
+        if (!$adivina->buscarPorId($id)) {
             Sistema::app()->paginaError(404, "Página no encontrada");
             exit;
         }
@@ -346,12 +346,12 @@ class calculadoraControlador extends CControlador {
                 "enlace" => ["index"]
             ],
             [
-                "texto" => "Calculadora",
-                "enlace" => ["calculadora"]
+                "texto" => "Adivina",
+                "enlace" => ["adivina"]
             ],
             [
-                "texto" => "Borrar Test del día ".$test->fecha,
-                "enlace" => ["calculadora", "borrar/id=$id",]
+                "texto" => "Borrar Juego Adivina del día ".$adivina->fecha,
+                "enlace" => ["adivina", "borrar/id=$id",]
             ]
         ];
 
@@ -359,38 +359,38 @@ class calculadoraControlador extends CControlador {
 
             if (isset($_POST["borrar"]) && $_POST["borrar"]=="si") {
                 
-                $borrado = Test::borrarTest($id, Sistema::app()->Acceso()->getCodUsuario());
+                $borrado = Adivina::borrarAdivina($id, Sistema::app()->Acceso()->getCodUsuario());
 
                 if (!$borrado) {
                     Sistema::app()->paginaError(506, "Error al borrar los datos");
                     exit;
                 }
 
-                Sistema::app()->irAPagina(array("calculadora")); 
+                Sistema::app()->irAPagina(array("adivina")); 
                 exit;
             }
 
             if (isset($_POST["recuperar"]) && $_POST["recuperar"]=="si") {
                 
-                $recuperado = Test::recuperarTest($id);
+                $recuperado = Adivina::recuperarAdivina($id);
 
                 if (!$recuperado) {
                     Sistema::app()->paginaError(507, "Error al recuperar los datos");
                     exit;
                 }
 
-                Sistema::app()->irAPagina(array("calculadora")); 
+                Sistema::app()->irAPagina(array("adivina")); 
                 exit;
             }
         }
 
         $borr = 0;
-        if (!is_null($test->borrado_fecha)) $borr = 1;
+        if (!is_null($adivina->borrado_fecha)) $borr = 1;
     
-        $preguntas = Test::damePreguntas($id);
+        $palabras = Adivina::damePalabras($id);
 
 
-        $this->dibujaVista("borrar", ["test" => $test, "preguntas" => $preguntas, "borr" => $borr], "Borrar test ".$test->fecha);
+        $this->dibujaVista("borrar", ["adivina" => $adivina, "palabras" => $palabras, "borr" => $borr], "Borrar juego del día ".$adivina->fecha);
 
    }
 
@@ -403,12 +403,12 @@ class calculadoraControlador extends CControlador {
 
        $this->menu = [
            [
-               "texto" => "Calculadora",
-               "enlace" => ["calculadora"]
+               "texto" => "Adivina",
+               "enlace" => ["adivina"]
            ],
            [
-               "texto" => "Nuevo Test",
-               "enlace" => ["calculadora", "nuevo"]
+               "texto" => "Nuevo Juego",
+               "enlace" => ["adivina", "nuevo"]
            ],
            [
                "texto" => "Volver a Manager", 
@@ -420,13 +420,13 @@ class calculadoraControlador extends CControlador {
 
    /**
     * Devuelve un array con todas las filas que cumplan tales condiciones
-    * @param Test $test Modelo
+    * @param Adivina $adivina Modelo
     * @param array $condiciones Condiciones de búsqueda
     * @return  mixed array con todas las filas, false si la sentencia falla
     */
-   public function filasTodas (Test $test, array $condiciones = []) : array | false {
+   public function filasTodas (Adivina $adivina, array $condiciones = []) : array | false {
 
-       $filas = $test->buscarTodos($condiciones);
+       $filas = $adivina->buscarTodos($condiciones);
 
        if (!$filas) return false;
 
@@ -443,14 +443,14 @@ class calculadoraControlador extends CControlador {
             else $fila["borrado"] = "NO";
 
             $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-tabla"]),
-                                       Sistema::app()->generaURL(["calculadora","consultar"],
-                                       ["id" => $fila["cod_test"]]))." ".
+                                       Sistema::app()->generaURL(["adivina","consultar"],
+                                       ["id" => $fila["cod_adivina"]]))." ".
                             CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-tabla"]),
-                                       Sistema::app()->generaURL(["calculadora","modificar"],
-                                       ["id" => $fila["cod_test"]]))." ".
+                                       Sistema::app()->generaURL(["adivina","modificar"],
+                                       ["id" => $fila["cod_adivina"]]))." ".
                             CHTML::link(CHTML::imagen("/imagenes/24x24/$iconoBorrar.png", "", ["class" => "icon-tabla"]),
-                                       Sistema::app()->generaURL(["calculadora","borrar"],
-                                       ["id" => $fila["cod_test"]]));
+                                       Sistema::app()->generaURL(["adivina","borrar"],
+                                       ["id" => $fila["cod_adivina"]]));
            $filas[$clave] = $fila;
        }
 
@@ -466,10 +466,10 @@ class calculadoraControlador extends CControlador {
    public function crearCabecera () : array {
 
        return [
-           ["ETIQUETA" => "FECHA TEST", "CAMPO" => "fecha", "ALINEA" => "cen"],
+           ["ETIQUETA" => "FECHA JUEGO", "CAMPO" => "fecha", "ALINEA" => "cen"],
            ["ETIQUETA" => "TÍTULO", "CAMPO" => "titulo", "ALINEA" => "cen"],
            ["ETIQUETA" => "DIFICULTAD", "CAMPO" => "dificultad", "ALINEA" => "cen"],
-           ["ETIQUETA" => "PREGUNTAS", "CAMPO" => "num_preguntas", "ALINEA" => "cen"],
+           ["ETIQUETA" => "PALABRAS", "CAMPO" => "num_palabras", "ALINEA" => "cen"],
            ["ETIQUETA" => "BORRADO", "CAMPO" => "borrado", "ALINEA" => "cen"],
            ["ETIQUETA" => "OPERACIONES", "CAMPO" => "oper", "ALINEA" => "cen"],
        ];
@@ -486,7 +486,7 @@ class calculadoraControlador extends CControlador {
     */
    public function paginador (int $registros, int $pag, int $tamPagina) : array{
 
-       return array("URL" => Sistema::app()->generaURL(array("calculadora","index")),
+       return array("URL" => Sistema::app()->generaURL(array("adivina","index")),
        "TOTAL_REGISTROS" => $registros,
        "PAGINA_ACTUAL" => $pag,
        "REGISTROS_PAGINA" => $tamPagina,
@@ -526,7 +526,7 @@ class calculadoraControlador extends CControlador {
                
        // Si el usuario no tiene permiso de acceso, salta un error
        if (!Sistema::app()->Acceso()->puedePermiso(1)  && 
-            !Sistema::app()->Acceso()->puedePermiso(5)) 
+            !Sistema::app()->Acceso()->puedePermiso(6)) 
         {
            Sistema::app()->paginaError(503, "Acceso no permitido");
            return;

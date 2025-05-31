@@ -20,6 +20,7 @@ class indexControlador extends CControlador {
 			Sistema::app()->paginaError(502, "No tienes permiso para aceder aquí");
 			exit;
 		}
+
 		$this->menu = $this->crearMenu($acceso);
 
 		$tabCalculadora = false;
@@ -73,7 +74,7 @@ class indexControlador extends CControlador {
         if (Sistema::app()->Acceso()->hayUsuario()) {
 
 			if ($acceso->puedePermiso(2)) {
-				Sistema::app()->paginaError(502, "No tienes permiso para aceder aquí");
+				Sistema::app()->paginaError(502, "No tienes permiso para acceder aquí");
 			}
 
             Sistema::app()->irAPagina(["index", "index"]);
@@ -101,19 +102,21 @@ class indexControlador extends CControlador {
 
 		$arrayMenu = [];
 
-		$perm3 = false;  $perm4 = false; $perm5 = false; 
+		$perm3 = false;  $perm4 = false; $perm5 = false; $perm6 = false; 
 
 		if ($acceso->puedePermiso(1)) {
-			$perm3 = true;  $perm4 = true; $perm5 = true;
+			$perm3 = true;  $perm4 = true; $perm5 = true; $perm6 = true; 
 		} else {
 			$perm3 = $acceso->puedePermiso(3);
 			$perm4 = $acceso->puedePermiso(4);
 			$perm5 = $acceso->puedePermiso(5);
+			$perm6 = $acceso->puedePermiso(6);
 		}
 
 		if ($perm3) array_push($arrayMenu, ["texto" => "Permisos", "enlace" => ["permisos"]]);
 		if ($perm4) array_push($arrayMenu, ["texto" => "Usuarios", "enlace" => ["usuarios"]]);
 		if ($perm5) array_push($arrayMenu, ["texto" => "Calculadora", "enlace" => ["calculadora"]]);
+		if ($perm6) array_push($arrayMenu, ["texto" => "Adivina", "enlace" => ["adivina"]]);
 
 		return $arrayMenu;
 	}
@@ -178,9 +181,52 @@ class indexControlador extends CControlador {
 	 */
 	public function tablaAdivina () : mixed  {
 
-		//TO DO
+		$adivina = new Adivina();
 
-		return false;
+		$condiciones = ["select" => "t.*", "where" => " t.borrado_fecha IS NULL ", 
+			"order" => " t.creado_fecha desc", "limit" => "5"];
+		
+		$filas = $adivina->buscarTodos($condiciones);
+
+       if (!$filas) return false;
+
+       foreach ($filas as $clave=>$fila) {
+
+			$iconoBorrar = "borrar";
+            $fila["fecha"] = CGeneral::fechaMysqlANormal($fila["fecha"]);
+            $fila["creado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["creado_fecha"]);
+            if (!is_null($fila["borrado_fecha"])) {
+                $fila["borrado"] = "SI";
+                $fila["borrado_fecha"] = CGeneral::fechahoraMysqlANormal($fila["borrado_fecha"]);
+				$iconoBorrar = "recuperar";
+            } 
+            else $fila["borrado"] = "NO";
+
+            $fila["oper"] = CHTML::link(CHTML::imagen("/imagenes/24x24/ver.png", "", ["class" => "icon-tabla"]),
+                                       Sistema::app()->generaURL(["adivina","consultar"],
+                                       ["id" => $fila["cod_adivina"]]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/modificar.png", "", ["class" => "icon-tabla"]),
+                                       Sistema::app()->generaURL(["adivina","modificar"],
+                                       ["id" => $fila["cod_adivina"]]))." ".
+                            CHTML::link(CHTML::imagen("/imagenes/24x24/$iconoBorrar.png", "", ["class" => "icon-tabla"]),
+                                       Sistema::app()->generaURL(["adivina","borrar"],
+                                       ["id" => $fila["cod_adivina"]]));
+           $filas[$clave] = $fila;
+       }
+
+        $cabecera = [
+			["ETIQUETA" => "FECHA JUEGO", "CAMPO" => "fecha", "ALINEA" => "cen"],
+			["ETIQUETA" => "TÍTULO", "CAMPO" => "titulo", "ALINEA" => "cen"],
+			["ETIQUETA" => "DIFICULTAD", "CAMPO" => "dificultad", "ALINEA" => "cen"],
+			["ETIQUETA" => "PALABRAS", "CAMPO" => "num_palabras", "ALINEA" => "cen"],
+			["ETIQUETA" => "BORRADO", "CAMPO" => "borrado", "ALINEA" => "cen"],
+			["ETIQUETA" => "OPERACIONES", "CAMPO" => "oper", "ALINEA" => "cen"],
+		];
+
+		return [
+			"cab" => $cabecera,
+			"fil" => $filas
+		];
 	}
 
 
@@ -242,8 +288,6 @@ class indexControlador extends CControlador {
 			"fil" => $filas
 		];
     }
-	
-
 
 }
 

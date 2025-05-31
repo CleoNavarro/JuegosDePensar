@@ -169,7 +169,7 @@ class Pregunta extends CActiveRecord {
         $sentencia = "UPDATE pregunta ".
             "SET cod_test = $cod_test, orden = $orden, ".
             "cod_tipo = $cod_tipo, enunciado = '$enunciado', ".
-            "operacion = $operacion, cantidad = $cantidad, ".
+            "operacion = $operacion, cantidad = $cantidad ".
             "WHERE cod_pregunta = $cod_pregunta;";
      
         return $sentencia;

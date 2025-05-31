@@ -106,7 +106,7 @@ class usuariosControlador extends CControlador {
     public function accionConsultar() {
 		
         if (!isset($_GET["id"])) {
-            Sistema::app()->paginaError("¿A dónde pretendes ir?");
+            Sistema::app()->paginaError(404, "¿A dónde pretendes ir?");
 			exit;
         }
 
@@ -117,7 +117,7 @@ class usuariosControlador extends CControlador {
         $usuario = new Usuarios();
 
         if (!$usuario->buscarPorId($id)) {
-			Sistema::app()->paginaError("No se encuentra el usuario");
+			Sistema::app()->paginaError(404, "No se encuentra el usuario");
 			exit;
 		}
 
@@ -305,7 +305,7 @@ class usuariosControlador extends CControlador {
 	public function accionBorrar() {
 
 		if (!isset($_GET["id"])) {
-            Sistema::app()->paginaError("No has indicado el usuario");
+            Sistema::app()->paginaError(404, "No has indicado el usuario");
 			exit;
         }
 
@@ -316,12 +316,12 @@ class usuariosControlador extends CControlador {
         $usuarios = new Usuarios();
 
         if (!$usuarios->buscarPorId($id)) {
-			Sistema::app()->paginaError("No se encuentra el usuario");
+			Sistema::app()->paginaError(404, "No se encuentra el usuario");
 			exit;
 		}
 
 		if ($id == Sistema::app()->Acceso()->getCodUsuario()) {
-			Sistema::app()->paginaError("No puedes borrarte a tí mismo");
+			Sistema::app()->paginaError(502, "No puedes borrarte a tí mismo");
 			exit;
 		}
 
@@ -349,7 +349,7 @@ class usuariosControlador extends CControlador {
 				$borrado = Usuarios::borrarUsuario($id, Sistema::app()->Acceso()->getCodUsuario());
 
 				if (!$borrado) {
-					Sistema::app()->paginaError("Error al borrar los datos");
+					Sistema::app()->paginaError(406, "Error al borrar los datos");
 					exit;
 				}
 
@@ -362,7 +362,7 @@ class usuariosControlador extends CControlador {
 				$recuperado = Usuarios::recuperarUsuario($id);
 
 				if (!$recuperado) {
-					Sistema::app()->paginaError("Error al recuperar los datos");
+					Sistema::app()->paginaError(407, "Error al recuperar los datos");
 					exit;
 				}
 
