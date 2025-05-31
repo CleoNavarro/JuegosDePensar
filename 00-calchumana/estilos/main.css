@@ -417,6 +417,42 @@ div.contRanking table.tablaPuntuacion {
     margin: 3vh 10%;
 }
 
+a.linkRanking:hover {
+    color: var(--amarillo-destacado);
+    font-weight: bold;
+}
+
+/* Acerca de */ 
+
+div.contAcerca {
+    width: 70%;
+    margin: 3vh 15%;
+}
+
+div.contAcerca h1 {
+    text-align: center;
+    color: var(--naranja-principal);
+}
+
+div.contAcerca p {
+    text-align: justify;
+}
+
+div.acercaJuegos {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    text-align: center;
+}
+
+div.acercaJuegos div {
+   padding: 20px;
+}
+
+div.acercaJuegos div img {
+    height: 80px;
+}
+    
+
 @media screen and (max-width: 950px){
 
     div.contSelect{
@@ -445,6 +481,13 @@ div.contRanking table.tablaPuntuacion {
         grid-template-columns: 100%;
         padding: 10px;
     }
+
+    div.acercaJuegos {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 50% 50%;
+    }
+    
 }
 
 
@@ -486,6 +529,11 @@ div.contRanking table.tablaPuntuacion {
 		display: none;
 	}
 
+    div.contAcerca {
+        width: 90%;
+        margin: 3vh 5%;
+    }
+
 }
 
 @media screen and (max-width: 500px){
@@ -494,6 +542,10 @@ div.contRanking table.tablaPuntuacion {
 	table#tablaRecientes tr th:nth-child(2){
 		display: none;
 	}
+
+    div.acercaJuegos div img {
+        height: 60px;
+    }
 }
 
 @media screen and (max-width: 420px){

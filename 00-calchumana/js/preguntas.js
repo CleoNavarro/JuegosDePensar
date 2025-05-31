@@ -23,6 +23,8 @@ var intervalo = setInterval(function() {
     }
 }, 1000);
 
+document.getElementById("logoPrincipal").src = "/imagenes/logocalculadora.png"
+
 
 cargarPreguntas()
 

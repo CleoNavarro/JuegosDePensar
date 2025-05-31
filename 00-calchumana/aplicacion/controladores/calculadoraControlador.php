@@ -62,6 +62,10 @@ class calculadoraControlador extends CControlador {
 			[
 				"texto" => "Ranking", 
 				"enlace" => ["ranking"]
+			],
+			[
+				"texto" => "Acerca de", 
+				"enlace" => ["index", "acercade"]
 			]
 			
 		];

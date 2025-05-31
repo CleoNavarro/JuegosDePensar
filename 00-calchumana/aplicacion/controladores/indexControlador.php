@@ -83,6 +83,9 @@ class indexControlador extends CControlador {
 			
 	}
 
+	/**
+	 * Acción para ir a la página de datos de cada usuario
+	 */
 	public function accionDatos() {
 
 		$this->menu = $this->menu();
@@ -92,12 +95,28 @@ class indexControlador extends CControlador {
             return;
 		}
 
+		if ($_GET["id"] == 0) {
+			Sistema::app()->paginaError(404, "Usuario no existente");
+            return;
+		}
+
 		if (!Usuarios::dameUsuarios($_GET["id"])) {
 			Sistema::app()->paginaError(404, "No, este usuario no existe (o no es un usuario)");
             return;
 		}
 
         $this->dibujaVista("datos", ["cod_usuario" => intval($_GET["id"])], "Estadísticas - JUEGOS DE PENSAR");
+			
+	}
+
+	/**
+	 * Acción para la página principal
+	 */
+	public function accionAcercade() {
+		$this->menu = $this->menu();
+
+		$this->dibujaVista("acercade",
+			[], "Acerca De - JUEGOS DE PENSAR");
 			
 	}
 
@@ -115,8 +134,11 @@ class indexControlador extends CControlador {
 			[
 				"texto" => "Ranking", 
 				"enlace" => ["ranking"]
+			],
+			[
+				"texto" => "Acerca de", 
+				"enlace" => ["index", "acercade"]
 			]
-			
 		];
 
 		if (Sistema::app()->Acceso()->hayUsuario()) {

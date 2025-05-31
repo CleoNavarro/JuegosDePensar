@@ -23,7 +23,7 @@
 			</div>
 			 <div class="logocontainer">
 				<div class="logo">
-				<a href="/"><img class="logo" src="/imagenes/logo.png" /></a>
+				<a href="/"><img class="logo" id="logoPrincipal" src="/imagenes/logo.png" /></a>
 				</div>
 			</div>
 		</header>

@@ -65,7 +65,11 @@ function cargarRanking () {
             let td1= document.createElement("td");
             td1.innerText = datosCalDia[i]["posicion"];
             let td2= document.createElement("td");
-            td2.innerText = datosCalDia[i]["nick"];
+            let enlUsu = document.createElement("a");
+            enlUsu.setAttribute("class", "linkRanking");
+            enlUsu.setAttribute("href", "http://www.juegosdepensar.com/index/datos?id="+datosCalDia[i]["cod_usuario"])
+            enlUsu.innerText = datosCalDia[i]["nick"];
+            td2.appendChild(enlUsu);
             let td3= document.createElement("td");
             td3.innerText = datosCalDia[i]["puntos"];
             trlinea.appendChild(td1);
@@ -109,7 +113,11 @@ function cargarRanking () {
             let td1= document.createElement("td");
             td1.innerText = datosCalMes[i]["posicion"];
             let td2= document.createElement("td");
-            td2.innerText = datosCalMes[i]["nick"];
+            let enlUsu = document.createElement("a");
+            enlUsu.setAttribute("class", "linkRanking");
+            enlUsu.setAttribute("href", "http://www.juegosdepensar.com/index/datos?id="+datosCalMes[i]["cod_usuario"])
+            enlUsu.innerText = datosCalMes[i]["nick"];
+            td2.appendChild(enlUsu);
             let td3= document.createElement("td");
             td3.innerText = datosCalMes[i]["puntos"];
             trlinea.appendChild(td1);
@@ -153,7 +161,11 @@ function cargarRanking () {
             let td1= document.createElement("td");
             td1.innerText = datosAdivDia[i]["posicion"];
             let td2= document.createElement("td");
-            td2.innerText = datosAdivDia[i]["nick"];
+            let enlUsu = document.createElement("a");
+            enlUsu.setAttribute("class", "linkRanking");
+            enlUsu.setAttribute("href", "http://www.juegosdepensar.com/index/datos?id="+datosAdivDia[i]["cod_usuario"])
+            enlUsu.innerText = datosAdivDia[i]["nick"];
+            td2.appendChild(enlUsu);
             let td3= document.createElement("td");
             td3.innerText = datosAdivDia[i]["puntos"];
             trlinea.appendChild(td1);
@@ -197,7 +209,11 @@ function cargarRanking () {
             let td1= document.createElement("td");
             td1.innerText = datosAdivMes[i]["posicion"];
             let td2= document.createElement("td");
-            td2.innerText = datosAdivMes[i]["nick"];
+            let enlUsu = document.createElement("a");
+            enlUsu.setAttribute("class", "linkRanking");
+            enlUsu.setAttribute("href", "http://www.juegosdepensar.com/index/datos?id="+datosAdivMes[i]["cod_usuario"])
+            enlUsu.innerText = datosAdivMes[i]["nick"];
+            td2.appendChild(enlUsu);
             let td3= document.createElement("td");
             td3.innerText = datosAdivMes[i]["puntos"];
             trlinea.appendChild(td1);
