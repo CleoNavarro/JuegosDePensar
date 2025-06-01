@@ -80,7 +80,7 @@ Nombre de Usuario: 2daw01
 Nombre del Servidor: localhost
 Contraseña: 2daw
 - Luego, en la tabla de cuentas de usuario, selecciona Editar Privilegios en la linea de 2daw01.
-- Seleccionas Base de datos, y en Añadir privilegios a la base de datos siguiente, selecciona safeplace
+- Seleccionas Base de datos, y en Añadir privilegios a la base de datos siguiente, selecciona 'calculadora'.
 - Selecciona los permisos para hacer SELECT, INSERT, UPDATE y DELETE y dale a Continuar.
 
 
