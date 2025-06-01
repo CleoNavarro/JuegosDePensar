@@ -19,6 +19,7 @@ class adivinaControlador extends CControlador {
        ]; 
  
        $adivina = new Adivina();
+       $adivNombre = $adivina->getNombre();
 
        $condiciones = ["select" => "*"];
 
@@ -32,18 +33,18 @@ class adivinaControlador extends CControlador {
 
        if ($_POST) {
 
-            if (isset($_POST["adivina"]["fecha"])) {
-                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST["adivina"]["fecha"]));
+            if (isset($_POST[$adivNombre]["fecha"]) && !($_POST[$adivNombre]["fecha"] == "")) {
+                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST[$adivNombre]["fecha"]));
                 $where .= " and fecha = '".$postmen["fecha"]."' ";
             }
 
-            if (isset($_POST["adivina"]["titulo"])) {
-                $postmen["titulo"] = CGeneral::addSlashes($_POST["adivina"]["titulo"]);
+            if (isset($_POST[$adivNombre]["titulo"]) && !($_POST[$adivNombre]["titulo"] == "")) {
+                $postmen["titulo"] = CGeneral::addSlashes($_POST[$adivNombre]["titulo"]);
                 $where .= " and titulo like '%".$postmen["titulo"]."%' ";
             }
 
-            if (isset($_POST["adivina"]["cod_dificultad"])) {
-                $postmen["cod_dificultad"] = intval($_POST["adivina"]["cod_dificultad"]);
+            if (isset($_POST[$adivNombre]["cod_dificultad"]) && !($_POST[$adivNombre]["cod_dificultad"] == "")) {
+                $postmen["cod_dificultad"] = intval($_POST[$adivNombre]["cod_dificultad"]);
                 $where .= " and cod_dificultad = ".$postmen["cod_dificultad"]." ";
             }
 
@@ -73,7 +74,7 @@ class adivinaControlador extends CControlador {
        $filas = $this->filasTodas($adivina, $condiciones);
 
        if ($filas===false) {
-           Sistema::app()->paginaError(402, "Error con el acceso a base de datos");
+           Sistema::app()->paginaError(402, "No hay resultados en la búsqueda");
            return;
        }
 
@@ -162,16 +163,16 @@ class adivinaControlador extends CControlador {
 
            $adivinaNombre = $adivina->getNombre();
            $fechaAux =  $_POST[$adivinaNombre]["fecha"] ;
-           $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+           if ($fechaAux != "") $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
            $_POST[$adivinaNombre]["fecha"] = $fechaAux;
            $_POST[$adivinaNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
            $_POST[$adivinaNombre]["puntuacion_base"] = 0;
            $adivina->setValores($_POST[$adivinaNombre]);
+           $arrPalabras = $_POST["palabras"];
    
             if ($adivina->validar()) {
 
                 $palabras = new Palabras();
-                $arrPalabras = $_POST["palabras"];
                 $valido = true;
                 $puntuacion = 0;
 
@@ -191,7 +192,6 @@ class adivinaControlador extends CControlador {
                 if (!$adivina->validar()) $valido = false;
 
                 if (!$valido || !$adivina->guardar()) {
-
                    $this->dibujaVista("nuevo", array("modelo"=>$adivina), "Nuevo Juego de Adivina");
                    exit;
                 }
@@ -213,9 +213,12 @@ class adivinaControlador extends CControlador {
                     exit;
                 }
            }
+
+           if ($adivina->fecha != "")
+           $adivina->fecha = CGeneral::fechaNormalAMysql($adivina->fecha);
        }
 
-       $this->dibujaVista("nuevo", array("modelo" => $adivina), 
+       $this->dibujaVista("nuevo", array("modelo" => $adivina, "palabras" => $arrPalabras), 
                 "Nuevo Juego de Adivina");
    }
 
@@ -258,20 +261,19 @@ class adivinaControlador extends CControlador {
 
         if ($_POST) {
 
-            // TODO: REVISAR BIEN Y PROBAR
-
             $adivinaNombre = $adivina->getNombre();
             $fechaAux =  $_POST[$adivinaNombre]["fecha"] ;
-            $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+            if ($fechaAux != "") $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
             $_POST[$adivinaNombre]["fecha"] = $fechaAux;
             $_POST[$adivinaNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
             $_POST[$adivinaNombre]["puntuacion_base"] = 0;
             $adivina->setValores($_POST[$adivinaNombre]);
+            $arrPalabras = $_POST["palabras"];
 
             if ($adivina->validar()) {
 
                 $palabras = new Palabras();
-                $arrPalabras = $_POST["palabras"];
+                
                 $valido = true;
                 $puntuacion = 0;
 
@@ -298,6 +300,12 @@ class adivinaControlador extends CControlador {
                 }
 
                 $codAdivina = $adivina->cod_adivina;
+
+                if (!Adivina::borrarPalabras($codAdivina)) {
+                    Sistema::app()->paginaError(511, "Error al actualizar las palagras del juego");
+                    exit;
+                }
+
                 for ($i = 1; $i <= count($arrPalabras); $i++){
                     $palabras = new Palabras();
                     $arrPalabras[$i]["cod_test"] = $codAdivina;
@@ -316,7 +324,10 @@ class adivinaControlador extends CControlador {
             }
         }
 
-       $this->dibujaVista("modificar", array("modelo" => $adivina, "palabras"=> $arrPalabras), 
+        if ($adivina->fecha != "")
+           $adivina->fecha = CGeneral::fechaNormalAMysql($adivina->fecha);
+
+        $this->dibujaVista("modificar", array("modelo" => $adivina, "palabras"=> $arrPalabras), 
                 "Modificar juego del día ".$adivina->fecha);
    }
 

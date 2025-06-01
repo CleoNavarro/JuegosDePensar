@@ -54,6 +54,14 @@ echo CHTML::modeloNumber($modelo, "telefono",
 echo CHTML::modeloError($modelo, "telefono");
 echo "<br>".PHP_EOL;
 
+echo CHTML::modeloLabel($modelo, "foto");
+echo CHTML::modeloFile($modelo, "foto", ["accept" => "image/png, image/jpeg"]);
+echo CHTML::modeloError($modelo, "foto");
+echo "<br>".PHP_EOL;
+
+echo CHTML::dibujaEtiqueta("p", ["style" => "text-align:center;"] , 
+    "<b>¡Atención!</b> Si no desea cambiar la contraseña de este usuario, deja estos campos en blanco");
+
 echo CHTML::modeloLabel($modelo, "contrasenia"); 
 echo CHTML::modeloPassword($modelo, "contrasenia", 
     array(
@@ -74,11 +82,8 @@ echo CHTML::modeloPassword($modelo, "repite_contrasenia",
 echo CHTML::modeloError($modelo, "repite_contrasenia");
 echo "<br>".PHP_EOL;
 
-echo CHTML::modeloLabel($modelo, "foto");
-echo CHTML::modeloFile($modelo, "foto", ["accept" => "image/png, image/jpeg"]);
-echo CHTML::modeloError($modelo, "foto");
-echo "<br>".PHP_EOL;
 
-echo CHTML::campoBotonSubmit("Crear", ["class" => "boton"]);
+
+echo CHTML::campoBotonSubmit("Guardar", ["class" => "boton"]);
 echo CHTML::finalizarForm();
 echo CHTML::dibujaEtiquetaCierre("div");

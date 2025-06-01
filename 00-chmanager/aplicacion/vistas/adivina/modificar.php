@@ -5,7 +5,7 @@ $this->textoHead= "<script src='/js/nuevaAdivina.js' defer></script>";
 $num_preg = count($palabras);
 
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
-echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Nuevo Juego de Adivina");
+echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Modificar Juego de Adivina");
 
 echo CHTML::iniciarForm("", "post", ["enctype"=>"multipart/form-data", "id" => "formulario"]);
 
@@ -42,7 +42,7 @@ for ($i = 1; $i <= $num_preg; $i++){
 }
 
 
-echo CHTML::campoBotonSubmit("Crear");
+echo CHTML::campoBotonSubmit("Guardar");
 echo CHTML::finalizarForm();
 
 echo CHTML::dibujaEtiquetaCierre("div");

@@ -229,6 +229,23 @@ class Adivina extends CActiveRecord {
             return true;
     }
 
+     /**
+     * Función para borrar todas las preguntas de un juego adivina.
+     * Esta función pertenece al proceso de actualizar los datos del juego
+     */
+    public static function borrarPalabras (int $cod_adiv) : bool {
+
+        $sentencia = "DELETE from palabras ".
+            "WHERE cod_adivina = $cod_adiv;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+
+    }
    
 
     protected function afterBuscar(): void {
@@ -237,10 +254,14 @@ class Adivina extends CActiveRecord {
         $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
         $this->fecha = $fechaAux;
 
-        if (!is_null($this->fecha_borrado)) {
-            $fechaAux = $this->fecha_borrado;
+        $fechaAux = $this->creado_fecha;
+        $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
+        $this->creado_fecha = $fechaAux;
+
+        if (!is_null($this->borrado_fecha)) {
+            $fechaAux = $this->borrado_fecha;
             $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
-            $this->fecha_borrado = $fechaAux;
+            $this->borrado_fecha = $fechaAux;
         }
    
     }

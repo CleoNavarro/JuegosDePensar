@@ -56,6 +56,36 @@ class UsuariosACL extends CActiveRecord {
             );
     }
 
+     /**
+     * Devuelve el rol del usuario, junto con sus permiso
+     */
+    public static function damePermisosUsuario (int $cod_usu) : mixed {
+
+        $usuario = Usuarios::dameUsuarios($cod_usu);
+        $rol = false;
+
+        if ($usuario) {
+            $rol = Usuarios::dameRoles($usuario["cod_acl_role"]);
+        } 
+
+        return $rol;
+    }
+
+    private function quiereCambiarContrasenia () :bool {
+
+        $sentencia = "SELECT * from acl_usuarios where contrasenia = '".$this->contrasenia."'";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+    
+        $filas=$consulta->filas();
+
+        if (is_null($filas) || count($filas)==0)
+            return true;
+
+        return false;
+
+    }
+
     protected function afterCreate(): void {
         
         $this->cod_acl_usuario = 0;
@@ -100,15 +130,19 @@ class UsuariosACL extends CActiveRecord {
         $cod_acl_usuario = intval($this->cod_acl_usuario);
         $nombre = CGeneral::addSlashes($this->nombre);
         $nick = CGeneral::addSlashes($this->nick);
+        $cambiarContra = $this->quiereCambiarContrasenia();
         $contrasenia = CGeneral::addSlashes($this->contrasenia);
         $cod_acl_role = intval($this->cod_acl_role);
 
 
         $sentencia = "UPDATE acl_usuarios ".
             "SET nombre = '$nombre', ".
-            "nick = '$nick', ".
-            "contrasenia = sha1('$contrasenia'), ".
-            "cod_acl_role = $cod_acl_role, ".
+            "nick = '$nick', ";
+
+        if ($cambiarContra)
+        $sentencia .= "contrasenia = sha1('$contrasenia'), ";
+
+        $sentencia .="cod_acl_role = $cod_acl_role ".
             "WHERE cod_acl_usuario = $cod_acl_usuario;";
      
         return $sentencia;

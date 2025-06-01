@@ -32,7 +32,7 @@ echo $cajaFiltrado->dibujaApertura();
         echo CHTML::modeloLabel($modelo, "mail");
         echo CHTML::modeloText($modelo, "mail",
             array(
-                "size"=>10
+                "size"=>20
             )
         );
         echo "<br>".PHP_EOL;

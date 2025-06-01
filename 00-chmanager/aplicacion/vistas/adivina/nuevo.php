@@ -2,6 +2,12 @@
 
 $this->textoHead= "<script src='/js/nuevaAdivina.js' defer></script>";
 
+$num_preg = 5;
+
+if ($palabras) {
+    $num_preg = count($palabras);
+}
+
 echo CHTML::dibujaEtiqueta("div", ["class" => "contenedorForm"], null, false);
 echo CHTML::dibujaEtiqueta("h2", ["style" => "text-align: center"], "Nuevo Juego de Adivina");
 
@@ -26,17 +32,17 @@ echo CHTML::campoNumber("num_palabras", 5, ["id" => "num_palabras", "disabled" =
 echo CHTML::boton("+", ["id" => "palabramas", "class" => "botonmas"]);
 echo CHTML::boton("-", ["id" => "palabramenos", "class" => "botonmas"]);
 
-for ($i = 1; $i <= 5; $i++){
+for ($i = 1; $i <= $num_preg; $i++){
     echo CHTML::dibujaEtiqueta("hr", ["class" => "separador", "id" => "separador".$i], null. false);
 
     echo CHTML::campoLabel("Enunciado ".$i.": ", "palabras[".$i."][enunciado]", ["id" => "labelenunciado".$i]);
-    echo CHTML::campoText("palabras[".$i."][enunciado]", "", ["id" => "textenunciado".$i]);
+    echo CHTML::campoText("palabras[".$i."][enunciado]", $palabras? $palabras[$i]["enunciado"] : "", ["id" => "textenunciado".$i]);
     
     echo CHTML::campoLabel("Siglas", "preguntas[".$i."][siglas]", ["id" => "labelsiglas".$i]);
-    echo CHTML::campoText("palabras[".$i."][siglas]", "", ["id" => "textsiglas".$i]);
+    echo CHTML::campoText("palabras[".$i."][siglas]", $palabras? $palabras[$i]["siglas"] : "", ["id" => "textsiglas".$i]);
     
     echo CHTML::campoLabel("Respuesta", "palabras[".$i."][respuesta]", ["id" => "labelrespuesta".$i]);
-    echo CHTML::campoText("palabras[".$i."][respuesta]", "", ["id" => "textrespuesta".$i]);
+    echo CHTML::campoText("palabras[".$i."][respuesta]", $palabras? $palabras[$i]["respuesta"] : "", ["id" => "textrespuesta".$i]);
 }
 
 

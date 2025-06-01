@@ -119,7 +119,7 @@ class Usuarios extends CActiveRecord {
      */
     public static function dameUsuarios(?int $cod_usu = null) : mixed {
 
-        $sentencia = "SELECT * from usuarios";
+        $sentencia = "SELECT * from vista_usuarios";
 
         $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
     
@@ -173,8 +173,8 @@ class Usuarios extends CActiveRecord {
      */
     public function validarMail () : void {
         $mail = $this->mail;
-        if (CValidaciones::validaEMail($mail))
-            $this->setError("mail", "Este no parece ser un mail privado");
+        if (!CValidaciones::validaEMail($mail))
+            $this->setError("mail", "Este no parece ser un mail válido");
     }
 
     /**
@@ -223,8 +223,11 @@ class Usuarios extends CActiveRecord {
             $arraDrop[intval($fila["cod_acl_role"])] = $fila["nombre"];
         }
 
-        return $arraDrop;
+        return 
+        
+        $arraDrop;
     }
+
 
     /**
      * Función para borrar un usuario. Le asigna fecha de borrado y el código de quien lo ha hecho
@@ -339,7 +342,7 @@ class Usuarios extends CActiveRecord {
             "nick = '$nick', ".
             "mail = '$mail', ".
             "telefono = '$telefono', ".
-            "foto = '$foto', ".
+            "foto = '$foto' ".
             "WHERE cod_usuario = $cod_usuario; ";
      
         return $sentencia;

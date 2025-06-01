@@ -373,7 +373,7 @@ class Usuarios extends CActiveRecord {
             "nick = '$nick', ".
             "mail = '$mail', ".
             "telefono = '$telefono', ".
-            "foto = '$foto', ".
+            "foto = '$foto' ".
             "WHERE cod_usuario = $cod_usuario; ";
      
         return $sentencia;

@@ -600,7 +600,7 @@
 
 	
 
-	/* Definición de aside (legado de anteriores versiones)*/
+	/* Definición de la barra de ubicación*/
 	aside {
 		background: #fff4df;   
 	    margin: 0 auto; 
@@ -615,6 +615,12 @@
 		background-color: rgb(238, 238, 238);
 		padding:5px 5%;
 	}
+
+	aside.ubicacion span {
+		color: var(--naranja-principal);
+		font-weight: bold;
+	}
+
 
 	/* Definición del separador */
 

@@ -241,6 +241,14 @@ class usuariosControlador extends CControlador {
 			exit;
 		}
 
+		$permisos = UsuariosACL::damePermisosUsuario($id);
+
+		if ($permisos["perm1"] == 1 && !Sistema::app()->Acceso()->puedePermiso(1) ) {
+			Sistema::app()->paginaError(515, "No puedes cambiar los datos de un administrador principal");
+			exit;
+		}
+
+
         $this->menu();
 
 		$this->barra_ubi = [
@@ -277,10 +285,15 @@ class usuariosControlador extends CControlador {
 					$_POST[$nombre]["foto"] = $usuarios->foto;
 			}
 
-			// TODO: Cómo hacer que no pida nunca contraseña
+
+			if ($_POST[$nombre]["cod_acl_role"] == 1 && !Sistema::app()->Acceso()->puedePermiso(1) ) {
+				Sistema::app()->paginaError(515, "No puedes asignar un admin principal si tú no lo eres");
+				exit;
+			}
+	
 			if ($_POST[$nombre]["contrasenia"]=="") {
-				unset($_POST[$nombre]["contrasenia"]);
-				unset($_POST[$nombre]["repite_contrasenia"]);
+				$_POST[$nombre]["contrasenia"] = $usuarioACL->contrasenia;
+				$_POST[$nombre]["repite_contrasenia"] = $usuarioACL->contrasenia;
 			}
           
             $usuarios->setValores($_POST[$nombre]);
@@ -289,6 +302,10 @@ class usuariosControlador extends CControlador {
 			if ($usuarios->validar() && $usuarioACL->validar()) {
 
 				if (!$usuarios->guardar() || !$usuarioACL->guardar()) {
+
+					$usuarios->contrasenia = "";
+					$usuarios->repite_contrasenia = "";
+
 					$this->dibujaVista("modificar", array("modelo" => $usuarios), 
 								"Modificar usuario ".$usuarios->nick);
 					exit;
@@ -297,6 +314,9 @@ class usuariosControlador extends CControlador {
 				Sistema::app()->irAPagina(array("usuarios")); 
 				exit;
 			}
+
+			$usuarios->contrasenia = "";
+			$usuarios->repite_contrasenia = "";
         }
 
         $this->dibujaVista("modificar", array("modelo" => $usuarios), "Modificar usuario ".$usuarios->nick);
@@ -322,6 +342,13 @@ class usuariosControlador extends CControlador {
 
 		if ($id == Sistema::app()->Acceso()->getCodUsuario()) {
 			Sistema::app()->paginaError(502, "No puedes borrarte a tí mismo");
+			exit;
+		}
+
+		$permisos = UsuariosACL::damePermisosUsuario($id);
+
+		if ($permisos["perm1"] == 1) {
+			Sistema::app()->paginaError(514, "No puedes borrar a un administrador principal");
 			exit;
 		}
 

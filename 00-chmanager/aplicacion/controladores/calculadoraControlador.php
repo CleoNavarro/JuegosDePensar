@@ -19,6 +19,7 @@ class calculadoraControlador extends CControlador {
        ]; 
  
        $test = new Test();
+       $testNombre = $test->getNombre();
 
        $condiciones = ["select" => "*"];
 
@@ -32,18 +33,18 @@ class calculadoraControlador extends CControlador {
 
        if ($_POST) {
 
-            if (isset($_POST["calculadora"]["fecha"])) {
-                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST["calculadora"]["fecha"]));
+            if (isset($_POST[$testNombre]["fecha"]) && !($_POST[$testNombre]["fecha"] == "")) {
+                $postmen["fecha"] = CGeneral::fechaNormalAMysql(CGeneral::addSlashes($_POST[$testNombre]["fecha"]));
                 $where .= " and fecha = '".$postmen["fecha"]."' ";
             }
 
-            if (isset($_POST["calculadora"]["titulo"])) {
-                $postmen["titulo"] = CGeneral::addSlashes($_POST["calculadora"]["titulo"]);
+            if (isset($_POST[$testNombre]["titulo"]) && !($_POST[$testNombre]["titulo"] == "")) {
+                $postmen["titulo"] = CGeneral::addSlashes($_POST[$testNombre]["titulo"]);
                 $where .= " and titulo like '%".$postmen["titulo"]."%' ";
             }
 
-            if (isset($_POST["calculadora"]["cod_dificultad"])) {
-                $postmen["cod_dificultad"] = intval($_POST["calculadora"]["cod_dificultad"]);
+            if (isset($_POST[$testNombre]["cod_dificultad"]) && !($_POST[$testNombre]["cod_dificultad"] == "")) {
+                $postmen["cod_dificultad"] = intval($_POST[$testNombre]["cod_dificultad"]);
                 $where .= " and cod_dificultad = ".$postmen["cod_dificultad"]." ";
             }
 
@@ -73,7 +74,7 @@ class calculadoraControlador extends CControlador {
        $filas = $this->filasTodas($test, $condiciones);
 
        if ($filas===false) {
-           Sistema::app()->paginaError(402, "Error con el acceso a base de datos");
+           Sistema::app()->paginaError(402, "No hay resultados en la búsqueda");
            return;
        }
 
@@ -136,42 +137,44 @@ class calculadoraControlador extends CControlador {
 
    public function accionNuevo () {
 
-       $this->tienePermisos("nuevo");
+        $this->tienePermisos("nuevo");
 
-       $this->menu();
+        $this->menu();
 
-       $this->barra_ubi = [
-           [
-               "texto" => "MANAGER",
-               "enlace" => ["index"]
-           ],
-           [
-               "texto" => "Calculadora",
-               "enlace" => ["calculadora"]
-           ],
-           [
-               "texto" => "Nuevo Test",
-               "enlace" => ["calculadora", "nuevo"]
-           ]
-       ];
-       
-      
-       $test = new Test();
+        $this->barra_ubi = [
+            [
+                "texto" => "MANAGER",
+                "enlace" => ["index"]
+            ],
+            [
+                "texto" => "Calculadora",
+                "enlace" => ["calculadora"]
+            ],
+            [
+                "texto" => "Nuevo Test",
+                "enlace" => ["calculadora", "nuevo"]
+            ]
+        ];
+        
+        
+        $test = new Test();
 
-       if ($_POST) {
+        $arrPreguntas = false;
 
-           $testNombre = $test->getNombre();
-           $fechaAux =  $_POST[$testNombre]["fecha"] ;
-           $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
-           $_POST[$testNombre]["fecha"] = $fechaAux;
-           $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
-           $_POST[$testNombre]["puntuacion_base"] = 0;
-           $test->setValores($_POST[$testNombre]);
-   
+        if ($_POST) {
+
+            $testNombre = $test->getNombre();
+            $fechaAux =  $_POST[$testNombre]["fecha"] ;
+            if ($fechaAux != "") $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+            $_POST[$testNombre]["fecha"] = $fechaAux;
+            $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
+            $_POST[$testNombre]["puntuacion_base"] = 0;
+            $test->setValores($_POST[$testNombre]);
+            $arrPreguntas = $_POST["preguntas"];
+    
             if ($test->validar()) {
 
                 $pregunta = new Pregunta();
-                $arrPreguntas = $_POST["preguntas"];
                 $valido = true;
                 $puntuacion = 0;
 
@@ -212,10 +215,13 @@ class calculadoraControlador extends CControlador {
                     Sistema::app()->irAPagina(array("calculadora")); 
                     exit;
                 }
-           }
-       }
+            }
 
-       $this->dibujaVista("nuevo", array("modelo" => $test), 
+            if ($test->fecha != "")
+                $test->fecha = CGeneral::fechaNormalAMysql($test->fecha);
+        }
+
+        $this->dibujaVista("nuevo", array("modelo" => $test,  "preguntas" => $arrPreguntas), 
                 "Nuevo Test de Calculadora");
    }
 
@@ -258,11 +264,9 @@ class calculadoraControlador extends CControlador {
 
         if ($_POST) {
 
-            // TODO: REVISAR BIEN Y PROBAR
-
             $testNombre = $test->getNombre();
             $fechaAux =  $_POST[$testNombre]["fecha"] ;
-            $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
+            if ($fechaAux != "") $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
             $_POST[$testNombre]["fecha"] = $fechaAux;
             $_POST[$testNombre]["creado_por"] = Sistema::app()->Acceso()->getCodUsuario();
             $_POST[$testNombre]["puntuacion_base"] = 0;
@@ -298,6 +302,12 @@ class calculadoraControlador extends CControlador {
                 }
 
                 $codTest = $test->cod_test;
+
+                if (!Test::borrarPreguntas($codTest)) {
+                    Sistema::app()->paginaError(510, "Error al actualizar las preguntas del test");
+                    exit;
+                }
+
                 for ($i = 1; $i <= count($arrPreguntas); $i++){
                     $pregunta = new Pregunta();
                     $arrPreguntas[$i]["cod_test"] = $codTest;
@@ -316,7 +326,10 @@ class calculadoraControlador extends CControlador {
             }
         }
 
-       $this->dibujaVista("modificar", array("modelo" => $test, "preguntas"=> $arrPreguntas), 
+        if ($test->fecha != "")
+                $test->fecha = CGeneral::fechaNormalAMysql($test->fecha);
+
+        $this->dibujaVista("modificar", array("modelo" => $test, "preguntas"=> $arrPreguntas), 
                 "Modificar test del día ".$test->fecha);
    }
 

@@ -253,14 +253,31 @@ class Test extends CActiveRecord {
             "borrado_por = 0 ".
             "WHERE cod_test = $cod_test;";
 
-            $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
 
-            if ($consulta->error())
-                return false;
+        if ($consulta->error())
+            return false;
 
-            return true;
+        return true;
     }
 
+    /**
+     * Función para borrar todas las preguntas de un test.
+     * Esta función pertenece al proceso de actualizar los datos del Test
+     */
+    public static function borrarPreguntas (int $cod_test) : bool {
+
+        $sentencia = "DELETE from pregunta ".
+            "WHERE cod_test = $cod_test;";
+
+        $consulta=Sistema::App()->BD()->crearConsulta($sentencia);
+
+        if ($consulta->error())
+            return false;
+
+        return true;
+
+    }
 
 
     protected function afterBuscar(): void {
@@ -269,10 +286,14 @@ class Test extends CActiveRecord {
         $fechaAux = CGeneral::fechaMysqlANormal($fechaAux);
         $this->fecha = $fechaAux;
 
-        if (!is_null($this->fecha_borrado)) {
-            $fechaAux = $this->fecha_borrado;
+        $fechaAux = $this->creado_fecha;
+        $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
+        $this->creado_fecha = $fechaAux;
+
+        if (!is_null($this->borrado_fecha)) {
+            $fechaAux = $this->borrado_fecha;
             $fechaAux = CGeneral::fechahoraMysqlANormal($fechaAux);
-            $this->fecha_borrado = $fechaAux;
+            $this->borrado_fecha = $fechaAux;
         }
    
     }
