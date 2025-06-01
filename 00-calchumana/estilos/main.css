@@ -41,6 +41,9 @@ body {
     padding: 0;
     background-color: var(--gris-fondo);
     color: var(--texto-defecto);
+    min-height: 100vh;
+    background-image: url("fondo.png");
+    background-position: left top;
 }
 
 /* Header */
@@ -203,6 +206,7 @@ div.selectJuego{
     padding: 0 10px 50px;
     border-radius: 40px;
     box-shadow: 5px 5px 4px 4px var(--gris-oscuro) ;
+    background-color: var(--gris-fondo);
     text-align: center;
 }
 
